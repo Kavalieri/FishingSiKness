@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Godot: Ejecutar juego",
+            "type": "shell",
+            "command": "godot",
+            "args": [
+                "--path",
+                "project/"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Godot: Ejecutar tests unitarios",
+            "type": "shell",
+            "command": "godot",
+            "args": [
+                "--headless",
+                "--test",
+                "project/tests/unit/"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Godot: Ejecutar tests de integración",
+            "type": "shell",
+            "command": "godot",
+            "args": [
+                "--headless",
+                "--test",
+                "project/tests/integration/"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always"
+            }
+        }
+    ]
+}
