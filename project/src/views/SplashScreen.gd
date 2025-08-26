@@ -4,36 +4,49 @@ extends Control
 signal splash_finished()
 
 # Variables principales
-var logo_texture: Control # Cambiado de TextureRect a Control para flexibilidad
+var logo_texture: Control
+var subtitle_label: Label
 var progress_bar: ProgressBar
+var progress_label: Label
 var tip_label: Label
 var version_label: Label
-var press_key_label: Label
+var license_label: Label
 var loading_label: Label
+var press_key_label: Label
 
-# Botones de redes sociales y opciones
+# Botones sociales
 var discord_button: Button
 var twitter_button: Button
-var settings_button: Button
+var options_button: Button
 
 # Estado de carga
 var loading_progress := 0.0
 var loading_complete := false
 var can_continue := false
 var current_tip_index := 0
+var loading_steps := [
+	"Cargando sistemas de pesca...",
+	"Inicializando zonas de pesca...",
+	"Preparando especies marinas...",
+	"Configurando equipamiento...",
+	"Cargando datos de guardado...",
+	"Optimizando experiencia...",
+	"¡Listo para pescar!"
+]
+var current_step := 0
 
-# Tips aleatorios
-var loading_tips = [
-	"💡 Los peces más raros se encuentran en zonas avanzadas",
-	"⚡ Mejora tu equipo para acceder a nuevas zonas",
-	"🎯 Practica el QTE para capturas más exitosas",
-	"💰 Los multiplicadores de zona afectan todos tus ingresos",
-	"🌟 Las rarezas legendarias valen hasta 5x más",
-	"🎣 Cada zona tiene peces únicos esperando ser descubiertos",
-	"💎 Las gemas te permiten comprar mejoras especiales",
-	"🚀 Viaja a zonas más caras para obtener mejores recompensas",
-	"🔥 La zona Infernal tiene los multiplicadores más altos",
-	"⭐ Tu experiencia crece con cada pez capturado"
+# Tips de experto (reubicados)
+var expert_tips = [
+	"💡 Tip de Experto: Los peces más raros se encuentran en aguas profundas",
+	"⚡ Consejo Pro: Mejora tu equipo para acceder a nuevas zonas",
+	"🎯 Experto: Domina el QTE para capturas perfectas",
+	"💰 Pro-tip: Los multiplicadores de zona maximizan tus ganancias",
+	"🌟 Maestro: Las rarezas legendarias pueden valer hasta 10x más",
+	"🎣 Experto: Cada zona tiene especies únicas que descubrir",
+	"💎 Consejo: Las gemas desbloquean mejoras especiales",
+	"🚀 Pro: Las zonas avanzadas tienen mejores recompensas",
+	"🔥 Maestro: La zona Infernal es para pescadores expertos",
+	"⭐ Tip: Tu experiencia crece con cada captura exitosa"
 ]
 
 func _ready():
@@ -41,31 +54,63 @@ func _ready():
 	start_loading()
 
 func setup_ui():
-	# Fondo splash.png con escalado perfecto
+	"""Configurar UI de la splash screen con nuevo diseño épico"""
+	# Fondo splash con escalado perfecto
+	setup_background()
+
+	# Overlay sutil para contraste
+	var overlay = ColorRect.new()
+	overlay.anchor_right = 1.0
+	overlay.anchor_bottom = 1.0
+	overlay.color = Color(0, 0, 0, 0.25) # Overlay más sutil
+	add_child(overlay)
+
+	# Container principal
+	var main_container = Control.new()
+	main_container.anchor_right = 1.0
+	main_container.anchor_bottom = 1.0
+	add_child(main_container)
+
+	# 1. Logo gigante en mitad superior
+	setup_main_logo_area(main_container)
+
+	# 2. Subtítulo épico debajo del logo
+	setup_subtitle_area(main_container)
+
+	# 3. Barra de carga atractiva y central
+	setup_dynamic_loading_area(main_container)
+
+	# 4. Tips de experto reubicados estéticamente
+	setup_expert_tips_area(main_container)
+
+	# 5. Botones sociales sobre copyright
+	setup_social_buttons_area(main_container)
+
+	# 6. Footer con versión y licencia GNU3
+	setup_enhanced_footer_area(main_container)
+
+func setup_background():
+	"""Configurar el fondo splash optimizado"""
 	var background = TextureRect.new()
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	background.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+
 	var splash_texture = load("res://art/env/splash.png")
 	if splash_texture:
 		background.texture = splash_texture
-		print("✅ Splash background loaded successfully")
+		print("✅ Splash background cargado exitosamente")
 	else:
-		print("⚠️ Splash background not found, using fallback")
-		# Fallback a color sólido
+		print("⚠️ Fondo splash no encontrado, usando fallback")
 		var fallback_bg = ColorRect.new()
 		fallback_bg.anchor_right = 1.0
 		fallback_bg.anchor_bottom = 1.0
-		fallback_bg.color = Color(0.05, 0.15, 0.35) # Azul marino oscuro
+		fallback_bg.color = Color(0.05, 0.15, 0.35)
 		add_child(fallback_bg)
-		background = fallback_bg
+		return
 
-	if background is TextureRect:
-		add_child(background)
-
-	# Crear efectos dinámicos de fondo
-	create_dynamic_background_effects()
+	add_child(background)
 
 	# Overlay sutil para mejor contraste
 	var overlay = ColorRect.new()
@@ -174,7 +219,7 @@ func setup_logo_tips_area(parent: Control):
 
 	# Consejo actual (usar la primera variable tip_label para los consejos principales)
 	var main_tip_label = Label.new()
-	main_tip_label.text = loading_tips[0]
+	main_tip_label.text = expert_tips[0]
 	main_tip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	main_tip_label.add_theme_font_size_override("font_size", 15)
 	main_tip_label.add_theme_color_override("font_color", Color.WHITE)
@@ -340,20 +385,63 @@ func setup_footer_area(parent: Control):
 	social_buttons_container.add_child(options_button)
 
 func start_loading():
-	"""Iniciar proceso de carga con logo que aparece durante la carga"""
-	# Cambiar tips cada 3 segundos (más lento para mejor lectura)
+	"""Sistema de carga progresiva e informativa"""
+	# Timer para tips de experto cada 4 segundos
 	var tip_timer = Timer.new()
-	tip_timer.timeout.connect(_on_tip_timer_timeout)
-	tip_timer.wait_time = 3.0
+	tip_timer.timeout.connect(_on_expert_tip_timeout)
+	tip_timer.wait_time = 4.0
 	tip_timer.autostart = true
 	add_child(tip_timer)
 
-	# Progreso de carga simulado
+	# Timer para progreso de carga realista por etapas
 	var loading_timer = Timer.new()
-	loading_timer.timeout.connect(_on_loading_timer_timeout)
-	loading_timer.wait_time = 0.05 # Más fluido
+	loading_timer.timeout.connect(_on_progressive_loading_timeout)
+	loading_timer.wait_time = 0.8 # Cada etapa dura ~800ms
 	loading_timer.autostart = true
 	add_child(loading_timer)
+
+	# Iniciar primera etapa
+	advance_loading_step()
+
+func advance_loading_step():
+	"""Avanzar al siguiente paso de carga"""
+	if current_step < loading_steps.size():
+		if progress_label:
+			progress_label.text = loading_steps[current_step]
+
+		# Calcular progreso
+		var target_progress = (current_step + 1.0) / loading_steps.size() * 100.0
+		animate_progress_bar(target_progress)
+
+		if loading_label:
+			loading_label.text = str(int(target_progress)) + "%"
+
+		current_step += 1
+		loading_progress = target_progress
+
+		# Cuando termine la carga, permitir continuar
+		if current_step >= loading_steps.size():
+			loading_complete = true
+			can_continue = true
+			show_continue_prompt()
+
+func animate_progress_bar(target_value: float):
+	"""Animar la barra de progreso suavemente"""
+	if not progress_bar:
+		return
+
+	var tween = create_tween()
+	tween.tween_property(progress_bar, "value", target_value, 0.6)
+
+func show_continue_prompt():
+	"""Mostrar prompt para continuar"""
+	if progress_label:
+		progress_label.text = "¡Sistema listo! Presiona cualquier tecla para continuar..."
+		progress_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3))
+
+	if loading_label:
+		loading_label.text = "100% ✓"
+		loading_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3))
 
 	# Logo aparece después de un breve momento
 	var logo_timer = Timer.new()
@@ -363,11 +451,24 @@ func start_loading():
 	logo_timer.autostart = true
 	add_child(logo_timer)
 
-func _on_tip_timer_timeout():
-	"""Cambiar tip mostrado"""
+func _on_expert_tip_timeout():
+	"""Cambiar tips de experto cada 4 segundos"""
+	if not tip_label:
+		return
+
+	current_tip_index = (current_tip_index + 1) % expert_tips.size()
+
+	# Animación de cambio de tip
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(tip_label, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(func(): tip_label.text = expert_tips[current_tip_index]).set_delay(0.3)
+	tween.tween_property(tip_label, "modulate:a", 1.0, 0.3).set_delay(0.3)
+
+func _on_progressive_loading_timeout():
+	"""Avanzar carga progresiva"""
 	if not loading_complete:
-		current_tip_index = (current_tip_index + 1) % loading_tips.size()
-		tip_label.text = loading_tips[current_tip_index]
+		advance_loading_step()
 
 func _on_loading_timer_timeout():
 	"""Actualizar progreso de carga"""
@@ -738,3 +839,344 @@ func _on_options_pressed():
 		timer.timeout.connect(func(): loading_label.text = "⚡ PREPARANDO EXPERIENCIA...")
 		add_child(timer)
 		timer.start()
+
+# === NUEVAS FUNCIONES DE LA SPLASH SCREEN ÉPICA ===
+
+func setup_main_logo_area(parent: Control):
+	"""Logo GIGANTE ocupando la mitad superior"""
+	var logo_container = Control.new()
+	logo_container.anchor_left = 0.5
+	logo_container.anchor_right = 0.5
+	logo_container.anchor_top = 0.05 # Muy arriba
+	logo_container.anchor_bottom = 0.05
+
+	# Tamaño ÉPICO para el logo - ocupa mitad superior
+	var viewport_size = get_viewport().get_visible_rect().size
+	var logo_size = Vector2(
+		min(1000, viewport_size.x * 0.98), # 98% del ancho máximo
+		min(500, viewport_size.y * 0.45) # 45% de altura = casi mitad superior
+	)
+
+	logo_container.position = Vector2(-logo_size.x / 2, 0)
+	logo_container.size = logo_size
+	parent.add_child(logo_container)
+
+	# Cargar y mostrar el logo
+	var logo_resource = load("res://art/logo/logo.png")
+	if logo_resource:
+		logo_texture = TextureRect.new()
+		logo_texture.anchor_right = 1.0
+		logo_texture.anchor_bottom = 1.0
+		logo_texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		logo_texture.texture = logo_resource
+		logo_texture.modulate.a = 0.0 # Invisible para animación
+		logo_container.add_child(logo_texture)
+		print("✅ Logo épico cargado - tamaño:", logo_size)
+	else:
+		print("⚠️ Logo no encontrado")
+		create_fallback_logo(logo_container, logo_size)
+
+	# Efecto de entrada dramática
+	create_epic_logo_entrance()
+
+func setup_subtitle_area(parent: Control):
+	"""Subtítulo épico justo debajo del logo"""
+	var subtitle_container = Control.new()
+	subtitle_container.anchor_left = 0.5
+	subtitle_container.anchor_right = 0.5
+	subtitle_container.anchor_top = 0.52 # Justo después del logo
+	subtitle_container.anchor_bottom = 0.52
+
+	var subtitle_width = 800
+	subtitle_container.position = Vector2(-subtitle_width / 2, 0)
+	subtitle_container.size = Vector2(subtitle_width, 60)
+	parent.add_child(subtitle_container)
+
+	subtitle_label = Label.new()
+	subtitle_label.text = "🌊 ¡PREPÁRATE PARA LA AVENTURA DE PESCA MÁS ÉPICA! 🎣"
+	subtitle_label.anchor_right = 1.0
+	subtitle_label.anchor_bottom = 1.0
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	subtitle_label.add_theme_font_size_override("font_size", 24)
+	subtitle_label.add_theme_color_override("font_color", Color(1, 1, 0.3, 0.95)) # Dorado épico
+	subtitle_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	subtitle_label.add_theme_constant_override("shadow_offset_x", 3)
+	subtitle_label.add_theme_constant_override("shadow_offset_y", 3)
+	subtitle_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	subtitle_label.modulate.a = 0.0 # Invisible para animación
+	subtitle_container.add_child(subtitle_label)
+
+	# Animación de entrada del subtítulo
+	create_subtitle_entrance()
+
+func setup_dynamic_loading_area(parent: Control):
+	"""Barra de carga atractiva y dinámica en posición central"""
+	var loading_container = Control.new()
+	loading_container.anchor_left = 0.5
+	loading_container.anchor_right = 0.5
+	loading_container.anchor_top = 0.65 # Posición central-inferior
+	loading_container.anchor_bottom = 0.65
+
+	var container_width = 700
+	loading_container.position = Vector2(-container_width / 2, 0)
+	loading_container.size = Vector2(container_width, 120)
+	parent.add_child(loading_container)
+
+	# VBox para organizar elementos de carga
+	var loading_vbox = VBoxContainer.new()
+	loading_vbox.anchor_right = 1.0
+	loading_vbox.anchor_bottom = 1.0
+	loading_vbox.add_theme_constant_override("separation", 15)
+	loading_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	loading_container.add_child(loading_vbox)
+
+	# Etiqueta de estado de carga
+	progress_label = Label.new()
+	progress_label.text = "Inicializando sistemas..."
+	progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	progress_label.add_theme_font_size_override("font_size", 18)
+	progress_label.add_theme_color_override("font_color", Color(0.9, 0.9, 1.0))
+	progress_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	progress_label.add_theme_constant_override("shadow_offset_x", 2)
+	progress_label.add_theme_constant_override("shadow_offset_y", 2)
+	loading_vbox.add_child(progress_label)
+
+	# Barra de progreso ÉPICA y atractiva
+	progress_bar = ProgressBar.new()
+	progress_bar.custom_minimum_size = Vector2(600, 12)
+	progress_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	progress_bar.value = 0
+	progress_bar.max_value = 100
+
+	# Estilo épico para la barra
+	var progress_stylebox = StyleBoxFlat.new()
+	progress_stylebox.bg_color = Color(0.2, 0.3, 0.6, 0.8)
+	progress_stylebox.border_width_left = 2
+	progress_stylebox.border_width_right = 2
+	progress_stylebox.border_width_top = 2
+	progress_stylebox.border_width_bottom = 2
+	progress_stylebox.border_color = Color(0.4, 0.6, 1.0)
+	progress_stylebox.corner_radius_top_left = 8
+	progress_stylebox.corner_radius_top_right = 8
+	progress_stylebox.corner_radius_bottom_left = 8
+	progress_stylebox.corner_radius_bottom_right = 8
+
+	loading_vbox.add_child(progress_bar)
+
+	# Porcentaje de carga
+	loading_label = Label.new()
+	loading_label.text = "0%"
+	loading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	loading_label.add_theme_font_size_override("font_size", 16)
+	loading_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	loading_vbox.add_child(loading_label)
+
+func setup_expert_tips_area(parent: Control):
+	"""Tips de experto en posición estética lateral"""
+	var tips_container = Control.new()
+	tips_container.anchor_left = 0.02 # Lateral izquierdo
+	tips_container.anchor_right = 0.02
+	tips_container.anchor_top = 0.30 # Medio lateral
+	tips_container.anchor_bottom = 0.30
+
+	var tips_width = 350
+	tips_container.position = Vector2(0, 0)
+	tips_container.size = Vector2(tips_width, 200)
+	parent.add_child(tips_container)
+
+	# Fondo sutil para los tips
+	var tips_bg = StyleBoxFlat.new()
+	tips_bg.bg_color = Color(0, 0, 0, 0.4)
+	tips_bg.border_width_left = 2
+	tips_bg.border_width_right = 2
+	tips_bg.border_width_top = 2
+	tips_bg.border_width_bottom = 2
+	tips_bg.border_color = Color(0.3, 0.7, 1.0, 0.6)
+	tips_bg.corner_radius_top_left = 10
+	tips_bg.corner_radius_top_right = 10
+	tips_bg.corner_radius_bottom_left = 10
+	tips_bg.corner_radius_bottom_right = 10
+
+	var tips_panel = Panel.new()
+	tips_panel.anchor_right = 1.0
+	tips_panel.anchor_bottom = 1.0
+	tips_panel.add_theme_stylebox_override("panel", tips_bg)
+	tips_container.add_child(tips_panel)
+
+	# Label para tips de experto
+	tip_label = Label.new()
+	tip_label.text = expert_tips[0]
+	tip_label.anchor_left = 0.05
+	tip_label.anchor_right = 0.95
+	tip_label.anchor_top = 0.1
+	tip_label.anchor_bottom = 0.9
+	tip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	tip_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tip_label.add_theme_font_size_override("font_size", 14)
+	tip_label.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0))
+	tip_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	tip_label.add_theme_constant_override("shadow_offset_x", 1)
+	tip_label.add_theme_constant_override("shadow_offset_y", 1)
+	tip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tips_panel.add_child(tip_label)
+
+func setup_social_buttons_area(parent: Control):
+	"""Botones sociales sobre la línea de copyright"""
+	var social_container = Control.new()
+	social_container.anchor_left = 0.5
+	social_container.anchor_right = 0.5
+	social_container.anchor_top = 0.85 # Sobre el copyright
+	social_container.anchor_bottom = 0.85
+
+	var social_width = 600
+	social_container.position = Vector2(-social_width / 2, 0)
+	social_container.size = Vector2(social_width, 50)
+	parent.add_child(social_container)
+
+	# HBox para botones
+	var buttons_hbox = HBoxContainer.new()
+	buttons_hbox.anchor_right = 1.0
+	buttons_hbox.anchor_bottom = 1.0
+	buttons_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	buttons_hbox.add_theme_constant_override("separation", 30)
+	social_container.add_child(buttons_hbox)
+
+	# Botón Discord
+	discord_button = Button.new()
+	discord_button.text = "🎮 Discord"
+	discord_button.custom_minimum_size = Vector2(140, 40)
+	discord_button.add_theme_font_size_override("font_size", 16)
+	discord_button.add_theme_color_override("font_color", Color.WHITE)
+	discord_button.flat = true
+	discord_button.pressed.connect(_on_discord_pressed)
+	buttons_hbox.add_child(discord_button)
+
+	# Botón Twitter
+	twitter_button = Button.new()
+	twitter_button.text = "🐦 Twitter"
+	twitter_button.custom_minimum_size = Vector2(140, 40)
+	twitter_button.add_theme_font_size_override("font_size", 16)
+	twitter_button.add_theme_color_override("font_color", Color.WHITE)
+	twitter_button.flat = true
+	twitter_button.pressed.connect(_on_twitter_pressed)
+	buttons_hbox.add_child(twitter_button)
+
+	# Botón Opciones
+	options_button = Button.new()
+	options_button.text = "⚙️ Opciones"
+	options_button.custom_minimum_size = Vector2(140, 40)
+	options_button.add_theme_font_size_override("font_size", 16)
+	options_button.add_theme_color_override("font_color", Color.WHITE)
+	options_button.flat = true
+	options_button.pressed.connect(_on_options_pressed)
+	buttons_hbox.add_child(options_button)
+
+func setup_enhanced_footer_area(parent: Control):
+	"""Footer mejorado con versión y licencia GNU GPL v3"""
+	var footer_container = Control.new()
+	footer_container.anchor_left = 0.5
+	footer_container.anchor_right = 0.5
+	footer_container.anchor_top = 0.92 # Muy abajo
+	footer_container.anchor_bottom = 0.92
+
+	var footer_width = 800
+	footer_container.position = Vector2(-footer_width / 2, 0)
+	footer_container.size = Vector2(footer_width, 60)
+	parent.add_child(footer_container)
+
+	# VBox para organizar footer
+	var footer_vbox = VBoxContainer.new()
+	footer_vbox.anchor_right = 1.0
+	footer_vbox.anchor_bottom = 1.0
+	footer_vbox.add_theme_constant_override("separation", 5)
+	footer_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	footer_container.add_child(footer_vbox)
+
+	# Versión
+	version_label = Label.new()
+	version_label.text = "Fishing SiKness v0.1.0 - Pre-Alpha | © 2025 Hecho con ❤️ y Godot 4.4"
+	version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	version_label.add_theme_font_size_override("font_size", 12)
+	version_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 0.9))
+	version_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	version_label.add_theme_constant_override("shadow_offset_x", 1)
+	version_label.add_theme_constant_override("shadow_offset_y", 1)
+	footer_vbox.add_child(version_label)
+
+	# Licencia GNU GPL v3
+	license_label = Label.new()
+	license_label.text = "📜 Licencia: GNU General Public License v3.0 - Software Libre y de Código Abierto"
+	license_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	license_label.add_theme_font_size_override("font_size", 10)
+	license_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0, 0.8))
+	license_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	license_label.add_theme_constant_override("shadow_offset_x", 1)
+	license_label.add_theme_constant_override("shadow_offset_y", 1)
+	footer_vbox.add_child(license_label)
+
+# === ANIMACIONES ÉPICAS ===
+
+func create_epic_logo_entrance():
+	"""Animación de entrada épica para el logo"""
+	if not logo_texture:
+		return
+
+	var tween = create_tween()
+	tween.set_parallel(true)
+
+	# Fade in
+	tween.tween_property(logo_texture, "modulate:a", 1.0, 1.5)
+
+	# Escala épica desde pequeño
+	logo_texture.scale = Vector2(0.3, 0.3)
+	tween.tween_property(logo_texture, "scale", Vector2(1.0, 1.0), 1.5)
+	tween.tween_callback(start_logo_breathing).set_delay(1.5)
+
+func create_subtitle_entrance():
+	"""Animación de entrada del subtítulo"""
+	if not subtitle_label:
+		return
+
+	# Usar timer para delay en lugar de tween_delay
+	var timer = Timer.new()
+	timer.wait_time = 0.8
+	timer.one_shot = true
+	timer.timeout.connect(func():
+		var tween = create_tween()
+		tween.tween_property(subtitle_label, "modulate:a", 1.0, 1.0)
+		timer.queue_free()
+	)
+	add_child(timer)
+	timer.start()
+
+func start_logo_breathing():
+	"""Efecto de respiración continuo del logo"""
+	if not logo_texture:
+		return
+
+	var breathing_tween = create_tween()
+	breathing_tween.set_loops()
+	breathing_tween.tween_property(logo_texture, "scale", Vector2(1.02, 1.02), 2.5)
+	breathing_tween.tween_property(logo_texture, "scale", Vector2(1.0, 1.0), 2.5)
+
+func create_typing_effect():
+	"""Efecto de escritura para el subtítulo"""
+	# Implementación futura si se desea
+	return
+
+func create_fallback_logo(parent: Control, size: Vector2):
+	"""Logo de fallback en caso de no encontrar la imagen"""
+	var fallback_label = Label.new()
+	fallback_label.text = "FISHING\nSIKNESS"
+	fallback_label.anchor_right = 1.0
+	fallback_label.anchor_bottom = 1.0
+	fallback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	fallback_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	fallback_label.add_theme_font_size_override("font_size", int(size.y / 6))
+	fallback_label.add_theme_color_override("font_color", Color(0.2, 0.6, 1.0))
+	fallback_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	fallback_label.add_theme_constant_override("shadow_offset_x", 4)
+	fallback_label.add_theme_constant_override("shadow_offset_y", 4)
+	parent.add_child(fallback_label)
+	logo_texture = fallback_label
