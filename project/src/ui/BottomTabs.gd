@@ -8,13 +8,13 @@ var current_tab := 0
 var left_handed := false
 
 func _ready():
-	# Obtener los botones existentes (diseño con prestigio)
+	# Obtener los botones existentes (orden: Pescar, Mercado, Mejoras, Mapa, Prestigio)
 	tab_buttons = [
 		$FishingBtn,
-		$PrestigeBtn,
 		$MarketBtn,
 		$UpgradesBtn,
-		$MapBtn
+		$MapBtn,
+		$PrestigeBtn
 	]
 
 	# Conectar las señales de los botones

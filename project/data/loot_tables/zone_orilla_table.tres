@@ -1,7 +1,9 @@
-[gd_resource type="Resource" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="LootTable" load_steps=4 format=3]
 
-[ext_resource type="Resource" path="res://data/fish/fish_sardina.tres" id="1"]
-[ext_resource type="Resource" path="res://data/fish/fish_trucha.tres" id="2"]
+[ext_resource type="Script" path="res://src/resources/LootTable.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_sardina.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_trucha.tres" id="3"]
 
 [resource]
-entries = Array[Resource]([ExtResource("1"), ExtResource("2")])
+script = ExtResource("1")
+entries = Array[Resource]([ExtResource("2"), ExtResource("3")])

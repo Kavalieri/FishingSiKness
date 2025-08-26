@@ -107,7 +107,7 @@ func setup_qte_ui():
 
 func setup_inventory_button():
 	inventory_button = Button.new()
-	inventory_button.text = "🗑️ Gestionar Inventario"
+	inventory_button.text = "🧊 Ver Inventario"
 	inventory_button.custom_minimum_size = Vector2(200, 50)
 	inventory_button.pressed.connect(_on_inventory_button_pressed)
 
@@ -331,7 +331,7 @@ func show_catch_message(fish_instance: FishInstance, success: bool):
 
 func show_inventory_full_message():
 	var message = Label.new()
-	message.text = "🧊 ¡Inventario lleno!\n🗑️ Usa 'Gestionar Inventario' para liberar espacio"
+	message.text = "🧊 ¡Inventario lleno!\n🏪 Ve al Mercado para vender peces y liberar espacio"
 	message.add_theme_font_size_override("font_size", 18)
 	message.add_theme_color_override("font_color", Color.ORANGE)
 	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -346,8 +346,9 @@ func show_inventory_full_message():
 		SFX.play_event("error")
 
 func _on_inventory_button_pressed():
+	# Solo mostrar inventario para visualizar, sin opciones de venta/descarte
 	var screen_manager = get_tree().current_scene
-	if screen_manager and screen_manager.has_method("show_inventory_discard_mode"):
-		screen_manager.show_inventory_discard_mode()
+	if screen_manager and screen_manager.has_method("show_inventory"):
+		screen_manager.show_inventory(false, "🧊 NEVERA - CONSULTA")
 		if SFX:
 			SFX.play_event("click")

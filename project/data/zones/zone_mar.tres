@@ -8,10 +8,4 @@ id = "mar"
 name = "Mar"
 price_multiplier = 2.0
 entries = []
-background = "res://art/env/industrial.png"ource type="Resource" format=3]
-
-id = "mar"
-name = "Mar"
-price_multiplier = 2.0
-entries = []
-background = ExtResource("res://art/env/space.png")
+background = "res://art/env/industrial.png"

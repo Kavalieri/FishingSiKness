@@ -24,6 +24,7 @@ Save="*res://src/autoload/Save.gd"
 SFX="*res://src/autoload/SFX.gd"
 Logger="*res://src/autoload/Logger.gd"
 Experience="*res://src/autoload/Experience.gd"
+SkillTree="*res://src/autoload/SkillTree.gd"
 
 [display]
 

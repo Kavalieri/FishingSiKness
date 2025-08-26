@@ -12,17 +12,38 @@ func _ready():
 	refresh_save_slots()
 
 func setup_save_manager_ui():
+	# Fondo semi-transparente
+	var background = ColorRect.new()
+	background.color = Color(0, 0, 0, 0.8)
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	background.mouse_filter = Control.MOUSE_FILTER_STOP
+	background.gui_input.connect(_on_background_clicked)
+	add_child(background)
+
+	# Panel principal centrado
+	var main_panel = PanelContainer.new()
+	main_panel.anchor_left = 0.05
+	main_panel.anchor_right = 0.95
+	main_panel.anchor_top = 0.1
+	main_panel.anchor_bottom = 0.9
+	add_child(main_panel)
+
+	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 15)
+	main_panel.add_child(main_vbox)
+
 	# Título
 	var title_label = Label.new()
 	title_label.text = "💾 GESTOR DE PARTIDAS"
 	title_label.add_theme_font_size_override("font_size", 24)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	add_child(title_label)
+	main_vbox.add_child(title_label)
 
 	# Scroll para slots de guardado
 	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(400, 500)
-	add_child(scroll)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_vbox.add_child(scroll)
 
 	save_slots_container = VBoxContainer.new()
 	save_slots_container.add_theme_constant_override("separation", 10)
@@ -33,7 +54,7 @@ func setup_save_manager_ui():
 	back_button.text = "⬅️ Volver"
 	back_button.custom_minimum_size = Vector2(200, 48)
 	back_button.pressed.connect(_on_back_pressed)
-	add_child(back_button)
+	main_vbox.add_child(back_button)
 
 func refresh_save_slots():
 	# Limpiar slots existentes
@@ -160,3 +181,12 @@ func show_message(text: String):
 	var tween = create_tween()
 	tween.tween_interval(3.0)
 	tween.tween_callback(message_label.queue_free)
+
+func _on_background_clicked(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		queue_free()
+
+func _input(event):
+	# Permitir cerrar con ESC
+	if event.is_action_pressed("ui_cancel"):
+		queue_free()

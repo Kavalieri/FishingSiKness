@@ -121,35 +121,12 @@ layout_mode = 2
 text = "LANZAR"
 custom_minimum_size = Vector2(0, 60)
 
-[node name="PrestigeView" type="Control" parent="ScreenContainer"]
-layout_mode = 1
-anchor_right = 1.0
-anchor_bottom = 1.0
-visible = false
-script = ExtResource("5_prestige")
-
-[node name="PrestigeLabel" type="Label" parent="ScreenContainer/PrestigeView"]
-layout_mode = 1
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "⭐ Vista de Prestigio"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="MarketView" type="Control" parent="ScreenContainer"]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 1.0
 visible = false
 script = ExtResource("6_market")
-
-[node name="MarketLabel" type="Label" parent="ScreenContainer/MarketView"]
-layout_mode = 1
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "Vista de Mercado - En construcción"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="UpgradesView" type="Control" parent="ScreenContainer"]
 layout_mode = 1
@@ -164,6 +141,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 visible = false
 script = ExtResource("8_map")
+
+[node name="PrestigeView" type="Control" parent="ScreenContainer"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("5_prestige")
+
+[node name="PrestigeLabel" type="Label" parent="ScreenContainer/PrestigeView"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "⭐ Vista de Prestigio"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BottomTabs" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -186,12 +178,6 @@ text = "🐟 Pescar"
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(0, 48)
 
-[node name="PrestigeBtn" type="Button" parent="BottomTabs"]
-layout_mode = 2
-text = "⭐ Prestigio"
-size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 48)
-
 [node name="MarketBtn" type="Button" parent="BottomTabs"]
 layout_mode = 2
 text = "🛒 Mercado"
@@ -207,5 +193,11 @@ custom_minimum_size = Vector2(0, 48)
 [node name="MapBtn" type="Button" parent="BottomTabs"]
 layout_mode = 2
 text = "🗺 Mapa"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="PrestigeBtn" type="Button" parent="BottomTabs"]
+layout_mode = 2
+text = "⭐ Prestigio"
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(0, 48)

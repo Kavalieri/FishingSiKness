@@ -1,5 +1,5 @@
 class_name InventoryPanel
-extends PanelContainer
+extends Control
 
 signal fish_selected(fish_index: int)
 signal fish_deselected(fish_index: int)
@@ -7,6 +7,7 @@ signal sell_selected_requested()
 signal sell_all_requested()
 signal close_requested()
 
+var main_panel: PanelContainer
 var inventory_grid: GridContainer
 var info_container: VBoxContainer
 var selected_fish_indices: Array[int] = []
@@ -22,8 +23,31 @@ func _ready():
 	refresh_display()
 
 func setup_ui():
+	# Fondo semi-transparente
+	var background = ColorRect.new()
+	background.color = Color(0, 0, 0, 0.8)
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	background.mouse_filter = Control.MOUSE_FILTER_STOP
+	background.gui_input.connect(_on_background_clicked)
+	add_child(background)
+
+	# Panel principal centrado (pantalla completa)
+	main_panel = PanelContainer.new()
+	main_panel.anchor_left = 0.0
+	main_panel.anchor_right = 1.0
+	main_panel.anchor_top = 0.0
+	main_panel.anchor_bottom = 1.0
+	add_child(main_panel)
+
 	var main_vbox = VBoxContainer.new()
-	add_child(main_vbox)
+	main_vbox.add_theme_constant_override("separation", 10)
+	# Agregar margen interno
+	main_vbox.add_theme_constant_override("margin_left", 20)
+	main_vbox.add_theme_constant_override("margin_right", 20)
+	main_vbox.add_theme_constant_override("margin_top", 20)
+	main_vbox.add_theme_constant_override("margin_bottom", 20)
+	main_panel.add_child(main_vbox)
 
 	# Header con título y botón cerrar
 	var header = HBoxContainer.new()
@@ -190,6 +214,16 @@ func _on_close_pressed():
 	emit_signal("close_requested")
 	if SFX:
 		SFX.play_event("click")
+
+func _on_background_clicked(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		# Solo cerrar si se hace click en el fondo, no en el panel
+		emit_signal("close_requested")
+
+func _input(event):
+	# Permitir cerrar con ESC
+	if event.is_action_pressed("ui_cancel"):
+		emit_signal("close_requested")
 
 func calculate_total_value() -> int:
 	var total = 0

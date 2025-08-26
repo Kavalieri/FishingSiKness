@@ -73,11 +73,29 @@ func update_display():
 		coins_label.text = "Monedas: " + str(Save.get_coins())
 	if Save and gems_label:
 		gems_label.text = "💎 " + str(Save.get_gems())
-	if zone_label:
-		zone_label.text = "Zona: Orilla"
+
+	# Actualizar zona actual desde Save
+	if zone_label and Save:
+		var current_zone_id = Save.game_data.get("current_zone", "orilla")
+		var zone_name = get_zone_name_from_id(current_zone_id)
+		zone_label.text = "Zona: " + zone_name
 
 	# Actualizar nivel y experiencia
 	update_level_display()
+
+func get_zone_name_from_id(zone_id: String) -> String:
+	# Mapeo de IDs a nombres de zona
+	var zone_names = {
+		"orilla": "Orilla",
+		"lago": "Lago",
+		"rio": "Río",
+		"costa": "Costa",
+		"mar": "Mar",
+		"lake": "Lago Tranquilo", # Para compatibilidad con MapView
+		"river": "Río Salvaje",
+		"ocean": "Océano Profundo"
+	}
+	return zone_names.get(zone_id, "Desconocida")
 
 func update_level_display():
 	if not Save or not level_button or not xp_bar:

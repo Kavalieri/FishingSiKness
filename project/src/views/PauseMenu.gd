@@ -4,6 +4,7 @@ extends Control
 signal resume_requested()
 signal save_and_exit_requested()
 signal settings_requested()
+signal save_manager_requested()
 
 var main_panel: PanelContainer
 
@@ -16,6 +17,8 @@ func setup_ui():
 	background.color = Color(0, 0, 0, 0.8)
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
+	background.mouse_filter = Control.MOUSE_FILTER_STOP
+	background.gui_input.connect(_on_background_clicked)
 	add_child(background)
 
 	# Panel principal
@@ -45,6 +48,7 @@ func setup_ui():
 	# Botones del menú
 	var buttons_data = [
 		{"text": "▶️ CONTINUAR", "signal": "resume_requested"},
+		{"text": "💾 GESTOR DE PARTIDAS", "signal": "save_manager_requested"},
 		{"text": "💾 GUARDAR Y SALIR", "signal": "save_and_exit_requested"},
 		{"text": "⚙️ OPCIONES", "signal": "settings_requested"}
 	]
@@ -91,6 +95,8 @@ func _on_button_pressed(signal_name: String):
 	match signal_name:
 		"resume_requested":
 			emit_signal("resume_requested")
+		"save_manager_requested":
+			emit_signal("save_manager_requested")
 		"save_and_exit_requested":
 			Save.save_game()
 			emit_signal("save_and_exit_requested")
@@ -100,4 +106,8 @@ func _on_button_pressed(signal_name: String):
 func _input(event):
 	# Permitir cerrar con ESC o botón de atrás
 	if event.is_action_pressed("ui_cancel"):
+		emit_signal("resume_requested")
+
+func _on_background_clicked(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		emit_signal("resume_requested")

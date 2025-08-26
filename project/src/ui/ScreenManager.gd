@@ -4,13 +4,13 @@ extends Control
 # Recursos precargados
 const InventoryClass = preload("res://src/ui/InventoryPanel.gd")
 
-# Enums para las pestañas (diseño vertical 5 tabs con prestigio)
+# Enums para las pestañas (orden: Pescar, Mercado, Mejoras, Mapa, Prestigio)
 enum Tab {
 	FISHING = 0,
-	PRESTIGE = 1,
-	MARKET = 2,
-	UPGRADES = 3,
-	MAP = 4
+	MARKET = 1,
+	UPGRADES = 2,
+	MAP = 3,
+	PRESTIGE = 4
 }
 
 var views = {}
@@ -20,16 +20,20 @@ var current_tab = Tab.FISHING
 var store_view: StoreView
 var pause_menu: PauseMenu
 var inventory_panel: InventoryPanel
+var milestones_panel: Control
+var settings_menu: Control
+var save_manager: Control
+var debug_panel: Control
 
 func _ready():
-	# Registrar las vistas desde ScreenContainer (con prestigio)
+	# Registrar las vistas desde ScreenContainer (sin Fridge)
 	var screen_container = $ScreenContainer
 	if screen_container:
 		register_view(Tab.FISHING, screen_container.get_node("FishingView"))
-		register_view(Tab.PRESTIGE, screen_container.get_node("PrestigeView"))
 		register_view(Tab.MARKET, screen_container.get_node("MarketView"))
 		register_view(Tab.UPGRADES, screen_container.get_node("UpgradesView"))
 		register_view(Tab.MAP, screen_container.get_node("MapView"))
+		register_view(Tab.PRESTIGE, screen_container.get_node("PrestigeView"))
 
 	# Conectar con BottomTabs
 	var bottom_tabs = $BottomTabs
@@ -43,6 +47,8 @@ func _ready():
 			top_bar.gems_button_clicked.connect(_on_gems_button_clicked)
 		if top_bar.has_signal("settings_button_clicked"):
 			top_bar.settings_button_clicked.connect(_on_settings_button_clicked)
+		if top_bar.has_signal("level_button_clicked"):
+			top_bar.level_button_clicked.connect(_on_level_button_clicked)
 
 	# Conectar con FishingView
 	var fishing_view = screen_container.get_node("FishingView")
@@ -51,6 +57,9 @@ func _ready():
 
 	# Mostrar la pestaña inicial
 	show_tab(Tab.FISHING)
+
+	# Crear debug panel (accesible con F2)
+	create_debug_panel()
 
 func register_view(index: int, view_node: Node):
 	if view_node:
@@ -94,12 +103,18 @@ func _on_settings_button_clicked():
 	print("ScreenManager: Settings button clicked")
 	show_pause_menu()
 
+func _on_level_button_clicked():
+	print("ScreenManager: Level button clicked")
+	show_milestones_panel()
+
 func show_store():
 	if store_view:
 		store_view.queue_free()
 
 	store_view = preload("res://src/views/StoreView.gd").new()
 	store_view.close_requested.connect(_on_store_closed)
+	# Asegurar que el overlay esté en el nivel superior
+	store_view.z_index = 100
 	add_child(store_view)
 
 func show_pause_menu():
@@ -110,7 +125,23 @@ func show_pause_menu():
 	pause_menu.resume_requested.connect(_on_pause_menu_closed)
 	pause_menu.save_and_exit_requested.connect(_on_save_and_exit)
 	pause_menu.settings_requested.connect(_on_settings_requested)
+	pause_menu.save_manager_requested.connect(_on_save_manager_requested_from_pause)
+	# Asegurar que el overlay esté en el nivel superior
+	pause_menu.z_index = 100
 	add_child(pause_menu)
+
+func show_milestones_panel():
+	# Evitar crear múltiples instancias
+	if milestones_panel:
+		return
+
+	var MilestonesClass = preload("res://src/views/MilestonesPanel.gd")
+	milestones_panel = MilestonesClass.new()
+	milestones_panel.close_requested.connect(_on_milestones_closed)
+	milestones_panel.tree_exiting.connect(_on_milestones_closed)
+	# Asegurar que el overlay esté en el nivel superior
+	milestones_panel.z_index = 100
+	add_child(milestones_panel)
 
 func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO"):
 	if inventory_panel:
@@ -123,6 +154,8 @@ func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO
 		inventory_panel.sell_selected_requested.connect(_on_sell_selected_fish)
 		inventory_panel.sell_all_requested.connect(_on_sell_all_fish)
 
+	# Asegurar que el overlay esté en el nivel superior
+	inventory_panel.z_index = 100
 	add_child(inventory_panel)
 
 func show_inventory_discard_mode():
@@ -135,6 +168,8 @@ func show_inventory_discard_mode():
 	inventory_panel.sell_selected_requested.connect(_on_discard_selected_fish)
 	inventory_panel.sell_all_requested.connect(_on_discard_all_fish)
 
+	# Asegurar que el overlay esté en el nivel superior
+	inventory_panel.z_index = 100
 	add_child(inventory_panel)
 
 func _on_store_closed():
@@ -159,9 +194,77 @@ func _on_save_and_exit():
 	get_tree().quit()
 
 func _on_settings_requested():
-	# Por ahora cerrar menú de pausa, en futuro abrir configuración
+	# Mostrar el menú de opciones real
+	show_settings_menu()
 	_on_pause_menu_closed()
-	print("Settings requested - to be implemented")
+
+func show_settings_menu():
+	# Evitar crear múltiples instancias
+	if settings_menu:
+		return
+
+	if pause_menu:
+		pause_menu.queue_free()
+		pause_menu = null
+
+	var SettingsMenuClass = preload("res://src/views/SettingsMenu.gd")
+	settings_menu = SettingsMenuClass.new()
+	settings_menu.settings_closed.connect(_on_settings_closed)
+	settings_menu.save_manager_requested.connect(_on_save_manager_requested_from_settings)
+	settings_menu.tree_exiting.connect(_on_settings_closed)
+	add_child(settings_menu)
+
+func show_save_manager():
+	# Evitar crear múltiples instancias
+	if save_manager:
+		return
+
+	if pause_menu:
+		pause_menu.queue_free()
+		pause_menu = null
+
+	var SaveManagerClass = preload("res://src/views/SaveManagerView.gd")
+	save_manager = SaveManagerClass.new()
+	save_manager.save_loaded.connect(_on_save_loaded)
+	save_manager.save_created.connect(_on_save_created)
+	save_manager.tree_exiting.connect(_on_save_manager_closed)
+	add_child(save_manager)
+
+func _on_save_loaded(slot: int):
+	print("Save loaded from slot: ", slot)
+	# Actualizar toda la UI después de cargar
+	var top_bar = $TopBar
+	if top_bar and top_bar.has_method("update_display"):
+		top_bar.update_display()
+
+func _on_save_created(slot: int):
+	print("New save created in slot: ", slot)
+	# Actualizar toda la UI después de crear nueva partida
+	var top_bar = $TopBar
+	if top_bar and top_bar.has_method("update_display"):
+		top_bar.update_display()
+
+func _on_milestones_closed():
+	if milestones_panel:
+		milestones_panel.queue_free()
+		milestones_panel = null
+
+func _on_settings_closed():
+	if settings_menu:
+		settings_menu.queue_free()
+		settings_menu = null
+
+func _on_save_manager_requested_from_settings():
+	# Cerrar menú de opciones y abrir gestor de guardado
+	show_save_manager()
+
+func _on_save_manager_requested_from_pause():
+	# Cerrar menú de pausa y abrir gestor de guardado
+	_on_pause_menu_closed()
+	show_save_manager()
+
+func _on_save_manager_closed():
+	save_manager = null
 
 func _on_inventory_closed():
 	if inventory_panel:
@@ -235,3 +338,9 @@ func _on_discard_all_fish():
 	# Actualizar display del inventario solamente
 	if inventory_panel:
 		inventory_panel.refresh_display()
+
+func create_debug_panel():
+	"""Crear panel de debug para testing del skill tree"""
+	var DebugPanelClass = preload("res://src/ui/SkillTreeDebugPanel.gd")
+	debug_panel = DebugPanelClass.new()
+	add_child(debug_panel)

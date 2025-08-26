@@ -68,17 +68,19 @@ func _ready():
 func setup_ui():
 	# Fondo semi-transparente
 	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.7)
+	background.color = Color(0, 0, 0, 0.8)
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
+	background.mouse_filter = Control.MOUSE_FILTER_STOP
+	background.gui_input.connect(_on_background_clicked)
 	add_child(background)
 
-	# Panel principal
+	# Panel principal (más grande)
 	var main_panel = PanelContainer.new()
-	main_panel.anchor_left = 0.1
-	main_panel.anchor_right = 0.9
-	main_panel.anchor_top = 0.1
-	main_panel.anchor_bottom = 0.9
+	main_panel.anchor_left = 0.05
+	main_panel.anchor_right = 0.95
+	main_panel.anchor_top = 0.05
+	main_panel.anchor_bottom = 0.95
 	add_child(main_panel)
 
 	var main_vbox = VBoxContainer.new()
@@ -271,3 +273,12 @@ func _on_close_pressed():
 	if SFX:
 		SFX.play_event("click")
 	emit_signal("close_requested")
+
+func _on_background_clicked(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		emit_signal("close_requested")
+
+func _input(event):
+	# Permitir cerrar con ESC
+	if event.is_action_pressed("ui_cancel"):
+		emit_signal("close_requested")

@@ -31,6 +31,8 @@ var game_data := {
 		"qte_time_bonus": 0.0,
 		"rare_fish_chance": 0.0
 	},
+	# Sistema de skill tree
+	"unlocked_skills": {},
 	"prestige_unlocked": false,
 	"prestige_level": 0,
 	"prestige_points": 0,
@@ -246,10 +248,43 @@ func unlock_prestige():
 	save_game()
 
 func get_total_inventory_capacity() -> int:
-	return game_data.get("max_inventory", 12) + game_data.milestone_bonuses.inventory_capacity
+	var base_inventory = game_data.get("max_inventory", 12)
+	var milestone_bonus = game_data.milestone_bonuses.inventory_capacity
+	var skill_bonus = 0
+
+	# Usar bonificación del skill tree si está disponible
+	if SkillTree:
+		skill_bonus = SkillTree.get_max_inventory_with_bonus() - base_inventory
+
+	return base_inventory + milestone_bonus + skill_bonus
 
 func get_coins_multiplier() -> float:
-	return 1.0 + game_data.milestone_bonuses.coins_multiplier
+	var milestone_multiplier = 1.0 + game_data.milestone_bonuses.coins_multiplier
+	var skill_multiplier = 1.0
+
+	# Usar bonificación del skill tree si está disponible
+	if SkillTree:
+		skill_multiplier = SkillTree.get_active_bonus("sell_bonus")
+
+	return milestone_multiplier * skill_multiplier
+
+func get_fishing_speed_multiplier() -> float:
+	var skill_multiplier = 1.0
+
+	# Usar bonificación del skill tree si está disponible
+	if SkillTree:
+		skill_multiplier = SkillTree.get_active_bonus("fishing_speed")
+
+	return skill_multiplier
+
+func get_rare_fish_chance_multiplier() -> float:
+	var skill_multiplier = 1.0
+
+	# Usar bonificación del skill tree si está disponible
+	if SkillTree:
+		skill_multiplier = SkillTree.get_active_bonus("rare_chance")
+
+	return skill_multiplier
 
 # Sistema de guardado múltiple
 func get_save_slot_path(slot: int) -> String:
@@ -336,6 +371,8 @@ func reset_to_default():
 			"qte_time_bonus": 0.0,
 			"rare_fish_chance": 0.0
 		},
+		# Sistema de skill tree
+		"unlocked_skills": {},
 		"prestige_unlocked": false,
 		"prestige_level": 0,
 		"prestige_points": 0,
