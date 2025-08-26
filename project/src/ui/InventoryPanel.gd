@@ -32,13 +32,12 @@ func setup_ui():
 	background.gui_input.connect(_on_background_clicked)
 	add_child(background)
 
-	# Panel principal centrado (pantalla completa)
+	# Panel principal centrado (pantalla completa - centrado dinámicamente)
 	main_panel = PanelContainer.new()
-	main_panel.anchor_left = 0.0
-	main_panel.anchor_right = 1.0
-	main_panel.anchor_top = 0.0
-	main_panel.anchor_bottom = 1.0
 	add_child(main_panel)
+
+	# Centrado dinámico para ocupar toda la pantalla
+	call_deferred("_center_panel_fullscreen", main_panel)
 
 	var main_vbox = VBoxContainer.new()
 	main_vbox.add_theme_constant_override("separation", 10)
@@ -242,3 +241,15 @@ func clear_selection():
 		if child is Button:
 			child.button_pressed = false
 			child.modulate = Color.WHITE
+
+func _center_panel_fullscreen(panel: PanelContainer):
+	"""Centrar el panel para ocupar toda la pantalla"""
+	var viewport_size = get_viewport().get_visible_rect().size
+
+	panel.custom_minimum_size = viewport_size
+	panel.size = viewport_size
+	panel.position = Vector2.ZERO
+
+	# Asegurar que está visible y en primer plano
+	panel.show()
+	panel.z_index = 100

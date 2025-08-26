@@ -75,13 +75,12 @@ func setup_ui():
 	background.gui_input.connect(_on_background_clicked)
 	add_child(background)
 
-	# Panel principal (más grande)
+	# Panel principal (centrado dinámicamente)
 	var main_panel = PanelContainer.new()
-	main_panel.anchor_left = 0.05
-	main_panel.anchor_right = 0.95
-	main_panel.anchor_top = 0.05
-	main_panel.anchor_bottom = 0.95
 	add_child(main_panel)
+
+	# Centrado dinámico en _ready
+	call_deferred("_center_panel", main_panel)
 
 	var main_vbox = VBoxContainer.new()
 	main_panel.add_child(main_vbox)
@@ -282,3 +281,15 @@ func _input(event):
 	# Permitir cerrar con ESC
 	if event.is_action_pressed("ui_cancel"):
 		emit_signal("close_requested")
+
+func _center_panel(panel: PanelContainer):
+	"""Centrar el panel dinámicamente en la pantalla"""
+	var viewport_size = get_viewport().get_visible_rect().size
+	var panel_size = Vector2(viewport_size.x * 0.9, viewport_size.y * 0.9)
+
+	panel.custom_minimum_size = panel_size
+	panel.size = panel_size
+	panel.position = (viewport_size - panel_size) / 2
+
+	# Asegurar que está visible
+	panel.show()

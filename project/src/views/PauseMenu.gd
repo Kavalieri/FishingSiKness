@@ -21,13 +21,12 @@ func setup_ui():
 	background.gui_input.connect(_on_background_clicked)
 	add_child(background)
 
-	# Panel principal
+	# Panel principal (centrado dinámicamente)
 	main_panel = PanelContainer.new()
-	main_panel.anchor_left = 0.25
-	main_panel.anchor_right = 0.75
-	main_panel.anchor_top = 0.2
-	main_panel.anchor_bottom = 0.8
 	add_child(main_panel)
+
+	# Centrado dinámico en _ready
+	call_deferred("_center_panel", main_panel)
 
 	var main_vbox = VBoxContainer.new()
 	main_vbox.add_theme_constant_override("separation", 20)
@@ -111,3 +110,15 @@ func _input(event):
 func _on_background_clicked(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		emit_signal("resume_requested")
+
+func _center_panel(panel: PanelContainer):
+	"""Centrar el panel dinámicamente en la pantalla"""
+	var viewport_size = get_viewport().get_visible_rect().size
+	var panel_size = Vector2(viewport_size.x * 0.5, viewport_size.y * 0.6) # PauseMenu más pequeño
+
+	panel.custom_minimum_size = panel_size
+	panel.size = panel_size
+	panel.position = (viewport_size - panel_size) / 2
+
+	# Asegurar que está visible
+	panel.show()
