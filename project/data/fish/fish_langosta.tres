@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/langosta.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "langosta"
+name = "Langosta"
+description = "Un crustáceo de gran valor gastronómico. Su carne es una delicia culinaria."
+species_category = "Crustáceo premium"
+rarity = 2
+base_market_value = 85
+size_min = 25.0
+size_max = 60.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["costa", "mar"])
+difficulty = 4

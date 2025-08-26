@@ -5,7 +5,10 @@ signal fish_selected(fish_index: int)
 signal fish_deselected(fish_index: int)
 signal sell_selected_requested()
 signal sell_all_requested()
+signal discard_selected_requested()
+signal discard_all_requested()
 signal close_requested()
+signal fish_info_requested(fish_index: int)
 
 var main_panel: PanelContainer
 var inventory_grid: GridContainer
@@ -85,27 +88,61 @@ func _setup_panel_content(main_panel: PanelContainer):
 	inventory_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(inventory_grid)
 
-	# Botones de venta (opcional)
+	# Botones de acción (venta y descarte)
 	if show_sell_buttons:
-		var button_container = HBoxContainer.new()
-		button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+		var button_container = VBoxContainer.new()
+		button_container.add_theme_constant_override("separation", 10)
 		main_vbox.add_child(button_container)
 
-		var sell_selected_btn = Button.new()
-		sell_selected_btn.text = "VENDER SELECCIONADO"
-		sell_selected_btn.custom_minimum_size.y = 50
-		sell_selected_btn.pressed.connect(_on_sell_selected_pressed)
-		button_container.add_child(sell_selected_btn)
+		# Fila superior: Botones de venta
+		var sell_row = HBoxContainer.new()
+		sell_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		button_container.add_child(sell_row)
 
-		var separator = VSeparator.new()
-		separator.custom_minimum_size.x = 10
-		button_container.add_child(separator)
+		var sell_selected_btn = Button.new()
+		sell_selected_btn.text = "💰 VENDER SELECCIONADO"
+		sell_selected_btn.custom_minimum_size = Vector2(200, 50)
+		sell_selected_btn.add_theme_color_override("font_color", Color.WHITE)
+		sell_selected_btn.add_theme_color_override("font_hover_color", Color.LIGHT_GREEN)
+		sell_selected_btn.pressed.connect(_on_sell_selected_pressed)
+		sell_row.add_child(sell_selected_btn)
+
+		var separator1 = VSeparator.new()
+		separator1.custom_minimum_size.x = 20
+		sell_row.add_child(separator1)
 
 		var sell_all_btn = Button.new()
-		sell_all_btn.text = "VENDER TODO"
-		sell_all_btn.custom_minimum_size.y = 50
+		sell_all_btn.text = "💰 VENDER TODO"
+		sell_all_btn.custom_minimum_size = Vector2(200, 50)
+		sell_all_btn.add_theme_color_override("font_color", Color.WHITE)
+		sell_all_btn.add_theme_color_override("font_hover_color", Color.LIGHT_GREEN)
 		sell_all_btn.pressed.connect(_on_sell_all_pressed)
-		button_container.add_child(sell_all_btn)
+		sell_row.add_child(sell_all_btn)
+
+		# Fila inferior: Botones de descarte
+		var discard_row = HBoxContainer.new()
+		discard_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		button_container.add_child(discard_row)
+
+		var discard_selected_btn = Button.new()
+		discard_selected_btn.text = "🗑️ DESCARTAR SELECCIONADO"
+		discard_selected_btn.custom_minimum_size = Vector2(200, 50)
+		discard_selected_btn.add_theme_color_override("font_color", Color.WHITE)
+		discard_selected_btn.add_theme_color_override("font_hover_color", Color.ORANGE_RED)
+		discard_selected_btn.pressed.connect(_on_discard_selected_pressed)
+		discard_row.add_child(discard_selected_btn)
+
+		var separator2 = VSeparator.new()
+		separator2.custom_minimum_size.x = 20
+		discard_row.add_child(separator2)
+
+		var discard_all_btn = Button.new()
+		discard_all_btn.text = "🗑️ DESCARTAR TODO"
+		discard_all_btn.custom_minimum_size = Vector2(200, 50)
+		discard_all_btn.add_theme_color_override("font_color", Color.WHITE)
+		discard_all_btn.add_theme_color_override("font_hover_color", Color.ORANGE_RED)
+		discard_all_btn.pressed.connect(_on_discard_all_pressed)
+		discard_row.add_child(discard_all_btn)
 
 func refresh_display():
 	if not inventory_grid or not info_container:
@@ -166,10 +203,24 @@ func create_fish_button(fish_data: Dictionary, index: int):
 
 	fish_button.text = "%s\n%.1fcm\n%d🪙" % [fish_name, fish_size, fish_value]
 
+	# Configurar colores según rareza si existe
+	if fish_data.has("rarity_color"):
+		var color = fish_data.get("rarity_color", Color.WHITE)
+		fish_button.modulate = color
+
 	if show_sell_buttons:
 		fish_button.pressed.connect(_on_fish_toggled.bind(index))
 
+	# Doble clic o clic derecho para mostrar info detallada
+	fish_button.gui_input.connect(_on_fish_button_input.bind(index))
+
 	inventory_grid.add_child(fish_button)
+
+func _on_fish_button_input(event: InputEvent, fish_index: int):
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT or event.double_click:
+			emit_signal("fish_info_requested", fish_index)
+			accept_event()
 
 func create_empty_slot():
 	var empty_slot = Button.new()
@@ -196,9 +247,13 @@ func _on_fish_toggled(index: int):
 
 func _on_sell_selected_pressed():
 	if selected_fish_indices.size() > 0:
-		emit_signal("sell_selected_requested")
-		if SFX:
-			SFX.play_event("success")
+		var selected_value = calculate_selected_value()
+		var selected_count = selected_fish_indices.size()
+		show_confirmation_popup(
+			"💰 CONFIRMAR VENTA",
+			"¿Vender %d peces seleccionados por %d monedas?" % [selected_count, selected_value],
+			_confirm_sell_selected
+		)
 	else:
 		if SFX:
 			SFX.play_event("error")
@@ -206,9 +261,40 @@ func _on_sell_selected_pressed():
 func _on_sell_all_pressed():
 	var inventory = Save.get_inventory()
 	if inventory.size() > 0:
-		emit_signal("sell_all_requested")
+		var total_value = calculate_total_value()
+		show_confirmation_popup(
+			"💰 CONFIRMAR VENTA",
+			"¿Vender TODOS los %d peces por %d monedas?" % [inventory.size(), total_value],
+			_confirm_sell_all
+		)
+	else:
 		if SFX:
-			SFX.play_event("success")
+			SFX.play_event("error")
+
+func _on_discard_selected_pressed():
+	if selected_fish_indices.size() > 0:
+		var selected_value = calculate_selected_value()
+		var selected_count = selected_fish_indices.size()
+		var message = "¿DESCARTAR %d peces seleccionados?\n⚠️ PERDERÁS %d monedas de valor"
+		show_confirmation_popup(
+			"🗑️ CONFIRMAR DESCARTE",
+			message % [selected_count, selected_value],
+			_confirm_discard_selected
+		)
+	else:
+		if SFX:
+			SFX.play_event("error")
+
+func _on_discard_all_pressed():
+	var inventory = Save.get_inventory()
+	if inventory.size() > 0:
+		var total_value = calculate_total_value()
+		var message = "¿DESCARTAR TODOS los %d peces?\n⚠️ PERDERÁS %d monedas de valor"
+		show_confirmation_popup(
+			"🗑️ CONFIRMAR DESCARTE",
+			message % [inventory.size(), total_value],
+			_confirm_discard_all
+		)
 	else:
 		if SFX:
 			SFX.play_event("error")
@@ -260,3 +346,110 @@ func _center_panel_fullscreen(panel: PanelContainer):
 	# Asegurar que está visible y en primer plano
 	panel.show()
 	panel.z_index = 100
+
+func calculate_selected_value() -> int:
+	var total = 0
+	var inventory = Save.get_inventory()
+	for index in selected_fish_indices:
+		if index < inventory.size():
+			total += inventory[index].get("value", 0)
+	return total
+
+func show_confirmation_popup(title: String, message: String, confirm_callback: Callable):
+	"""Mostrar popup de confirmación"""
+	var popup = create_confirmation_popup(title, message, confirm_callback)
+	add_child(popup)
+
+func create_confirmation_popup(title: String, message: String,
+		confirm_callback: Callable) -> Control:
+	"""Crear popup de confirmación personalizado"""
+	var overlay = Control.new()
+	overlay.anchor_right = 1.0
+	overlay.anchor_bottom = 1.0
+	overlay.z_index = 200
+
+	# Fondo semi-transparente
+	var background = ColorRect.new()
+	background.color = Color(0, 0, 0, 0.8)
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	overlay.add_child(background)
+
+	# Panel del popup
+	var popup_panel = PanelContainer.new()
+	popup_panel.custom_minimum_size = Vector2(400, 200)
+	popup_panel.position = Vector2(
+		(get_viewport().get_visible_rect().size.x - 400) / 2,
+		(get_viewport().get_visible_rect().size.y - 200) / 2
+	)
+	overlay.add_child(popup_panel)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 20)
+	popup_panel.add_child(vbox)
+
+	# Título
+	var title_label = Label.new()
+	title_label.text = title
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 18)
+	title_label.add_theme_color_override("font_color", Color.YELLOW)
+	vbox.add_child(title_label)
+
+	# Mensaje
+	var message_label = Label.new()
+	message_label.text = message
+	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message_label.add_theme_font_size_override("font_size", 14)
+	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(message_label)
+
+	# Botones
+	var button_container = HBoxContainer.new()
+	button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_child(button_container)
+
+	var confirm_btn = Button.new()
+	confirm_btn.text = "✅ CONFIRMAR"
+	confirm_btn.custom_minimum_size = Vector2(120, 40)
+	confirm_btn.add_theme_color_override("font_color", Color.WHITE)
+	confirm_btn.add_theme_color_override("font_hover_color", Color.LIGHT_GREEN)
+	confirm_btn.pressed.connect(func():
+		confirm_callback.call()
+		overlay.queue_free()
+	)
+	button_container.add_child(confirm_btn)
+
+	var cancel_btn = Button.new()
+	cancel_btn.text = "❌ CANCELAR"
+	cancel_btn.custom_minimum_size = Vector2(120, 40)
+	cancel_btn.add_theme_color_override("font_color", Color.WHITE)
+	cancel_btn.add_theme_color_override("font_hover_color", Color.ORANGE_RED)
+	cancel_btn.pressed.connect(func(): overlay.queue_free())
+	button_container.add_child(cancel_btn)
+
+	return overlay
+
+func _confirm_sell_selected():
+	"""Confirmar venta de peces seleccionados"""
+	emit_signal("sell_selected_requested")
+	if SFX:
+		SFX.play_event("success")
+
+func _confirm_sell_all():
+	"""Confirmar venta de todos los peces"""
+	emit_signal("sell_all_requested")
+	if SFX:
+		SFX.play_event("success")
+
+func _confirm_discard_selected():
+	"""Confirmar descarte de peces seleccionados"""
+	emit_signal("discard_selected_requested")
+	if SFX:
+		SFX.play_event("success")
+
+func _confirm_discard_all():
+	"""Confirmar descarte de todos los peces"""
+	emit_signal("discard_all_requested")
+	if SFX:
+		SFX.play_event("success")

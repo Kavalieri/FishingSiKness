@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/lubina.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "lubina"
+name = "Lubina"
+description = "Un depredador costero muy apreciado por su carne firme y su fuerza al luchar."
+species_category = "Depredador"
+rarity = 2
+base_market_value = 45
+size_min = 25.0
+size_max = 60.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["costa", "mar"])
+difficulty = 3

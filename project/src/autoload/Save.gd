@@ -12,8 +12,8 @@ var game_data := {
 	"coins": 1000,
 	"gems": 25,
 	"zone": "orilla",
-	"current_zone": "lake",
-	"unlocked_zones": ["lake"],
+	"current_zone": "orilla",
+	"unlocked_zones": ["orilla"],
 	"max_inventory": 12,
 	"upgrades": {},
 	"equipment": {},
@@ -61,8 +61,17 @@ func add_fish(fish_instance: FishInstance):
 		"id": fish_instance.fish_def.id,
 		"name": fish_instance.fish_def.name,
 		"size": fish_instance.size,
-		"value": fish_instance.value,
-		"timestamp": fish_instance.timestamp
+		"value": fish_instance.final_price, # Usar el precio final calculado
+		"capture_zone_id": fish_instance.capture_zone_id,
+		"zone_multiplier": fish_instance.zone_multiplier,
+		"capture_timestamp": fish_instance.capture_timestamp,
+		"weight": fish_instance.weight,
+		"rarity": fish_instance.fish_def.rarity,
+		"rarity_color": fish_instance.get_rarity_color(),
+		"species_category": fish_instance.fish_def.species_category,
+		"description": fish_instance.fish_def.description,
+		# Mantener compatibility con código existente
+		"timestamp": Time.get_unix_time_from_system()
 	})
 	game_data.inventory = inventory
 	save_game()
@@ -125,6 +134,31 @@ func discard_all_fish() -> int:
 func get_inventory_count() -> int:
 	return get_inventory().size()
 
+func get_fish_from_inventory(index: int) -> FishInstance:
+	"""Obtener una instancia completa de FishInstance desde el inventario"""
+	var inventory = get_inventory()
+	if index < 0 or index >= inventory.size():
+		return null
+
+	var fish_data = inventory[index]
+
+	# Reconstruir FishDef desde Content
+	var fish_def = Content.get_fish_by_id(fish_data.get("id", "")) if Content else null
+	if not fish_def:
+		return null
+
+	# Crear instancia con datos guardados
+	var fish_instance = FishInstance.new()
+	fish_instance.fish_def = fish_def
+	fish_instance.size = fish_data.get("size", fish_def.size_min)
+	fish_instance.capture_zone_id = fish_data.get("capture_zone_id", "orilla")
+	fish_instance.zone_multiplier = fish_data.get("zone_multiplier", 1.0)
+	fish_instance.final_price = fish_data.get("value", fish_def.base_market_value)
+	fish_instance.capture_timestamp = fish_data.get("capture_timestamp", "")
+	fish_instance.weight = fish_data.get("weight", fish_instance.size * 0.1)
+
+	return fish_instance
+
 func get_max_inventory() -> int:
 	return game_data.get("max_inventory", 12)
 
@@ -164,9 +198,9 @@ func load_game():
 func migrate_game_data():
 	# Asegurar que existen todas las propiedades nuevas
 	if not game_data.has("current_zone"):
-		game_data.current_zone = "lake"
+		game_data.current_zone = "orilla"
 	if not game_data.has("unlocked_zones"):
-		game_data.unlocked_zones = ["lake"]
+		game_data.unlocked_zones = ["orilla"]
 	if not game_data.has("upgrades"):
 		game_data.upgrades = {}
 	if not game_data.has("max_inventory"):
@@ -322,7 +356,7 @@ func get_save_slot_info(slot: int) -> Dictionary:
 		"coins": data.get("coins", 0),
 		"gems": data.get("gems", 0),
 		"level": data.get("level", 1),
-		"zone": data.get("current_zone", "lake"),
+		"zone": data.get("current_zone", "orilla"),
 		"last_played": data.get("last_played", 0),
 		"playtime": _format_playtime(data.get("last_played", 0))
 	}
@@ -353,8 +387,8 @@ func reset_to_default():
 		"coins": 1000,
 		"gems": 25,
 		"zone": "orilla",
-		"current_zone": "lake",
-		"unlocked_zones": ["lake"],
+		"current_zone": "orilla",
+		"unlocked_zones": ["orilla"],
 		"max_inventory": 12,
 		"upgrades": {},
 		"equipment": {},

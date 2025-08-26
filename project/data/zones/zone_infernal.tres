@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_pulpo_dorado.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "infernal"
+name = "Infernal"
+price_multiplier = 2.6
+entries = Array[Resource]([ExtResource("2")])
+background = "res://art/env/nether.png"

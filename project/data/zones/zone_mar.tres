@@ -1,11 +1,18 @@
-[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_calamar.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_lubina.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_langosta.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_pulpo.tres" id="5"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_mantaraya.tres" id="6"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_pezglobo.tres" id="7"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_pulpo_dorado.tres" id="8"]
 
 [resource]
 script = ExtResource("1")
 id = "mar"
 name = "Mar"
-price_multiplier = 2.0
-entries = []
-background = "res://art/env/industrial.png"
+price_multiplier = 1.8
+entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8")])
+background = "res://art/env/space.png"

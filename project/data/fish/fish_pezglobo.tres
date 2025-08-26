@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/pezglobo.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "pezglobo"
+name = "Pez Globo"
+description = "Un pez tropical con una defensa única: inflarse cuando se siente amenazado."
+species_category = "Pez tropical"
+rarity = 3
+base_market_value = 150
+size_min = 15.0
+size_max = 35.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["mar"])
+difficulty = 5

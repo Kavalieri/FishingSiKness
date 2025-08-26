@@ -3,6 +3,8 @@ extends Control
 
 # Recursos precargados
 const InventoryClass = preload("res://src/ui/InventoryPanel.gd")
+const FishInfoPanelClass = preload("res://src/ui/FishInfoPanel.gd")
+const SpeciesLegendPanelClass = preload("res://src/ui/SpeciesLegendPanel.gd")
 
 # Enums para las pestañas (orden: Pescar, Mercado, Mejoras, Mapa, Prestigio)
 enum Tab {
@@ -20,6 +22,8 @@ var current_tab = Tab.FISHING
 var store_view: StoreView
 var pause_menu: PauseMenu
 var inventory_panel: InventoryPanel
+var fish_info_panel: FishInfoPanel
+var species_legend_panel: SpeciesLegendPanel
 var milestones_panel: Control
 var settings_menu: Control
 var save_manager: Control
@@ -54,6 +58,11 @@ func _ready():
 	var fishing_view = screen_container.get_node("FishingView")
 	if fishing_view and fishing_view.has_signal("fish_caught"):
 		fishing_view.fish_caught.connect(_on_fish_caught)
+
+	# Conectar con MapView para cambios de zona
+	var map_view = screen_container.get_node("MapView")
+	if map_view and map_view.has_signal("zone_changed"):
+		map_view.zone_changed.connect(_on_zone_changed)
 
 	# Mostrar la pestaña inicial
 	show_tab(Tab.FISHING)
@@ -149,10 +158,13 @@ func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO
 
 	inventory_panel = InventoryClass.new(allow_selling, title)
 	inventory_panel.close_requested.connect(_on_inventory_closed)
+	inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
 
 	if allow_selling:
 		inventory_panel.sell_selected_requested.connect(_on_sell_selected_fish)
 		inventory_panel.sell_all_requested.connect(_on_sell_all_fish)
+		inventory_panel.discard_selected_requested.connect(_on_discard_selected_fish)
+		inventory_panel.discard_all_requested.connect(_on_discard_all_fish)
 
 	# Asegurar que el overlay esté en el nivel superior
 	inventory_panel.z_index = 100
@@ -165,6 +177,7 @@ func show_inventory_discard_mode():
 
 	inventory_panel = InventoryClass.new(false, "🗑️ LIBERAR ESPACIO")
 	inventory_panel.close_requested.connect(_on_inventory_closed)
+	inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
 	inventory_panel.sell_selected_requested.connect(_on_discard_selected_fish)
 	inventory_panel.sell_all_requested.connect(_on_discard_all_fish)
 
@@ -310,6 +323,20 @@ func _on_fish_caught(fish_name: String, value: int):
 	if top_bar and top_bar.has_method("update_display"):
 		top_bar.update_display()
 
+func _on_zone_changed(zone_id: String):
+	"""Manejar cambio de zona - actualizar TopBar y fondos"""
+	print("Zone changed to: ", zone_id)
+
+	# Actualizar TopBar para mostrar nueva zona y multiplicador
+	var top_bar = $TopBar
+	if top_bar and top_bar.has_method("update_display"):
+		top_bar.update_display()
+
+	# Actualizar fondo del FishingView
+	var fishing_view = views.get(Tab.FISHING)
+	if fishing_view and fishing_view.has_method("update_zone_background"):
+		fishing_view.update_zone_background()
+
 # Funciones para modo descarte (liberar espacio sin ganar dinero)
 func _on_discard_selected_fish():
 	"""Descartar peces seleccionados sin ganar dinero"""
@@ -344,3 +371,43 @@ func create_debug_panel():
 	var DebugPanelClass = preload("res://src/ui/SkillTreeDebugPanel.gd")
 	debug_panel = DebugPanelClass.new()
 	add_child(debug_panel)
+
+func _on_fish_info_requested(fish_index: int):
+	"""Manejar solicitud de mostrar información detallada de un pez"""
+	var fish_instance = Save.get_fish_from_inventory(fish_index)
+	if fish_instance:
+		show_fish_info_panel(fish_instance)
+
+func show_fish_info_panel(fish_instance: FishInstance):
+	"""Mostrar panel de información detallada del pez"""
+	if fish_info_panel:
+		fish_info_panel.queue_free()
+
+	fish_info_panel = FishInfoPanelClass.new()
+	fish_info_panel.closed.connect(_on_fish_info_closed)
+	fish_info_panel.z_index = 150 # Por encima del inventario
+	add_child(fish_info_panel)
+
+	fish_info_panel.show_fish_info(fish_instance)
+
+func _on_fish_info_closed():
+	"""Manejar cierre del panel de información de peces"""
+	if fish_info_panel:
+		fish_info_panel.queue_free()
+		fish_info_panel = null
+
+func show_species_legend():
+	"""Mostrar panel de leyenda de especies"""
+	if species_legend_panel:
+		species_legend_panel.queue_free()
+
+	species_legend_panel = SpeciesLegendPanelClass.new()
+	species_legend_panel.closed.connect(_on_species_legend_closed)
+	species_legend_panel.z_index = 120 # Por encima de otros paneles
+	add_child(species_legend_panel)
+
+func _on_species_legend_closed():
+	"""Manejar cierre del panel de leyenda de especies"""
+	if species_legend_panel:
+		species_legend_panel.queue_free()
+		species_legend_panel = null

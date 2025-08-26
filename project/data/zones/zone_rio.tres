@@ -1,11 +1,14 @@
-[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_trucha.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_salmon.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_lubina.tres" id="4"]
 
 [resource]
 script = ExtResource("1")
 id = "rio"
 name = "Río"
 price_multiplier = 1.4
-entries = []
-background = "res://art/env/snow.png"
+entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4")])
+background = "res://art/env/city.png"

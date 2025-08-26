@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/pulpo.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "pulpo_dorado"
+name = "Pulpo Dorado"
+description = "Una criatura legendaria que solo aparece en las aguas más profundas. Los pescadores hablan de él en susurros."
+species_category = "Cefalópodo legendario"
+rarity = 4
+base_market_value = 500
+size_min = 80.0
+size_max = 300.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["mar"])
+difficulty = 5

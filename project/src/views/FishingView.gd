@@ -1,12 +1,14 @@
-class_name FishingView
 extends Control
 
 signal fish_caught(fish_name: String, value: int)
 
 var cast_button: Button
-var inventory_button: Button
 
-# Nuevo sistema QTE visual
+# Fondo dinámico
+var background_node: Control
+
+# Sistema QTE como componente separado
+var qte_component: Control
 var qte_container: VBoxContainer
 var qte_progress_bar: ProgressBar
 var qte_target_zone: Control
@@ -24,30 +26,83 @@ var qte_timer := 0.0
 var qte_max_time := 3.0
 var qte_active := false
 
-# Peces básicos temporales
-var available_fish := []
+# Historial de pescas
+var fishing_history_panel: PanelContainer
+var history_scroll: ScrollContainer
+var history_list: VBoxContainer
+var fishing_history: Array = []
+var max_history_entries := 50
+
+# Sistema gacha/rareza
+var rarity_multipliers = {
+	"común": 1.0,
+	"rara": 1.5,
+	"épica": 2.5,
+	"legendaria": 5.0
+}
+
+var rarity_chances = {
+	"común": 70.0, # 70%
+	"rara": 20.0, # 20%
+	"épica": 8.0, # 8%
+	"legendaria": 2.0 # 2%
+}
+
+var rarity_colors = {
+	"común": Color.WHITE,
+	"rara": Color.CYAN,
+	"épica": Color.MAGENTA,
+	"legendaria": Color.GOLD
+}
+
+var rarity_emojis = {
+	"común": "⚪",
+	"rara": "🔵",
+	"épica": "🟣",
+	"legendaria": "🟡"
+}
 
 func _ready():
-	setup_temp_fish()
-	setup_qte_ui()
-
-	# Obtener referencias básicas
+	# Obtener referencias a los nodos existentes
 	cast_button = $GameplayArea/CastButton
 	if cast_button:
 		cast_button.pressed.connect(_on_cast_button_pressed)
 
-	setup_inventory_button()
+	# Obtener referencia al fondo
+	background_node = $Background
+
+	# Inicializar sistema QTE
+	setup_qte_component()
+
+	# Inicializar historial de pescas
+	setup_fishing_history()
+
+	# Conectar señal de visibilidad
+	visibility_changed.connect(_on_visibility_changed)
+
+	update_zone_background()
 	print("FishingView ready")
 
-func setup_qte_ui():
+func setup_qte_component():
+	"""Crear el componente QTE como un elemento separado que no interfiera con la UI"""
+	# Crear contenedor principal del QTE
+	qte_component = Control.new()
+	qte_component.name = "QTEComponent"
+	qte_component.visible = false
+	qte_component.layout_mode = 1
+	qte_component.anchor_left = 0.1
+	qte_component.anchor_right = 0.9
+	qte_component.anchor_top = 0.3
+	qte_component.anchor_bottom = 0.6
+	add_child(qte_component)
+
 	# Crear contenedor para el QTE
 	qte_container = VBoxContainer.new()
-	qte_container.visible = false
+	qte_container.layout_mode = 1
+	qte_container.anchor_right = 1.0
+	qte_container.anchor_bottom = 1.0
 	qte_container.add_theme_constant_override("separation", 15)
-
-	var gameplay_area = $GameplayArea
-	if gameplay_area:
-		gameplay_area.add_child(qte_container)
+	qte_component.add_child(qte_container)
 
 	# Título del QTE
 	qte_instructions = Label.new()
@@ -105,50 +160,429 @@ func setup_qte_ui():
 	qte_timer_bar.add_theme_color_override("fill", Color.ORANGE)
 	qte_content.add_child(qte_timer_bar)
 
-func setup_inventory_button():
-	inventory_button = Button.new()
-	inventory_button.text = "🧊 Ver Inventario"
-	inventory_button.custom_minimum_size = Vector2(200, 50)
-	inventory_button.pressed.connect(_on_inventory_button_pressed)
+func setup_fishing_history():
+	"""Crear panel de historial de pescas debajo del botón de lanzamiento"""
+	# Panel principal del historial - posicionado en el área de gameplay
+	fishing_history_panel = PanelContainer.new()
+	fishing_history_panel.name = "FishingHistoryPanel"
+	fishing_history_panel.layout_mode = 2
+	fishing_history_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fishing_history_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	fishing_history_panel.custom_minimum_size = Vector2(0, 200)
 
+	# Añadir al GameplayArea después del botón
 	var gameplay_area = $GameplayArea
 	if gameplay_area:
-		gameplay_area.add_child(inventory_button)
+		gameplay_area.add_child(fishing_history_panel)
 
-func setup_temp_fish():
-	var sardina = FishDef.new()
-	sardina.id = "sardina"
-	sardina.name = "Sardina"
-	sardina.rarity = 0
-	sardina.base_price = 12
-	sardina.size_min = 8.0
-	sardina.size_max = 15.0
+	# VBox principal
+	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 5)
+	fishing_history_panel.add_child(main_vbox)
 
-	var trucha = FishDef.new()
-	trucha.id = "trucha"
-	trucha.name = "Trucha"
-	trucha.rarity = 1
-	trucha.base_price = 22
-	trucha.size_min = 15.0
-	trucha.size_max = 30.0
+	# Título del historial
+	var title_label = Label.new()
+	title_label.text = "📜 HISTORIAL DE PESCAS"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 14)
+	title_label.add_theme_color_override("font_color", Color.WHITE)
+	main_vbox.add_child(title_label)
 
-	var carpa = FishDef.new()
-	carpa.id = "carpa"
-	carpa.name = "Carpa"
-	carpa.rarity = 1
-	carpa.base_price = 18
-	carpa.size_min = 12.0
-	carpa.size_max = 25.0
+	main_vbox.add_child(HSeparator.new())
 
-	var boqueron = FishDef.new()
-	boqueron.id = "boqueron"
-	boqueron.name = "Boquerón"
-	boqueron.rarity = 0
-	boqueron.base_price = 10
-	boqueron.size_min = 6.0
-	boqueron.size_max = 12.0
+	# Contenedor con scroll
+	history_scroll = ScrollContainer.new()
+	history_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	history_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_vbox.add_child(history_scroll)
 
-	available_fish = [sardina, trucha, carpa, boqueron]
+	# Lista de entradas del historial
+	history_list = VBoxContainer.new()
+	history_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	history_list.add_theme_constant_override("separation", 2)
+	history_scroll.add_child(history_list)
+
+	# Añadir mensaje inicial
+	add_history_entry("🎣 ¡Comienza a pescar!", "", 0, 0.0, false)
+
+func add_history_entry(message: String, fish_name: String, value: int, size: float, success: bool):
+	"""Añadir una entrada al historial de pescas"""
+	# Crear entrada del historial con mayor separación
+	var entry_container = VBoxContainer.new()
+	entry_container.add_theme_constant_override("separation", 8)
+	entry_container.custom_minimum_size.y = 60
+
+	# Panel de fondo para cada entrada
+	var entry_panel = PanelContainer.new()
+	entry_panel.add_theme_color_override("bg_color", Color(0.1, 0.1, 0.1, 0.8))
+
+	var inner_container = HBoxContainer.new()
+	entry_panel.add_child(inner_container)
+
+	# Timestamp
+	var time_label = Label.new()
+	var current_time = Time.get_datetime_string_from_system().split("T")[1].substr(0, 5)
+	time_label.text = current_time
+	time_label.custom_minimum_size.x = 50
+	time_label.add_theme_font_size_override("font_size", 16) # Fuente más grande
+	time_label.add_theme_color_override("font_color", Color.GRAY)
+	time_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	inner_container.add_child(time_label)
+
+	# Contenido principal
+	var content_label = Label.new()
+	content_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content_label.add_theme_font_size_override("font_size", 16) # Fuente más grande
+	content_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	content_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+	if success and fish_name != "":
+		var rarity_color = get_rarity_color_from_fish_name(fish_name)
+		content_label.text = "%s\n💰 %dc • 📏 %.1fcm" % [message, value, size]
+		content_label.add_theme_color_override("font_color", rarity_color)
+	elif not success:
+		content_label.text = message
+		content_label.add_theme_color_override("font_color", Color.ORANGE_RED)
+	else:
+		content_label.text = message
+		content_label.add_theme_color_override("font_color", Color.WHITE)
+
+	inner_container.add_child(content_label)
+	entry_container.add_child(entry_panel)
+
+	# Separador visual
+	var separator = HSeparator.new()
+	separator.custom_minimum_size.y = 2
+	entry_container.add_child(separator)
+
+	# Añadir al principio de la lista (más reciente arriba)
+	history_list.add_child(entry_container)
+	history_list.move_child(entry_container, 0)
+
+	# Almacenar en array del historial
+	var history_data = {
+		"time": current_time,
+		"message": message,
+		"fish_name": fish_name,
+		"value": value,
+		"size": size,
+		"success": success
+	}
+	fishing_history.push_front(history_data)
+
+	# Limitar entradas del historial
+	if fishing_history.size() > max_history_entries:
+		fishing_history.pop_back()
+		# Remover la entrada visual más antigua
+		var children = history_list.get_children()
+		if children.size() > max_history_entries:
+			children[-1].queue_free()
+
+	# Scroll automático al principio para mostrar la entrada más reciente
+	await get_tree().process_frame
+	if history_scroll:
+		history_scroll.scroll_vertical = 0
+
+func get_rarity_color_from_fish_name(fish_name: String) -> Color:
+	"""Obtener color de rareza basado en el nombre del pez"""
+	# Intentar obtener el pez del sistema de contenido
+	if Content:
+		# Buscar en todas las zonas por el pez
+		var zones = ["orilla", "lago", "rio", "costa", "mar"]
+		for zone_id in zones:
+			var zone_def = Content.get_zone_by_id(zone_id)
+			if zone_def and zone_def.entries:
+				for entry in zone_def.entries:
+					if entry and entry.fish and entry.fish.name == fish_name:
+						return get_rarity_color(entry.fish.rarity)
+
+	# Color por defecto si no se encuentra
+	return Color.WHITE
+
+func roll_rarity_bonus() -> String:
+	"""Sistema gacha: determinar rareza aleatoria de la captura"""
+	var roll = randf() * 100.0 # 0-100
+	var cumulative = 0.0
+
+	# Orden de probabilidad: común -> rara -> épica -> legendaria
+	for rarity in ["común", "rara", "épica", "legendaria"]:
+		cumulative += rarity_chances[rarity]
+		if roll <= cumulative:
+			return rarity
+
+	return "común" # Fallback
+
+func get_rarity_multiplier(rarity: String) -> float:
+	"""Obtener multiplicador según rareza"""
+	return rarity_multipliers.get(rarity, 1.0)
+
+func get_rarity_color_by_name(rarity: String) -> Color:
+	"""Obtener color según nombre de rareza"""
+	return rarity_colors.get(rarity, Color.WHITE)
+
+func get_rarity_emoji(rarity: String) -> String:
+	"""Obtener emoji según rareza"""
+	return rarity_emojis.get(rarity, "⚪")
+
+func create_catch_popup(popup_data: Dictionary) -> Control:
+	"""Crear popup de captura con detalles y opciones"""
+	var fish_instance = popup_data.fish_instance
+	var rarity = popup_data.rarity
+	var rarity_multiplier = popup_data.rarity_multiplier
+
+	var overlay = Control.new()
+	overlay.anchor_right = 1.0
+	overlay.anchor_bottom = 1.0
+	overlay.z_index = 300
+
+	# Fondo semi-transparente con efecto especial para rareza legendaria
+	var background = ColorRect.new()
+	if rarity == "legendaria":
+		background.color = Color(0.8, 0.6, 0.0, 0.9) # Dorado intenso
+	elif rarity == "épica":
+		background.color = Color(0.5, 0.0, 0.8, 0.9) # Púrpura intenso
+	elif rarity == "rara":
+		background.color = Color(0.0, 0.5, 0.8, 0.9) # Azul intenso
+	else:
+		background.color = Color(0, 0, 0, 0.9) # Negro normal
+
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	overlay.add_child(background)
+
+	# Panel del popup (más grande para mostrar detalles)
+	var popup_panel = PanelContainer.new()
+	popup_panel.custom_minimum_size = Vector2(500, 400)
+	popup_panel.position = Vector2(
+		(get_viewport().get_visible_rect().size.x - 500) / 2,
+		(get_viewport().get_visible_rect().size.y - 400) / 2
+	)
+	overlay.add_child(popup_panel)
+
+	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 20)
+	popup_panel.add_child(main_vbox)
+
+	# Título con efecto de rareza
+	var title_label = Label.new()
+	var rarity_emoji = get_rarity_emoji(rarity)
+	title_label.text = "%s ¡CAPTURA %s! %s" % [rarity_emoji, rarity.to_upper(), rarity_emoji]
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 24)
+	title_label.add_theme_color_override("font_color", get_rarity_color_by_name(rarity))
+	main_vbox.add_child(title_label)
+
+	# Información del pez
+	var fish_info = VBoxContainer.new()
+	fish_info.add_theme_constant_override("separation", 10)
+	main_vbox.add_child(fish_info)
+
+	var fish_name_label = Label.new()
+	fish_name_label.text = "🐟 %s" % fish_instance.fish_def.name
+	fish_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	fish_name_label.add_theme_font_size_override("font_size", 20)
+	fish_name_label.add_theme_color_override("font_color", Color.WHITE)
+	fish_info.add_child(fish_name_label)
+
+	var size_label = Label.new()
+	size_label.text = "📏 Tamaño: %.1fcm" % fish_instance.size
+	size_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	size_label.add_theme_font_size_override("font_size", 16)
+	fish_info.add_child(size_label)
+
+	var price_info = VBoxContainer.new()
+	price_info.add_theme_constant_override("separation", 5)
+	main_vbox.add_child(price_info)
+
+	var base_price_label = Label.new()
+	base_price_label.text = "💰 Precio base: %d monedas" % fish_instance.fish_def.base_market_value
+	base_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	base_price_label.add_theme_font_size_override("font_size", 14)
+	price_info.add_child(base_price_label)
+
+	var multipliers_label = Label.new()
+	var multipliers_text = "🔢 Zona: x%.1f • Rareza: x%.1f"
+	multipliers_label.text = multipliers_text % [fish_instance.zone_multiplier, rarity_multiplier]
+	multipliers_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	multipliers_label.add_theme_font_size_override("font_size", 14)
+	price_info.add_child(multipliers_label)
+
+	var final_price_label = Label.new()
+	final_price_label.text = "💎 PRECIO FINAL: %d MONEDAS" % fish_instance.final_price
+	final_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	final_price_label.add_theme_font_size_override("font_size", 18)
+	final_price_label.add_theme_color_override("font_color", Color.GOLD)
+	price_info.add_child(final_price_label)
+
+	# Botones de acción
+	var button_container = HBoxContainer.new()
+	button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	main_vbox.add_child(button_container)
+
+	var store_btn = Button.new()
+	store_btn.text = "🧊 ALMACENAR"
+	store_btn.custom_minimum_size = Vector2(150, 50)
+	store_btn.add_theme_font_size_override("font_size", 16)
+	store_btn.add_theme_color_override("font_color", Color.WHITE)
+	store_btn.add_theme_color_override("font_hover_color", Color.LIGHT_GREEN)
+	store_btn.pressed.connect(func():
+		_confirm_store_fish(fish_instance, rarity, rarity_multiplier)
+		overlay.queue_free()
+	)
+	button_container.add_child(store_btn)
+
+	var separator = VSeparator.new()
+	separator.custom_minimum_size.x = 20
+	button_container.add_child(separator)
+
+	var discard_btn = Button.new()
+	discard_btn.text = "🗑️ DESCARTAR"
+	discard_btn.custom_minimum_size = Vector2(150, 50)
+	discard_btn.add_theme_font_size_override("font_size", 16)
+	discard_btn.add_theme_color_override("font_color", Color.WHITE)
+	discard_btn.add_theme_color_override("font_hover_color", Color.ORANGE_RED)
+	discard_btn.pressed.connect(func():
+		_confirm_discard_catch(fish_instance, rarity)
+		overlay.queue_free()
+	)
+	button_container.add_child(discard_btn)
+
+	return overlay
+
+func _confirm_store_fish(fish_instance: FishInstance, rarity: String, rarity_multiplier: float):
+	"""Confirmar almacenamiento del pez capturado"""
+	Save.add_fish(fish_instance)
+
+	# Añadir al historial con información de rareza
+	var rarity_emoji = get_rarity_emoji(rarity)
+	var success_message = "%s ¡%s %s!" % [
+		rarity_emoji, rarity.capitalize(), fish_instance.fish_def.name
+	]
+	add_special_history_entry(
+		success_message,
+		fish_instance.fish_def.name,
+		fish_instance.final_price,
+		fish_instance.size,
+		rarity
+	)
+
+	emit_signal("fish_caught", fish_instance.fish_def.name, fish_instance.final_price)
+
+	# Añadir experiencia con bonus por rareza
+	if Experience:
+		var xp_gained = calculate_xp_reward(fish_instance)
+		var rarity_xp_bonus = int(xp_gained * (rarity_multiplier - 1.0))
+		Experience.add_experience(xp_gained + rarity_xp_bonus)
+
+	if SFX:
+		SFX.play_event("success")
+
+	print("Stored: %s (%.1fcm) %s rarity worth %d coins" % [
+		fish_instance.fish_def.name,
+		fish_instance.size,
+		rarity,
+		fish_instance.final_price
+	])
+
+func _confirm_discard_catch(fish_instance: FishInstance, rarity: String):
+	"""Confirmar descarte del pez capturado"""
+	var rarity_emoji = get_rarity_emoji(rarity)
+	var discard_message = "%s Descartaste un %s %s (perdiste %d monedas)" % [
+		rarity_emoji, rarity, fish_instance.fish_def.name, fish_instance.final_price
+	]
+	add_history_entry(discard_message, "", 0, 0.0, false)
+
+	if SFX:
+		SFX.play_event("error")
+
+	print("Discarded: %s %s worth %d coins" % [
+		rarity, fish_instance.fish_def.name, fish_instance.final_price
+	])
+
+func add_special_history_entry(
+	message: String, fish_name: String, value: int, size: float, rarity: String
+):
+	"""Añadir entrada especial al historial con efectos de rareza"""
+	# Similar a add_history_entry pero con efectos especiales
+	var entry_container = VBoxContainer.new()
+	entry_container.add_theme_constant_override("separation", 8)
+	entry_container.custom_minimum_size.y = 70 # Más grande para rareza especial
+
+	# Panel de fondo con efecto especial según rareza
+	var entry_panel = PanelContainer.new()
+	var bg_color = get_rarity_color_by_name(rarity)
+	bg_color.a = 0.3 # Semi-transparente
+	entry_panel.add_theme_color_override("bg_color", bg_color)
+
+	var inner_container = HBoxContainer.new()
+	entry_panel.add_child(inner_container)
+
+	# Timestamp
+	var time_label = Label.new()
+	var current_time = Time.get_datetime_string_from_system().split("T")[1].substr(0, 5)
+	time_label.text = current_time
+	time_label.custom_minimum_size.x = 50
+	time_label.add_theme_font_size_override("font_size", 16)
+	time_label.add_theme_color_override("font_color", Color.GRAY)
+	time_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	inner_container.add_child(time_label)
+
+	# Contenido principal con efecto de rareza
+	var content_label = Label.new()
+	content_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content_label.add_theme_font_size_override("font_size", 18) # Más grande para rareza especial
+	content_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	content_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	content_label.text = "%s\n💰 %dc • 📏 %.1fcm • %s" % [message, value, size, rarity.to_upper()]
+	content_label.add_theme_color_override("font_color", get_rarity_color_by_name(rarity))
+
+	inner_container.add_child(content_label)
+	entry_container.add_child(entry_panel)
+
+	# Separador especial para rareza
+	var separator = HSeparator.new()
+	separator.custom_minimum_size.y = 3
+	separator.add_theme_color_override("color", get_rarity_color_by_name(rarity))
+	entry_container.add_child(separator)
+
+	# Añadir al principio de la lista (más reciente arriba)
+	history_list.add_child(entry_container)
+	history_list.move_child(entry_container, 0)
+
+	# Almacenar en array del historial
+	var history_data = {
+		"time": current_time,
+		"message": message,
+		"fish_name": fish_name,
+		"value": value,
+		"size": size,
+		"success": true,
+		"rarity": rarity
+	}
+	fishing_history.push_front(history_data)
+
+	# Limitar entradas del historial
+	if fishing_history.size() > max_history_entries:
+		fishing_history.pop_back()
+		var children = history_list.get_children()
+		if children.size() > max_history_entries:
+			children[-1].queue_free()
+
+	# Scroll automático al principio
+	await get_tree().process_frame
+	if history_scroll:
+		history_scroll.scroll_vertical = 0
+
+func get_rarity_color(rarity: int) -> Color:
+	"""Obtener color según rareza"""
+	var colors = {
+		0: Color.WHITE, # Común
+		1: Color.LIME_GREEN, # Poco común
+		2: Color.CYAN, # Raro
+		3: Color.MAGENTA, # Épico
+		4: Color.GOLD # Legendario
+	}
+	return colors.get(rarity, Color.WHITE)
 
 func _process(delta):
 	if is_fishing and qte_active:
@@ -244,8 +678,8 @@ func start_fishing():
 	qte_speed = randf_range(1.2, 2.0)
 
 	# Mostrar UI del QTE
-	if qte_container:
-		qte_container.visible = true
+	if qte_component:
+		qte_component.visible = true
 
 	cast_button.text = "🎯 ¡ATRAPAR!"
 
@@ -260,8 +694,8 @@ func try_catch_fish():
 	# Terminar QTE
 	qte_active = false
 	is_fishing = false
-	if qte_container:
-		qte_container.visible = false
+	if qte_component:
+		qte_component.visible = false
 
 	cast_button.text = "🎣 LANZAR"
 
@@ -271,25 +705,113 @@ func try_catch_fish():
 		qte_failed()
 
 func catch_successful():
-	if available_fish.size() > 0:
-		var random_fish = available_fish[randi() % available_fish.size()]
-		# Generar tamaño aleatorio dentro del rango del pez
-		var random_size = randf_range(random_fish.size_min, random_fish.size_max)
-		var fish_instance = FishInstance.new(random_fish, random_size)
+	# Usar el sistema real de contenido para pescar
+	if not Content or not Save:
+		print("Content or Save system not available")
+		add_history_entry("❌ Sistema no disponible", "", 0, 0.0, false)
+		return
 
-		Save.add_fish(fish_instance)
-		show_catch_message(fish_instance, true)
-		emit_signal("fish_caught", fish_instance.fish_def.name, fish_instance.value)
+	var current_zone_id = Save.game_data.get("current_zone", "orilla")
+	var zone_def = Content.get_zone_by_id(current_zone_id)
+	print("Fishing in zone: ", current_zone_id)
 
-		# Añadir experiencia por captura exitosa
-		if Experience:
-			var xp_gained = calculate_xp_reward(fish_instance)
-			Experience.add_experience(xp_gained)
+	if not zone_def:
+		print("Zone not found: ", current_zone_id)
+		add_history_entry("❌ Zona no encontrada: " + current_zone_id, "", 0, 0.0, false)
+		return
 
-		if SFX:
-			SFX.play_event("success")
+	# Seleccionar pez aleatorio de la zona
+	var selected_fish = select_random_fish_from_zone(zone_def)
+	if not selected_fish:
+		print("No fish available in zone: ", current_zone_id)
+		add_history_entry("❌ No hay peces en zona: " + current_zone_id, "", 0, 0.0, false)
+		return
 
-		print("Caught: ", fish_instance.fish_def.name, " worth ", fish_instance.value, " coins")
+	print("Selected fish: ", selected_fish.name)
+
+	# ¡SISTEMA GACHA! - Determinar rareza aleatoria
+	var rarity_bonus = roll_rarity_bonus()
+	var rarity_multiplier = get_rarity_multiplier(rarity_bonus)
+
+	print("Rarity roll: ", rarity_bonus, " (x", rarity_multiplier, ")")
+
+	# Generar tamaño aleatorio
+	var random_size = randf_range(selected_fish.size_min, selected_fish.size_max)
+
+	# Crear instancia de pez con multiplicadores combinados (zona + rareza)
+	var base_price = selected_fish.base_market_value
+	var zone_multiplier = zone_def.price_multiplier
+	var final_multiplier = zone_multiplier * rarity_multiplier
+	var final_price = int(base_price * final_multiplier)
+
+	# Crear fish_instance personalizada con rareza
+	var fish_instance = FishInstance.new(
+		selected_fish,
+		random_size,
+		current_zone_id,
+		zone_multiplier
+	)
+	# Sobrescribir el precio final con el bonus de rareza
+	fish_instance.final_price = final_price
+
+	# Mostrar popup de captura antes de guardar
+	show_catch_popup(fish_instance, rarity_bonus, rarity_multiplier)
+
+func show_catch_popup(fish_instance: FishInstance, rarity: String, rarity_multiplier: float):
+	"""Mostrar popup con detalles de la captura y opciones de almacenar/descartar"""
+	var popup_data = {
+		"fish_instance": fish_instance,
+		"rarity": rarity,
+		"rarity_multiplier": rarity_multiplier
+	}
+
+	# Crear popup personalizado
+	var popup = create_catch_popup(popup_data)
+	add_child(popup)
+
+func select_random_fish_from_zone(zone_def: ZoneDef) -> FishDef:
+	"""Seleccionar un pez aleatorio usando el sistema de loot tables"""
+	if not zone_def.entries or zone_def.entries.size() == 0:
+		print("No entries in zone_def")
+		return null
+
+	print("Zone has ", zone_def.entries.size(), " entries")
+
+	# Calcular peso total
+	var total_weight = 0
+	for entry in zone_def.entries:
+		if entry and entry.fish:
+			total_weight += entry.weight
+			print("Entry: ", entry.fish.name, " weight: ", entry.weight)
+		else:
+			print("Invalid entry found")
+
+	if total_weight == 0:
+		print("Total weight is 0")
+		return null
+
+	print("Total weight: ", total_weight)
+
+	# Seleccionar basado en peso
+	var random_weight = randi() % total_weight
+	var current_weight = 0
+
+	print("Random weight selected: ", random_weight)
+
+	for entry in zone_def.entries:
+		if entry and entry.fish:
+			current_weight += entry.weight
+			if random_weight < current_weight:
+				print("Selected: ", entry.fish.name)
+				return entry.fish
+
+	print("No fish selected - fallback to first available")
+	# Fallback - devolver el primer pez disponible
+	for entry in zone_def.entries:
+		if entry and entry.fish:
+			return entry.fish
+
+	return null
 
 func calculate_xp_reward(fish_instance: FishInstance) -> int:
 	"""Calcular XP basado en rareza y tamaño del pez"""
@@ -301,54 +823,112 @@ func calculate_xp_reward(fish_instance: FishInstance) -> int:
 	return base_xp + rarity_bonus + size_bonus
 
 func qte_failed():
-	show_catch_message(null, false)
+	# Añadir fallo al historial
+	add_history_entry("💔 ¡El pez se escapó!", "", 0, 0.0, false)
+
 	if SFX:
 		SFX.play_event("error")
 	print("Fish got away!")
 
-func show_catch_message(fish_instance: FishInstance, success: bool):
-	var message = Label.new()
-
-	if success and fish_instance:
-		message.text = "🎉 ¡Pescaste un %s!\n💰 +%d monedas\n📏 %.1fcm" % [
-			fish_instance.fish_def.name,
-			fish_instance.value,
-			fish_instance.size
-		]
-		message.add_theme_color_override("font_color", Color.LIME_GREEN)
-	else:
-		message.text = "💔 ¡El pez se escapó!\n⏱️ ¡Sé más rápido la próxima vez!"
-		message.add_theme_color_override("font_color", Color.ORANGE)
-
-	message.add_theme_font_size_override("font_size", 16)
-	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	message.position = Vector2(50, 150)
-	add_child(message)
-
-	var tween = create_tween()
-	tween.tween_interval(3.0)
-	tween.tween_callback(message.queue_free)
-
 func show_inventory_full_message():
-	var message = Label.new()
-	message.text = "🧊 ¡Inventario lleno!\n🏪 Ve al Mercado para vender peces y liberar espacio"
-	message.add_theme_font_size_override("font_size", 18)
-	message.add_theme_color_override("font_color", Color.ORANGE)
-	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	message.position = Vector2(50, 200)
-	add_child(message)
-
-	var tween = create_tween()
-	tween.tween_interval(3.0)
-	tween.tween_callback(message.queue_free)
+	# Añadir al historial en lugar de mensaje temporal
+	add_history_entry("🧊 ¡Inventario lleno! Ve al Mercado para vender peces", "", 0, 0.0, false)
 
 	if SFX:
 		SFX.play_event("error")
 
-func _on_inventory_button_pressed():
-	# Solo mostrar inventario para visualizar, sin opciones de venta/descarte
-	var screen_manager = get_tree().current_scene
-	if screen_manager and screen_manager.has_method("show_inventory"):
-		screen_manager.show_inventory(false, "🧊 NEVERA - CONSULTA")
-		if SFX:
-			SFX.play_event("click")
+func _on_visibility_changed():
+	"""Actualizar fondo cuando la vista se hace visible"""
+	if visible:
+		update_zone_background()
+
+func update_zone_background():
+	"""Actualizar el fondo basado en la zona actual"""
+	if not background_node or not Save or not Content:
+		return
+
+	var current_zone_id = Save.game_data.get("current_zone", "orilla")
+	var zone_def = Content.get_zone_by_id(current_zone_id)
+
+	if zone_def and zone_def.background:
+		# Si el fondo es una imagen, convertir ColorRect a TextureRect
+		if background_node is ColorRect and zone_def.background != "":
+			setup_texture_background(zone_def.background)
+		elif background_node is TextureRect:
+			var texture = load(zone_def.background)
+			if texture:
+				background_node.texture = texture
+				background_node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+				background_node.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	else:
+		# Fallback a color sólido si no hay imagen
+		setup_color_background(current_zone_id)
+
+func setup_texture_background(background_path: String):
+	"""Convertir ColorRect a TextureRect para mostrar imagen"""
+	if not background_node or not background_node.get_parent():
+		return
+
+	var parent = background_node.get_parent()
+	var old_position = background_node.get_index()
+
+	# Remover el ColorRect anterior
+	background_node.queue_free()
+
+	# Crear nuevo TextureRect
+	var new_background = TextureRect.new()
+	new_background.name = "Background"
+	new_background.layout_mode = 1
+	new_background.anchor_right = 1.0
+	new_background.anchor_bottom = 1.0
+	new_background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	new_background.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+
+	# Cargar textura
+	var texture = load(background_path)
+	if texture:
+		new_background.texture = texture
+
+	# Añadir al parent en la misma posición
+	parent.add_child(new_background)
+	parent.move_child(new_background, old_position)
+
+	# Actualizar referencia
+	background_node = new_background
+
+func setup_color_background(zone_id: String):
+	"""Configurar fondo de color sólido como fallback"""
+	if not background_node:
+		return
+
+	# Si es TextureRect, convertir a ColorRect
+	if background_node is TextureRect:
+		var parent = background_node.get_parent()
+		var old_position = background_node.get_index()
+
+		background_node.queue_free()
+
+		var new_background = ColorRect.new()
+		new_background.name = "Background"
+		new_background.layout_mode = 1
+		new_background.anchor_right = 1.0
+		new_background.anchor_bottom = 1.0
+		new_background.color = get_zone_color(zone_id)
+
+		parent.add_child(new_background)
+		parent.move_child(new_background, old_position)
+
+		background_node = new_background
+	elif background_node is ColorRect:
+		background_node.color = get_zone_color(zone_id)
+
+func get_zone_color(zone_id: String) -> Color:
+	"""Obtener color representativo para cada zona"""
+	var zone_colors = {
+		"orilla": Color(0.2, 0.5, 0.8), # Azul agua
+		"lago": Color(0.1, 0.4, 0.6), # Azul lago
+		"rio": Color(0.3, 0.6, 0.4), # Verde río
+		"costa": Color(0.4, 0.7, 0.9), # Azul claro
+		"mar": Color(0.1, 0.3, 0.7) # Azul profundo
+	}
+	return zone_colors.get(zone_id, Color(0.2, 0.5, 0.8))

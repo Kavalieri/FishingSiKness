@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/calamar.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "calamar"
+name = "Calamar"
+description = "Un cefalópodo ágil y esquivo. Sus tentáculos lo convierten en una captura desafiante."
+species_category = "Cefalópodo"
+rarity = 1
+base_market_value = 35
+size_min = 20.0
+size_max = 50.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["costa", "mar"])
+difficulty = 3

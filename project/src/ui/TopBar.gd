@@ -74,24 +74,43 @@ func update_display():
 	if Save and gems_label:
 		gems_label.text = "💎 " + str(Save.get_gems())
 
-	# Actualizar zona actual desde Save
+	# Actualizar zona actual desde Save con multiplicador
 	if zone_label and Save:
 		var current_zone_id = Save.game_data.get("current_zone", "orilla")
 		var zone_name = get_zone_name_from_id(current_zone_id)
-		zone_label.text = "Zona: " + zone_name
+		var zone_multiplier = get_zone_multiplier(current_zone_id)
+
+		if zone_multiplier > 1.0:
+			zone_label.text = "Zona: %s (x%.1f)" % [zone_name, zone_multiplier]
+		else:
+			zone_label.text = "Zona: %s" % zone_name
 
 	# Actualizar nivel y experiencia
 	update_level_display()
 
+func get_zone_multiplier(zone_id: String) -> float:
+	if not Content:
+		return 1.0
+
+	var zone_def = Content.get_zone_by_id(zone_id)
+	if zone_def:
+		return zone_def.price_multiplier
+	return 1.0
+
 func get_zone_name_from_id(zone_id: String) -> String:
-	# Mapeo de IDs a nombres de zona
+	# Mapeo de IDs a nombres de zona (actualizado para coincidir con Content)
 	var zone_names = {
 		"orilla": "Orilla",
 		"lago": "Lago",
 		"rio": "Río",
 		"costa": "Costa",
 		"mar": "Mar",
-		"lake": "Lago Tranquilo", # Para compatibilidad con MapView
+		"glaciar": "Glaciar",
+		"industrial": "Industrial",
+		"abismo": "Abismo",
+		"infernal": "Infernal",
+		# Compatibilidad con versiones anteriores
+		"lake": "Lago Tranquilo",
 		"river": "Río Salvaje",
 		"ocean": "Océano Profundo"
 	}

@@ -7,8 +7,12 @@
 script = ExtResource("1")
 id = "sardina"
 name = "Sardina"
+description = "Un pez pequeño y abundante, común en aguas costeras. Ideal para pescadores principiantes."
+species_category = "Pez plateado"
 rarity = 0
-base_price = 12
+base_market_value = 12
 size_min = 10.0
 size_max = 25.0
 sprite = ExtResource("2")
+habitat_zones = Array[String](["orilla", "costa"])
+difficulty = 1

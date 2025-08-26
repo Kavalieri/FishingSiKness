@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/mantaraya.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "mantaraya"
+name = "Mantarraya"
+description = "Una majestuosa criatura de las profundidades. Rara y muy valiosa para coleccionistas."
+species_category = "Cartilaginoso"
+rarity = 3
+base_market_value = 120
+size_min = 50.0
+size_max = 200.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["mar"])
+difficulty = 5

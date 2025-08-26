@@ -23,6 +23,8 @@ func _ready():
 			tab_buttons[i].pressed.connect(_on_tab_pressed.bind(i))
 			tab_buttons[i].custom_minimum_size = Vector2(60, 48) # Ajustado para 5 tabs
 			print("Connected button ", i, ": ", tab_buttons[i].name)
+		else:
+			print("Button ", i, " is null!")
 
 	# Accesibilidad: swap para modo zurdo
 	if left_handed:

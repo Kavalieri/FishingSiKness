@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Fishing SiKness"
-run/main_scene="res://scenes/core/Main.tscn"
+run/main_scene="res://scenes/core/MainWithSplash.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 boot_splash/minimum_display_time=2

@@ -7,8 +7,12 @@
 script = ExtResource("1")
 id = "trucha"
 name = "Trucha"
+description = "Un pez de agua dulce muy apreciado. Su carne es sabrosa y nutritiva."
+species_category = "Pez de río"
 rarity = 1
-base_price = 20
+base_market_value = 20
 size_min = 15.0
 size_max = 30.0
 sprite = ExtResource("2")
+habitat_zones = Array[String](["rio", "lago"])
+difficulty = 2
