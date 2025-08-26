@@ -1,5 +1,5 @@
 class_name SaveManagerView
-extends Control
+extends BaseFloatingMenu
 
 signal save_loaded(slot: int)
 signal save_created(slot: int)
@@ -7,7 +7,10 @@ signal save_created(slot: int)
 var save_slots_container: VBoxContainer
 var back_button: Button
 
-func _ready():
+func setup_menu():
+	"""Configurar interfaz del gestor de guardado - MENÚ ESTANDARIZADO"""
+	name = "SaveManagerView"
+
 	setup_save_manager_ui()
 	refresh_save_slots()
 

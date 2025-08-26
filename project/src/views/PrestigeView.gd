@@ -9,7 +9,8 @@ var prestige_benefits_container: VBoxContainer
 
 func _ready():
 	setup_prestige_ui()
-	update_display()
+	# Diferir update_display para después de que se configuren los elementos UI
+	call_deferred("update_display")
 
 func setup_prestige_ui():
 	# Configurar fondo de menú usando BackgroundManager
@@ -18,6 +19,9 @@ func setup_prestige_ui():
 		print("✅ Fondo principal configurado en PrestigeView")
 	else:
 		setup_fallback_background()
+
+	# Crear la UI independientemente del tipo de fondo
+	create_ui_elements()
 
 func setup_fallback_background():
 	"""Fondo fallback si BackgroundManager no está disponible"""
@@ -29,6 +33,8 @@ func setup_fallback_background():
 	opaque_bg.z_index = -1
 	add_child(opaque_bg)
 
+func create_ui_elements():
+	"""Crear elementos de UI del prestigio"""
 	# Contenedor principal centrado con margen
 	var main_container = MarginContainer.new()
 	main_container.anchor_left = 0.1
@@ -79,12 +85,17 @@ func setup_fallback_background():
 	button_container.add_child(prestige_button)
 
 func update_display():
+	if not prestige_info_label or not is_instance_valid(prestige_info_label):
+		print("⚠️ PrestigeView: UI no inicializada aún")
+		return
+
 	if not Save.game_data.prestige_unlocked:
 		var current_level = Save.game_data.level
 		prestige_info_label.text = "🔒 Prestigio desbloqueado en el nivel 75\n" + \
 			"Actual: Nivel %d" % current_level
-		prestige_button.disabled = true
-		prestige_button.text = "🔒 PRESTIGIO BLOQUEADO"
+		if prestige_button and is_instance_valid(prestige_button):
+			prestige_button.disabled = true
+			prestige_button.text = "🔒 PRESTIGIO BLOQUEADO"
 		return
 
 	var prestige_level = Save.game_data.get("prestige_level", 0)

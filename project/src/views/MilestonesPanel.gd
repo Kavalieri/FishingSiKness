@@ -11,7 +11,8 @@ func setup_menu():
 	name = "MilestonesPanel"
 
 	setup_ui()
-	refresh_display()
+	# Diferir refresh_display para después de que se configuren los elementos UI
+	call_deferred("refresh_display")
 
 func setup_ui():
 	# Panel principal centrado (centrado dinámicamente)
@@ -117,6 +118,11 @@ func create_current_skill_info() -> VBoxContainer:
 	return info_vbox
 
 func refresh_display():
+	# Verificar que milestones_container esté inicializado
+	if not milestones_container or not is_instance_valid(milestones_container):
+		print("⚠️ MilestonesPanel: milestones_container no inicializado aún")
+		return
+
 	# Limpiar skills existentes
 	for child in milestones_container.get_children():
 		child.queue_free()

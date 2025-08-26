@@ -124,38 +124,46 @@ func _on_level_button_clicked():
 	show_milestones_panel()
 
 func show_store():
+	"""Mostrar tienda de gemas - NUEVO MENÚ ESTANDARIZADO"""
 	if store_view:
 		store_view.queue_free()
 
-	# Instanciar escena con fondo negro configurado
-	store_view = StoreViewScene.instantiate()
+	# Crear nueva instancia usando clase BaseFloatingMenu
+	var StoreViewClass = preload("res://src/views/StoreView.gd")
+	store_view = StoreViewClass.new()
 	store_view.close_requested.connect(_on_store_closed)
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+
+	# Asegurar máxima visibilidad
+	store_view.z_index = 100
 	get_tree().root.add_child(store_view)
 
+	print("✅ StoreView estandarizado mostrado")
+
 func show_pause_menu():
-	"""Mostrar menú de pausa unificado"""
+	"""Mostrar menú de pausa - NUEVO MENÚ ESTANDARIZADO"""
 	# Cerrar menú anterior si existe
 	if pause_menu:
 		pause_menu.queue_free()
 		pause_menu = null
 
-	# Instanciar escena con fondo negro configurado
-	pause_menu = UnifiedMenuScene.instantiate()
+	# Crear nueva instancia usando clase BaseFloatingMenu
+	var PauseMenuClass = preload("res://src/views/PauseMenu.gd")
+	pause_menu = PauseMenuClass.new()
 
 	# Conectar señales
 	pause_menu.resume_requested.connect(_on_pause_menu_closed)
 	pause_menu.save_and_exit_requested.connect(_on_save_and_exit)
+	pause_menu.settings_requested.connect(show_settings_menu)
 	pause_menu.save_manager_requested.connect(_on_save_manager_requested_from_pause)
-	pause_menu.menu_closed.connect(_on_pause_menu_closed)
 
-	# Asegurar que el overlay esté en el nivel superior
+	# Asegurar máxima visibilidad
 	pause_menu.z_index = 100
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
 	get_tree().root.add_child(pause_menu)
 
+	print("✅ PauseMenu estandarizado mostrado")
+
 func show_settings_menu():
-	"""Mostrar menú de opciones unificado"""
+	"""Mostrar menú de configuración - NUEVO MENÚ ESTANDARIZADO"""
 	# Evitar crear múltiples instancias
 	if settings_menu:
 		settings_menu.queue_free()
@@ -166,32 +174,49 @@ func show_settings_menu():
 		pause_menu.queue_free()
 		pause_menu = null
 
-	# Crear menú de opciones unificado
-	var UnifiedMenuClass = preload("res://src/views/UnifiedMenu.gd")
-	settings_menu = UnifiedMenuClass.create_options_menu()
+	# Crear nueva instancia usando clase BaseFloatingMenu
+	var SettingsMenuClass = preload("res://src/views/SettingsMenu.gd")
+	settings_menu = SettingsMenuClass.new()
 
 	# Conectar señales
-	settings_menu.menu_closed.connect(_on_settings_closed)
+	settings_menu.settings_closed.connect(_on_settings_closed)
+	settings_menu.resume_requested.connect(_on_settings_closed)
 	settings_menu.save_manager_requested.connect(_on_save_manager_requested_from_settings)
 
-	# Asegurar que esté en el nivel superior
+	# Asegurar máxima visibilidad
 	settings_menu.z_index = 100
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
 	get_tree().root.add_child(settings_menu)
 
+	print("✅ SettingsMenu estandarizado mostrado")
+
 func show_milestones_panel():
+	"""Mostrar panel de hitos - NUEVO MENÚ ESTANDARIZADO"""
 	# Evitar crear múltiples instancias
 	if milestones_panel:
 		return
 
+	# Crear nueva instancia usando clase BaseFloatingMenu
 	var MilestonesClass = preload("res://src/views/MilestonesPanel.gd")
 	milestones_panel = MilestonesClass.new()
 	milestones_panel.close_requested.connect(_on_milestones_closed)
 	milestones_panel.tree_exiting.connect(_on_milestones_closed)
-	# Asegurar que el overlay esté en el nivel superior
+
+	# Asegurar máxima visibilidad
 	milestones_panel.z_index = 100
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
 	get_tree().root.add_child(milestones_panel)
+
+	print("✅ MilestonesPanel estandarizado mostrado")
+
+func show_fridge():
+	"""Mostrar nevera/inventario - NUEVO MENÚ ESTANDARIZADO"""
+	var FridgeViewClass = preload("res://src/views/FridgeView.gd")
+	var fridge_view = FridgeViewClass.new()
+
+	# Asegurar máxima visibilidad
+	fridge_view.z_index = 100
+	get_tree().root.add_child(fridge_view)
+
+	print("✅ FridgeView estandarizado mostrado")
 
 func show_inventory(allow_selling: bool = true, _title: String = "🧊 INVENTARIO"):
 	if inventory_panel:

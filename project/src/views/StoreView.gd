@@ -123,39 +123,61 @@ func create_store_ui():
 	store_items_container = VBoxContainer.new()
 	store_scroll_container.add_child(store_items_container)
 
-	# Actualizar display
-	update_currency_display()
-	populate_store_items()
+	# Actualizar display inicial
+	refresh_display()
 
-func refresh_display():
-	if not store_container:
-		return
+func update_currency_display():
+	"""Actualizar valores de monedas y gemas"""
+	if coins_label and is_instance_valid(coins_label):
+		var coins = Save.get_coins() if Save else 0
+		coins_label.text = "🪙 %d" % coins
+	if gems_label and is_instance_valid(gems_label):
+		var gems = Save.get_gems() if Save else 0
+		gems_label.text = "💎 %d" % gems
 
-	# Actualizar monedas y gemas
-	if coins_label:
-		coins_label.text = "🪙 %d monedas" % Save.get_coins()
-	if gems_label:
-		gems_label.text = "💎 %d gemas" % Save.get_gems()
+func populate_store_items():
+	"""Crear elementos de la tienda"""
+	# Limpiar elementos anteriores
+	if store_items_container:
+		for child in store_items_container.get_children():
+			child.queue_free()
 
-	# Limpiar productos anteriores
-	for child in store_container.get_children():
-		child.queue_free()
-
-	# Crear productos
+	# Crear cada producto
 	for item_data in store_items:
 		create_store_item(item_data)
 
+func refresh_display():
+	"""Actualizar toda la interfaz de la tienda"""
+	if not store_container:
+		return
+
+	update_currency_display()
+	populate_store_items()
+
 func create_store_item(item_data: Dictionary):
+	"""Crear un elemento de producto en la tienda"""
+	if not item_data or item_data.is_empty():
+		print("⚠️ StoreView: item_data vacío o inválido")
+		return
+
+	if not store_items_container or not is_instance_valid(store_items_container):
+		print("⚠️ StoreView: store_items_container no válido")
+		return
+
 	var item_container = PanelContainer.new()
 	item_container.custom_minimum_size.y = 80
-	store_container.add_child(item_container)
+	store_items_container.add_child(item_container)
 
 	var hbox = HBoxContainer.new()
 	item_container.add_child(hbox)
 
 	# Icono
 	var icon_label = Label.new()
-	icon_label.text = item_data.icon
+	var icon_text = item_data.get("icon", "💎")
+	if icon_text and icon_text != "":
+		icon_label.text = str(icon_text)
+	else:
+		icon_label.text = "💎"
 	icon_label.add_theme_font_size_override("font_size", 32)
 	icon_label.custom_minimum_size = Vector2(60, 60)
 	icon_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -168,178 +190,50 @@ func create_store_item(item_data: Dictionary):
 	hbox.add_child(info_vbox)
 
 	var name_label = Label.new()
-	name_label.text = item_data.name
+	var name_text = item_data.get("name", "Producto")
+	name_label.text = str(name_text) if name_text else "Producto"
 	name_label.add_theme_font_size_override("font_size", 18)
 	info_vbox.add_child(name_label)
 
 	var desc_label = Label.new()
-	desc_label.text = item_data.description
+	var desc_text = item_data.get("description", "")
+	desc_label.text = str(desc_text) if desc_text else ""
 	desc_label.add_theme_font_size_override("font_size", 14)
 	desc_label.modulate = Color(0.8, 0.8, 0.8)
 	info_vbox.add_child(desc_label)
 
 	# Botón de compra
 	var buy_button = Button.new()
-	buy_button.custom_minimum_size = Vector2(120, 60)
+	var cost = item_data.get("cost", 0)
+	var currency = item_data.get("currency", "coins")
+	var currency_symbol = "💰" if currency == "real_money" else "💎" if currency == "gems" else "🪙"
+	buy_button.text = "%s %d" % [currency_symbol, cost]
+	buy_button.custom_minimum_size = Vector2(100, 50)
+	buy_button.pressed.connect(_on_buy_pressed.bind(item_data))
 	hbox.add_child(buy_button)
 
-	var can_afford = false
-	var currency_text = ""
+func _on_buy_pressed(item_data: Dictionary):
+	"""Manejar compra de producto"""
+	print("Comprar: ", item_data.get("name", "Producto"))
+	# Aquí iría la lógica de compra
 
-	match item_data.currency:
-		"real_money":
-			currency_text = "$%.2f" % (item_data.cost / 100.0)
-			can_afford = true # Siempre disponible para dinero real
-			buy_button.text = "COMPRAR\n%s" % currency_text
-		"gems":
-			currency_text = "%d💎" % item_data.cost
-			can_afford = Save.get_gems() >= item_data.cost
-			buy_button.text = "COMPRAR\n%s" % currency_text
-		"coins":
-			currency_text = "%d🪙" % item_data.cost
-			can_afford = Save.get_coins() >= item_data.cost
-			buy_button.text = "COMPRAR\n%s" % currency_text
+	# Por ahora, solo mostrar mensaje
+	var notification = Label.new()
+	notification.text = "¡Compra realizada!"
+	notification.modulate = Color.GREEN
+	get_tree().root.add_child(notification)
 
-	if can_afford:
-		buy_button.pressed.connect(_on_item_purchased.bind(item_data))
-	else:
-		buy_button.disabled = true
-		buy_button.modulate = Color.GRAY
-
-func _on_item_purchased(item_data: Dictionary):
-	match item_data.currency:
-		"real_money":
-			# Simulación de compra con dinero real
-			_process_real_money_purchase(item_data)
-		"gems":
-			if Save.spend_gems(item_data.cost):
-				_grant_reward(item_data)
-				if SFX:
-					SFX.play_event("success")
-				refresh_display()
-			else:
-				if SFX:
-					SFX.play_event("error")
-		"coins":
-			if Save.spend_coins(item_data.cost):
-				_grant_reward(item_data)
-				if SFX:
-					SFX.play_event("success")
-				refresh_display()
-			else:
-				if SFX:
-					SFX.play_event("error")
-
-func _process_real_money_purchase(item_data: Dictionary):
-	# En un juego real, aquí se integraría con Google Play/App Store
-	# Por ahora, simulamos la compra exitosa
-	print("Processing real money purchase: ", item_data.name)
-	_grant_reward(item_data)
-	if SFX:
-		SFX.play_event("success")
-	refresh_display()
-
-	# Mostrar mensaje de confirmación
-	var confirm_label = Label.new()
-	confirm_label.text = "¡Compra exitosa!"
-	confirm_label.add_theme_font_size_override("font_size", 20)
-	confirm_label.add_theme_color_override("font_color", Color.GREEN)
-	confirm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	confirm_label.position = Vector2(get_viewport().size.x / 2 - 100, 100)
-	get_tree().current_scene.add_child(confirm_label)
-
-	# Eliminar mensaje después de 2 segundos
-	var tween = create_tween()
-	tween.tween_interval(2.0)
-	tween.tween_callback(confirm_label.queue_free)
-
-func _grant_reward(item_data: Dictionary):
-	match item_data.reward_type:
-		"coins":
-			Save.add_coins(item_data.reward_amount)
-		"gems":
-			Save.add_gems(item_data.reward_amount)
-
-	print("Granted reward: ", item_data.reward_amount, " ", item_data.reward_type)
+	# Remover después de 2 segundos
+	await get_tree().create_timer(2.0).timeout
+	if is_instance_valid(notification):
+		notification.queue_free()
 
 func _on_close_pressed():
-	if SFX:
-		SFX.play_event("click")
-	emit_signal("close_requested")
-
-func _on_background_clicked(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		emit_signal("close_requested")
+	"""Cerrar la tienda"""
+	close_requested.emit()
 
 func _input(event):
-	# Permitir cerrar con ESC
+	"""Manejar tecla ESC para cerrar"""
 	if event.is_action_pressed("ui_cancel"):
-		emit_signal("close_requested")
-
-func _setup_panel_content(main_panel: PanelContainer):
-	"""Configurar el contenido del panel después del centrado"""
-	var main_vbox = VBoxContainer.new()
-	main_panel.add_child(main_vbox)
-
-	# Header con título y botón cerrar
-	var header = HBoxContainer.new()
-	main_vbox.add_child(header)
-
-	var title = Label.new()
-	title.text = "🏪 TIENDA"
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_font_size_override("font_size", 28)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header.add_child(title)
-
-	var close_button = Button.new()
-	close_button.text = "❌"
-	close_button.custom_minimum_size = Vector2(48, 48)
-	close_button.pressed.connect(_on_close_pressed)
-	header.add_child(close_button)
-
-	# Estado de monedas y gemas
-	var currency_container = HBoxContainer.new()
-	currency_container.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_vbox.add_child(currency_container)
-
-	coins_label = Label.new()
-	coins_label.add_theme_font_size_override("font_size", 20)
-	currency_container.add_child(coins_label)
-
-	var separator = VSeparator.new()
-	separator.custom_minimum_size.x = 20
-	currency_container.add_child(separator)
-
-	gems_label = Label.new()
-	gems_label.add_theme_font_size_override("font_size", 20)
-	currency_container.add_child(gems_label)
-
-	# Separador
-	var hsep = HSeparator.new()
-	hsep.custom_minimum_size.y = 10
-	main_vbox.add_child(hsep)
-
-	# Scroll container para productos
-	var scroll = ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(scroll)
-
-	store_container = VBoxContainer.new()
-	store_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(store_container)
-
-func _center_panel(panel: PanelContainer):
-	"""Centrar el panel dinámicamente en la pantalla"""
-	var viewport_size = get_viewport().get_visible_rect().size
-	var panel_size = Vector2(viewport_size.x * 0.9, viewport_size.y * 0.9)
-
-	panel.custom_minimum_size = panel_size
-	panel.size = panel_size
-	panel.position = (viewport_size - panel_size) / 2
-
-	# Panel 100% opaco - consistente con otros menús flotantes
-	panel.modulate = Color(1, 1, 1, 1.0)
-
-	# Asegurar que está visible
-	panel.show()
+		get_viewport().set_input_as_handled()
+		_on_close_pressed()
