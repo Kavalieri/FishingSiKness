@@ -20,12 +20,13 @@ func _init(show_sell: bool = true, title: String = "🧊 INVENTARIO"):
 
 func _ready():
 	setup_ui()
-	refresh_display()
+	# Mover refresh_display después del setup completo
+	call_deferred("refresh_display")
 
 func setup_ui():
-	# Fondo semi-transparente
+	# Fondo opaco
 	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.8)
+	background.color = Color(0, 0, 0, 0.95) # Más opaco
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
 	background.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -252,6 +253,9 @@ func _center_panel_fullscreen(panel: PanelContainer):
 	panel.custom_minimum_size = viewport_size
 	panel.size = viewport_size
 	panel.position = Vector2.ZERO
+
+	# Hacer el panel semi-transparente para que se vea el fondo
+	panel.modulate = Color(1, 1, 1, 0.95)
 
 	# Asegurar que está visible y en primer plano
 	panel.show()

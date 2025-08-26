@@ -11,9 +11,9 @@ func _ready():
 	refresh_display()
 
 func setup_ui():
-	# Fondo semi-transparente
+	# Fondo opaco
 	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.8)
+	background.color = Color(0, 0, 0, 0.95) # Más opaco
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
 	background.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -358,6 +358,9 @@ func _center_panel(panel: PanelContainer):
 	panel.custom_minimum_size = panel_size
 	panel.size = panel_size
 	panel.position = (viewport_size - panel_size) / 2
+
+	# Hacer el panel semi-transparente para que se vea el fondo
+	panel.modulate = Color(1, 1, 1, 0.95)
 
 	# Asegurar que está visible
 	panel.show()
