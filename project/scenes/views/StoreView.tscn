@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://d5h9m0x1v8ynk"]
+
+[ext_resource type="Script" path="res://src/views/StoreView.gd" id="1_6l2mn"]
+
+[node name="StoreView" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+script = ExtResource("1_6l2mn")
+
+[node name="StoreContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="StoreContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="StoreContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TIENDA"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="StoreContainer/HeaderContainer"]
+layout_mode = 2
+text = "X"
+
+[node name="CurrencyContainer" type="HBoxContainer" parent="StoreContainer"]
+layout_mode = 2
+
+[node name="CoinsLabel" type="Label" parent="StoreContainer/CurrencyContainer"]
+layout_mode = 2
+text = "Monedas: 0"
+
+[node name="GemsLabel" type="Label" parent="StoreContainer/CurrencyContainer"]
+layout_mode = 2
+text = "Gemas: 0"
+
+[node name="StoreScrollContainer" type="ScrollContainer" parent="StoreContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StoreItemsContainer" type="VBoxContainer" parent="StoreContainer/StoreScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3

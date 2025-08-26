@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4k6l8j9w2xmz"]
+
+[ext_resource type="Script" path="res://src/ui/InventoryPanel.gd" id="1_4m7pk"]
+
+[node name="InventoryPanel" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+script = ExtResource("1_4m7pk")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "INVENTARIO"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+text = "X"
+
+[node name="FishScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FishGridContainer" type="GridContainer" parent="MainContainer/FishScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 4
+
+[node name="ActionsContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="SellSelectedButton" type="Button" parent="MainContainer/ActionsContainer"]
+layout_mode = 2
+text = "Vender Seleccionados"
+
+[node name="SellAllButton" type="Button" parent="MainContainer/ActionsContainer"]
+layout_mode = 2
+text = "Vender Todos"
+
+[node name="DiscardSelectedButton" type="Button" parent="MainContainer/ActionsContainer"]
+layout_mode = 2
+text = "Descartar Seleccionados"
+
+[node name="DiscardAllButton" type="Button" parent="MainContainer/ActionsContainer"]
+layout_mode = 2
+text = "Descartar Todos"

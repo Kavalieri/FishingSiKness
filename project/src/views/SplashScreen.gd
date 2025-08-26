@@ -176,31 +176,46 @@ func setup_social_buttons(container: Control):
 	# Botón de opciones ELIMINADO - solo está en la esquina superior derecha
 
 func setup_version(container: Control):
-	"""Información de versión centrada"""
-	var vbox = VBoxContainer.new()
-	vbox.anchor_left = 0.0
-	vbox.anchor_right = 1.0
-	vbox.anchor_top = 0.5
-	vbox.anchor_bottom = 0.5
-	vbox.offset_top = -30.0
-	vbox.offset_bottom = 30.0
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_theme_constant_override("separation", 8)
-	container.add_child(vbox)
+	"""Información de versión centrada - IGNORANDO contenedor limitado del .tscn"""
+	# IGNORAR completamente el contenedor pequeño del .tscn
+	# Crear nuestro propio contenedor que ocupe todo el ancho de pantalla
 
+	# Obtener FooterArea (el contenedor padre)
+	var footer_area = container.get_parent()
+
+	# Crear contenedor de versión que ocupe TODO el ancho
+	var full_width_version_container = Control.new()
+	full_width_version_container.anchor_left = 0.0
+	full_width_version_container.anchor_right = 1.0
+	full_width_version_container.anchor_top = 0.7
+	full_width_version_container.anchor_bottom = 1.0
+	footer_area.add_child(full_width_version_container)
+
+	# Línea de versión - ocupa todo el ancho disponible
 	version_label = Label.new()
 	version_label.text = "Fishing SiKness v0.1.0 pre-release alpha"
+	version_label.anchor_left = 0.0
+	version_label.anchor_right = 1.0
+	version_label.anchor_top = 0.0
+	version_label.anchor_bottom = 0.5
 	version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	version_label.add_theme_font_size_override("font_size", 16) # Aumentado de 12 a 16
+	version_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	version_label.add_theme_font_size_override("font_size", 16)
 	version_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.8))
-	vbox.add_child(version_label)
+	full_width_version_container.add_child(version_label)
 
+	# Línea de copyright - ocupa todo el ancho disponible
 	license_label = Label.new()
 	license_label.text = "© 2025 Kava - SiK Studio | Hecho 100% con Agentes IA | GNU GPL v3.0"
+	license_label.anchor_left = 0.0
+	license_label.anchor_right = 1.0
+	license_label.anchor_top = 0.5
+	license_label.anchor_bottom = 1.0
 	license_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	license_label.add_theme_font_size_override("font_size", 14) # Aumentado de 10 a 14
+	license_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	license_label.add_theme_font_size_override("font_size", 14)
 	license_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.7))
-	vbox.add_child(license_label)
+	full_width_version_container.add_child(license_label)
 
 func _rotate_tip():
 	"""Rotar tip actual"""
@@ -323,14 +338,27 @@ func setup_options_button():
 	print("✅ Botón de opciones configurado en esquina superior derecha")
 
 func _on_options_pressed():
-	"""Manejar clic en botón de opciones - abrir menú de configuración"""
+	"""Manejar clic en botón de opciones - abrir menú unificado"""
 	print("🔧 Abriendo menú de opciones desde splash screen")
 
-	# Cargar directamente SettingsMenu (más simple y confiable)
-	var SettingsMenuClass = preload("res://src/views/SettingsMenu.gd")
-	var settings_menu = SettingsMenuClass.new()
+	# Usar la escena de menú unificado
+	var UnifiedMenuScene = preload("res://scenes/views/UnifiedMenu.tscn")
+	var options_menu = UnifiedMenuScene.instantiate()
 
-	# Agregar al árbol de escena para que sea visible
-	get_tree().root.add_child(settings_menu)
+	# Conectar señales
+	options_menu.menu_closed.connect(_on_options_menu_closed)
+	options_menu.save_manager_requested.connect(_on_save_manager_requested)
 
-	print("✅ Menú de opciones abierto desde splash screen")
+	# Agregar al árbol de escena
+	get_tree().root.add_child(options_menu)
+
+	print("✅ Menú de opciones unificado abierto desde splash screen")
+
+func _on_options_menu_closed():
+	"""Callback cuando el menú de opciones se cierra"""
+	print("📴 Menú de opciones cerrado")
+
+func _on_save_manager_requested():
+	"""Callback cuando se solicita el gestor de guardado"""
+	print("💾 Gestor de guardado solicitado desde splash screen")
+	# TODO: Implementar gestor de guardado si es necesario en splash

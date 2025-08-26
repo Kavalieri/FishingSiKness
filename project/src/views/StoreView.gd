@@ -1,11 +1,19 @@
 class_name StoreView
-extends Control
+extends ColorRect
 
 signal close_requested()
 
-var store_container: VBoxContainer
-var coins_label: Label
-var gems_label: Label
+# UI references (se conectan automáticamente desde la escena)
+@onready var store_container: VBoxContainer = $StoreContainer
+@onready var coins_label: Label = $StoreContainer/CurrencyContainer/CoinsLabel
+@onready var gems_label: Label = $StoreContainer/CurrencyContainer/GemsLabel
+@onready var store_items_container: VBoxContainer = $StoreContainer/StoreScrollContainer/StoreItemsContainer
+@onready var close_button: Button = $StoreContainer/HeaderContainer/CloseButton
+
+func _ready():
+	# Conectar señales de los botones
+	if close_button:
+		close_button.pressed.connect(_on_close_pressed)
 
 # Productos de la tienda
 var store_items = [
@@ -66,17 +74,18 @@ func _ready():
 	refresh_display()
 
 func setup_ui():
-	# Fondo opaco
-	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.95) # Más opaco
-	background.anchor_right = 1.0
-	background.anchor_bottom = 1.0
-	background.mouse_filter = Control.MOUSE_FILTER_STOP
-	background.gui_input.connect(_on_background_clicked)
-	add_child(background)
+	# MÉTODO ULTRA SIMPLE: ColorRect NEGRO DIRECTO
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	z_index = 9999 # Z_INDEX MÁXIMO
+	color = Color.BLACK # NEGRO DIRECTO
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+	# Conectar evento de clic directamente
+	gui_input.connect(_on_background_clicked)
 
 	# Panel principal (centrado dinámicamente)
 	var main_panel = PanelContainer.new()
+	main_panel.z_index = 1
 	add_child(main_panel)
 
 	# Centrado dinámico en _ready
@@ -294,8 +303,8 @@ func _center_panel(panel: PanelContainer):
 	panel.size = panel_size
 	panel.position = (viewport_size - panel_size) / 2
 
-	# Hacer el panel semi-transparente para que se vea el fondo
-	panel.modulate = Color(1, 1, 1, 0.95)
+	# Panel 100% opaco - consistente con otros menús flotantes
+	panel.modulate = Color(1, 1, 1, 1.0)
 
 	# Asegurar que está visible
 	panel.show()

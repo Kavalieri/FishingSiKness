@@ -169,8 +169,18 @@ func _on_goto_fridge_pressed():
 
 func _on_open_inventory_pressed():
 	# Abre directamente la nevera con todas las opciones (venta y descarte)
-	var screen_manager = get_tree().current_scene
+	var screen_manager = get_tree().get_first_node_in_group("ScreenManager")
+	if not screen_manager:
+		# Fallback: buscar en current_scene
+		screen_manager = get_tree().current_scene
+
 	if screen_manager and screen_manager.has_method("show_inventory"):
 		screen_manager.show_inventory(true, "🧊 NEVERA - MERCADO")
 		if SFX:
 			SFX.play_event("click")
+		print("✅ Abriendo nevera desde MarketView")
+	else:
+		print("❌ ERROR: No se pudo encontrar ScreenManager o método show_inventory")
+		print("ScreenManager encontrado: ", screen_manager)
+		if screen_manager:
+			print("Métodos disponibles: ", screen_manager.get_method_list())

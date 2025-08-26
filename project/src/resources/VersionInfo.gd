@@ -109,3 +109,38 @@ static func format_template(template: String, data: Dictionary) -> String:
 	result = result.replace("{license.type}", str(license_data.get("type", "")))
 
 	return result
+
+# === MÉTODOS DE ACCESO ESTÁTICOS ===
+
+static func get_game_title() -> String:
+	"""Obtener título del juego"""
+	var version_data = get_version_info()
+	return version_data.get("game", {}).get("name", "Fishing SiKness")
+
+static func get_version() -> String:
+	"""Obtener versión del juego"""
+	var version_data = get_version_info()
+	return version_data.get("game", {}).get("version", "0.1.0")
+
+static func get_company() -> String:
+	"""Obtener nombre de la compañía/estudio"""
+	var version_data = get_version_info()
+	var dev_data = version_data.get("development", {})
+	var developer = dev_data.get("developer", "Kava")
+	var studio = dev_data.get("studio", "SiK Studio")
+	return "%s - %s" % [developer, studio]
+
+static func get_status() -> String:
+	"""Obtener estado de desarrollo (alpha, beta, release)"""
+	var version_data = get_version_info()
+	return version_data.get("game", {}).get("status", "release")
+
+static func get_build_number() -> int:
+	"""Obtener número de build"""
+	var version_data = get_version_info()
+	return version_data.get("game", {}).get("build_number", 1)
+
+static func is_ai_powered() -> bool:
+	"""Verificar si el proyecto fue hecho con IA"""
+	var version_data = get_version_info()
+	return version_data.get("development", {}).get("ai_powered", true)

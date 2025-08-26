@@ -1,24 +1,36 @@
 class_name SpeciesLegendPanel
-extends PanelContainer
+extends Control
 
 signal closed()
 
 var close_button: Button
 var content_container: VBoxContainer
 var species_grid: GridContainer
+var main_panel: PanelContainer
 
 func _ready():
-	# Configurar estilo del panel
-	modulate = Color(1, 1, 1, 0.95)
-	set_anchors_preset(Control.PRESET_CENTER)
-	custom_minimum_size = Vector2(600, 700)
-
 	setup_ui()
 	populate_species_data()
 
 func setup_ui():
+	# FONDO COMPLETAMENTE OPACO - MÉTODO DIRECTO
+	var opaque_bg = ColorRect.new()
+	opaque_bg.color = Color.BLACK # Negro puro 100% opaco
+	opaque_bg.anchor_right = 1.0
+	opaque_bg.anchor_bottom = 1.0
+	opaque_bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	opaque_bg.z_index = -1
+	add_child(opaque_bg)
+
+	# Panel principal centrado
+	main_panel = PanelContainer.new()
+	main_panel.set_anchors_preset(Control.PRESET_CENTER)
+	main_panel.custom_minimum_size = Vector2(600, 700)
+	main_panel.z_index = 1
+	add_child(main_panel)
+
 	content_container = VBoxContainer.new()
-	add_child(content_container)
+	main_panel.add_child(content_container)
 
 	# Título y botón cerrar
 	var header = HBoxContainer.new()

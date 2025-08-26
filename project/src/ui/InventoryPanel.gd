@@ -1,5 +1,5 @@
 class_name InventoryPanel
-extends Control
+extends ColorRect
 
 signal fish_selected(fish_index: int)
 signal fish_deselected(fish_index: int)
@@ -8,7 +8,27 @@ signal sell_all_requested()
 signal discard_selected_requested()
 signal discard_all_requested()
 signal close_requested()
-signal fish_info_requested(fish_index: int)
+
+# Referencias a UI (se conectan automáticamente desde la escena)
+@onready var fish_grid_container: GridContainer = $MainContainer/FishScrollContainer/FishGridContainer
+@onready var sell_selected_button: Button = $MainContainer/ActionsContainer/SellSelectedButton
+@onready var sell_all_button: Button = $MainContainer/ActionsContainer/SellAllButton
+@onready var discard_selected_button: Button = $MainContainer/ActionsContainer/DiscardSelectedButton
+@onready var discard_all_button: Button = $MainContainer/ActionsContainer/DiscardAllButton
+@onready var close_button: Button = $MainContainer/HeaderContainer/CloseButton
+
+func _ready():
+	# Conectar señales de los botones
+	if sell_selected_button:
+		sell_selected_button.pressed.connect(_on_sell_selected_pressed)
+	if sell_all_button:
+		sell_all_button.pressed.connect(_on_sell_all_pressed)
+	if discard_selected_button:
+		discard_selected_button.pressed.connect(_on_discard_selected_pressed)
+	if discard_all_button:
+		discard_all_button.pressed.connect(_on_discard_all_pressed)
+	if close_button:
+		close_button.pressed.connect(_on_close_pressed)
 
 var main_panel: PanelContainer
 var inventory_grid: GridContainer
@@ -27,14 +47,14 @@ func _ready():
 	call_deferred("refresh_display")
 
 func setup_ui():
-	# Fondo opaco
-	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.95) # Más opaco
-	background.anchor_right = 1.0
-	background.anchor_bottom = 1.0
-	background.mouse_filter = Control.MOUSE_FILTER_STOP
-	background.gui_input.connect(_on_background_clicked)
-	add_child(background)
+	# MÉTODO ULTRA SIMPLE: ColorRect NEGRO DIRECTO
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	z_index = 9999 # Z_INDEX MÁXIMO
+	color = Color.BLACK # NEGRO DIRECTO
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+	# Conectar evento de clic directamente
+	gui_input.connect(_on_background_clicked)
 
 	# Panel principal centrado (pantalla completa - centrado dinámicamente)
 	main_panel = PanelContainer.new()
@@ -341,7 +361,7 @@ func _center_panel_fullscreen(panel: PanelContainer):
 	panel.position = Vector2.ZERO
 
 	# Hacer el panel semi-transparente para que se vea el fondo
-	panel.modulate = Color(1, 1, 1, 0.95)
+	panel.modulate = Color(1, 1, 1, 1.0) # 100% opaco
 
 	# Asegurar que está visible y en primer plano
 	panel.show()
@@ -368,9 +388,9 @@ func create_confirmation_popup(title: String, message: String,
 	overlay.anchor_bottom = 1.0
 	overlay.z_index = 200
 
-	# Fondo semi-transparente
+	# Fondo 100% opaco - consistente con otros menús
 	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.8)
+	background.color = Color(0, 0, 0, 1.0)
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
 	overlay.add_child(background)

@@ -2,7 +2,10 @@ class_name ScreenManager
 extends Control
 
 # Recursos precargados
-const InventoryClass = preload("res://src/ui/InventoryPanel.gd")
+# Precargar escenas en lugar de clases
+const UnifiedMenuScene = preload("res://scenes/views/UnifiedMenu.tscn")
+const StoreViewScene = preload("res://scenes/views/StoreView.tscn")
+const InventoryPanelScene = preload("res://scenes/ui/InventoryPanel.tscn")
 const FishInfoPanelClass = preload("res://src/ui/FishInfoPanel.gd")
 const SpeciesLegendPanelClass = preload("res://src/ui/SpeciesLegendPanel.gd")
 
@@ -20,7 +23,7 @@ var current_tab = Tab.FISHING
 
 # Overlays
 var store_view: StoreView
-var pause_menu: PauseMenu
+var pause_menu: Control # Cambiado de PauseMenu a Control para aceptar UnifiedMenu
 var inventory_panel: InventoryPanel
 var fish_info_panel: FishInfoPanel
 var species_legend_panel: SpeciesLegendPanel
@@ -30,6 +33,9 @@ var save_manager: Control
 var debug_panel: Control
 
 func _ready():
+	# Añadir al grupo para fácil acceso
+	add_to_group("ScreenManager")
+
 	# Registrar las vistas desde ScreenContainer (sin Fridge)
 	var screen_container = $ScreenContainer
 	if screen_container:
@@ -120,24 +126,57 @@ func show_store():
 	if store_view:
 		store_view.queue_free()
 
-	store_view = preload("res://src/views/StoreView.gd").new()
+	# Instanciar escena con fondo negro configurado
+	store_view = StoreViewScene.instantiate()
 	store_view.close_requested.connect(_on_store_closed)
-	# Asegurar que el overlay esté en el nivel superior
-	store_view.z_index = 100
-	add_child(store_view)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(store_view)
 
 func show_pause_menu():
+	"""Mostrar menú de pausa unificado"""
+	# Cerrar menú anterior si existe
 	if pause_menu:
 		pause_menu.queue_free()
+		pause_menu = null
 
-	pause_menu = preload("res://src/views/PauseMenu.gd").new()
+	# Instanciar escena con fondo negro configurado
+	pause_menu = UnifiedMenuScene.instantiate()
+
+	# Conectar señales
 	pause_menu.resume_requested.connect(_on_pause_menu_closed)
 	pause_menu.save_and_exit_requested.connect(_on_save_and_exit)
-	pause_menu.settings_requested.connect(_on_settings_requested)
 	pause_menu.save_manager_requested.connect(_on_save_manager_requested_from_pause)
+	pause_menu.menu_closed.connect(_on_pause_menu_closed)
+
 	# Asegurar que el overlay esté en el nivel superior
 	pause_menu.z_index = 100
-	add_child(pause_menu)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(pause_menu)
+
+func show_settings_menu():
+	"""Mostrar menú de opciones unificado"""
+	# Evitar crear múltiples instancias
+	if settings_menu:
+		settings_menu.queue_free()
+		settings_menu = null
+
+	# Cerrar menú de pausa si existe
+	if pause_menu:
+		pause_menu.queue_free()
+		pause_menu = null
+
+	# Crear menú de opciones unificado
+	var UnifiedMenuClass = preload("res://src/views/UnifiedMenu.gd")
+	settings_menu = UnifiedMenuClass.create_options_menu()
+
+	# Conectar señales
+	settings_menu.menu_closed.connect(_on_settings_closed)
+	settings_menu.save_manager_requested.connect(_on_save_manager_requested_from_settings)
+
+	# Asegurar que esté en el nivel superior
+	settings_menu.z_index = 100
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(settings_menu)
 
 func show_milestones_panel():
 	# Evitar crear múltiples instancias
@@ -150,15 +189,17 @@ func show_milestones_panel():
 	milestones_panel.tree_exiting.connect(_on_milestones_closed)
 	# Asegurar que el overlay esté en el nivel superior
 	milestones_panel.z_index = 100
-	add_child(milestones_panel)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(milestones_panel)
 
 func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO"):
 	if inventory_panel:
 		inventory_panel.queue_free()
 
-	inventory_panel = InventoryClass.new(allow_selling, title)
+	# Instanciar escena con fondo negro configurado
+	inventory_panel = InventoryPanelScene.instantiate()
 	inventory_panel.close_requested.connect(_on_inventory_closed)
-	inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
+	# inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
 
 	if allow_selling:
 		inventory_panel.sell_selected_requested.connect(_on_sell_selected_fish)
@@ -166,24 +207,25 @@ func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO
 		inventory_panel.discard_selected_requested.connect(_on_discard_selected_fish)
 		inventory_panel.discard_all_requested.connect(_on_discard_all_fish)
 
-	# Asegurar que el overlay esté en el nivel superior
-	inventory_panel.z_index = 100
-	add_child(inventory_panel)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(inventory_panel)
 
 func show_inventory_discard_mode():
 	"""Mostrar inventario en modo descarte para liberar espacio durante la pesca"""
 	if inventory_panel:
 		inventory_panel.queue_free()
 
-	inventory_panel = InventoryClass.new(false, "🗑️ LIBERAR ESPACIO")
+	# Instanciar escena con fondo negro configurado
+	inventory_panel = InventoryPanelScene.instantiate()
 	inventory_panel.close_requested.connect(_on_inventory_closed)
-	inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
+	# inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
 	inventory_panel.sell_selected_requested.connect(_on_discard_selected_fish)
 	inventory_panel.sell_all_requested.connect(_on_discard_all_fish)
 
 	# Asegurar que el overlay esté en el nivel superior
 	inventory_panel.z_index = 100
-	add_child(inventory_panel)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(inventory_panel)
 
 func _on_store_closed():
 	if store_view:
@@ -206,27 +248,6 @@ func _on_save_and_exit():
 		pause_menu = null
 	get_tree().quit()
 
-func _on_settings_requested():
-	# Mostrar el menú de opciones real
-	show_settings_menu()
-	_on_pause_menu_closed()
-
-func show_settings_menu():
-	# Evitar crear múltiples instancias
-	if settings_menu:
-		return
-
-	if pause_menu:
-		pause_menu.queue_free()
-		pause_menu = null
-
-	var SettingsMenuClass = preload("res://src/views/SettingsMenu.gd")
-	settings_menu = SettingsMenuClass.new()
-	settings_menu.settings_closed.connect(_on_settings_closed)
-	settings_menu.save_manager_requested.connect(_on_save_manager_requested_from_settings)
-	settings_menu.tree_exiting.connect(_on_settings_closed)
-	add_child(settings_menu)
-
 func show_save_manager():
 	# Evitar crear múltiples instancias
 	if save_manager:
@@ -241,7 +262,8 @@ func show_save_manager():
 	save_manager.save_loaded.connect(_on_save_loaded)
 	save_manager.save_created.connect(_on_save_created)
 	save_manager.tree_exiting.connect(_on_save_manager_closed)
-	add_child(save_manager)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(save_manager)
 
 func _on_save_loaded(slot: int):
 	print("Save loaded from slot: ", slot)
@@ -268,11 +290,12 @@ func _on_settings_closed():
 		settings_menu = null
 
 func _on_save_manager_requested_from_settings():
-	# Cerrar menú de opciones y abrir gestor de guardado
+	"""Gestor de guardado solicitado desde opciones"""
+	_on_settings_closed()
 	show_save_manager()
 
 func _on_save_manager_requested_from_pause():
-	# Cerrar menú de pausa y abrir gestor de guardado
+	"""Gestor de guardado solicitado desde pausa"""
 	_on_pause_menu_closed()
 	show_save_manager()
 
@@ -386,7 +409,8 @@ func show_fish_info_panel(fish_instance: FishInstance):
 	fish_info_panel = FishInfoPanelClass.new()
 	fish_info_panel.closed.connect(_on_fish_info_closed)
 	fish_info_panel.z_index = 150 # Por encima del inventario
-	add_child(fish_info_panel)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(fish_info_panel)
 
 	fish_info_panel.show_fish_info(fish_instance)
 
@@ -404,7 +428,8 @@ func show_species_legend():
 	species_legend_panel = SpeciesLegendPanelClass.new()
 	species_legend_panel.closed.connect(_on_species_legend_closed)
 	species_legend_panel.z_index = 120 # Por encima de otros paneles
-	add_child(species_legend_panel)
+	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
+	get_tree().root.add_child(species_legend_panel)
 
 func _on_species_legend_closed():
 	"""Manejar cierre del panel de leyenda de especies"""

@@ -124,7 +124,7 @@ func _center_panel(panel: PanelContainer):
 	panel.position = (viewport_size - panel_size) / 2
 
 	# Hacer el panel semi-transparente para que se vea el fondo
-	panel.modulate = Color(1, 1, 1, 0.95)
+	panel.modulate = Color(1, 1, 1, 1.0) # 100% opaco
 
 	# Asegurar que está visible
 	panel.show()

@@ -11,17 +11,21 @@ func _ready():
 	refresh_display()
 
 func setup_ui():
-	# Fondo opaco
-	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.95) # Más opaco
-	background.anchor_right = 1.0
-	background.anchor_bottom = 1.0
-	background.mouse_filter = Control.MOUSE_FILTER_STOP
-	background.gui_input.connect(_on_background_clicked)
-	add_child(background)
+	# FONDO COMPLETAMENTE OPACO - MÉTODO DIRECTO
+	var opaque_bg = ColorRect.new()
+	opaque_bg.color = Color.BLACK # Negro puro 100% opaco
+	opaque_bg.anchor_right = 1.0
+	opaque_bg.anchor_bottom = 1.0
+	opaque_bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	opaque_bg.z_index = -1
+	add_child(opaque_bg)
+
+	# Evento para cerrar al hacer click en fondo
+	opaque_bg.gui_input.connect(_on_background_clicked)
 
 	# Panel principal centrado (centrado dinámicamente)
 	main_panel = PanelContainer.new()
+	main_panel.z_index = 1
 	add_child(main_panel)
 
 	# Centrado dinámico en _ready
@@ -360,7 +364,7 @@ func _center_panel(panel: PanelContainer):
 	panel.position = (viewport_size - panel_size) / 2
 
 	# Hacer el panel semi-transparente para que se vea el fondo
-	panel.modulate = Color(1, 1, 1, 0.95)
+	panel.modulate = Color(1, 1, 1, 1.0) # 100% opaco
 
 	# Asegurar que está visible
 	panel.show()

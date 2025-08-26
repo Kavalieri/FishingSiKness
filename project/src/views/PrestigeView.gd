@@ -12,29 +12,63 @@ func _ready():
 	update_display()
 
 func setup_prestige_ui():
+	# FONDO COMPLETAMENTE OPACO - MÉTODO DIRECTO
+	var opaque_bg = ColorRect.new()
+	opaque_bg.color = Color.BLACK # Negro puro 100% opaco
+	opaque_bg.anchor_right = 1.0
+	opaque_bg.anchor_bottom = 1.0
+	opaque_bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	opaque_bg.z_index = -1
+	add_child(opaque_bg)
+
+	# Contenedor principal centrado con margen
+	var main_container = MarginContainer.new()
+	main_container.anchor_left = 0.1
+	main_container.anchor_top = 0.1
+	main_container.anchor_right = 0.9
+	main_container.anchor_bottom = 0.9
+	add_child(main_container)
+
+	# VBoxContainer para organizar todo verticalmente
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 20)
+	main_container.add_child(vbox)
+
 	# Título
 	var title_label = Label.new()
 	title_label.text = "⭐ PRESTIGIO"
-	title_label.add_theme_font_size_override("font_size", 24)
+	title_label.add_theme_font_size_override("font_size", 32)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	add_child(title_label)
+	vbox.add_child(title_label)
 
 	# Información del prestigio
 	prestige_info_label = Label.new()
 	prestige_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	prestige_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	add_child(prestige_info_label)
+	prestige_info_label.add_theme_font_size_override("font_size", 16)
+	vbox.add_child(prestige_info_label)
 
 	# Beneficios del prestigio
 	prestige_benefits_container = VBoxContainer.new()
-	add_child(prestige_benefits_container)
+	prestige_benefits_container.add_theme_constant_override("separation", 10)
+	vbox.add_child(prestige_benefits_container)
 
-	# Botón de prestigio
+	# Spacer para empujar el botón hacia abajo
+	var spacer = Control.new()
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(spacer)
+
+	# Botón de prestigio centrado
+	var button_container = HBoxContainer.new()
+	button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_child(button_container)
+
 	prestige_button = Button.new()
 	prestige_button.text = "🌟 HACER PRESTIGIO"
-	prestige_button.custom_minimum_size = Vector2(300, 60)
+	prestige_button.custom_minimum_size = Vector2(400, 80)
+	prestige_button.add_theme_font_size_override("font_size", 18)
 	prestige_button.pressed.connect(_on_prestige_button_pressed)
-	add_child(prestige_button)
+	button_container.add_child(prestige_button)
 
 func update_display():
 	if not Save.game_data.prestige_unlocked:
