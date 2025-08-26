@@ -16,18 +16,6 @@ func setup_ui():
 	if BackgroundManager:
 		BackgroundManager.setup_menu_background(self)
 		print("✅ Fondo de menú configurado en PauseMenu")
-	else:
-		setup_fallback_background()
-
-func setup_fallback_background():
-	"""Fondo fallback si BackgroundManager no está disponible"""
-	var background = ColorRect.new()
-	background.color = Color(0, 0, 0, 0.95) # Más opaco
-	background.anchor_right = 1.0
-	background.anchor_bottom = 1.0
-	background.mouse_filter = Control.MOUSE_FILTER_STOP
-	background.gui_input.connect(_on_background_clicked)
-	add_child(background)
 
 	# Panel principal (centrado dinámicamente)
 	main_panel = PanelContainer.new()

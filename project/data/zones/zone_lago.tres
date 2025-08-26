@@ -1,20 +1,15 @@
-[gd_res[resource]
-script = ExtResource("1")
-id = "lago"
-name = "Lago"
-price_multiplier = 1.4
-entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
-background = "res://art/env/forest.png"type="Resource" script_class="ZoneDef" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
 [ext_resource type="Resource" path="res://data/loot_tables/entry_trucha.tres" id="2"]
 [ext_resource type="Resource" path="res://data/loot_tables/entry_salmon.tres" id="3"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_cangrejo.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_lubina.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_cangrejo.tres" id="5"]
 
 [resource]
 script = ExtResource("1")
 id = "lago"
 name = "Lago"
-price_multiplier = 1.2
-entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4")])
+price_multiplier = 1.4
+entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
 background = "res://art/env/forest.png"
