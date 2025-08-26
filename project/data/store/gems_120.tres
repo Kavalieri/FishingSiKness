@@ -1,0 +1,9 @@
+[gd_resource type="Resource" format=3]
+
+sku = "gems_120"
+kind = "gems_pack"
+title = "120 Gemas"
+desc = "Pack de gemas para compras premium."
+price_eur = 0.99
+gems = 120
+grant = {}

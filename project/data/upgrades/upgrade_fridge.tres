@@ -1,0 +1,8 @@
+[gd_resource type="Resource" format=3]
+
+id = "fridge"
+name = "Nevera"
+max_level = 5
+cost_base = 100
+cost_mult = 1.5
+effects = { "capacity": 5 }

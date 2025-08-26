@@ -1,0 +1,36 @@
+{
+    "schema": 1,
+    "coins": 120,
+    "gems": 15,
+    "zone": "orilla",
+    "upgrades": {
+        "rod": 2,
+        "fridge": 3
+    },
+    "equipment": {
+        "rod": "rod_basic",
+        "reel": "reel_1",
+        "hook": "hook_1"
+    },
+    "inventory": [
+        {
+            "id": "sardina",
+            "size": 20.5,
+            "val": 12,
+            "ts": 1724567890
+        }
+    ],
+    "purchases": [
+        "gems_120"
+    ],
+    "owned_cosmetics": [],
+    "ad_cooldowns": {
+        "booster_x2": "2025-08-25T19:00:00Z"
+    },
+    "last_played": 1724567890,
+    "settings": {
+        "vibration": true,
+        "sfx": 0.8,
+        "music": 0.4
+    }
+}

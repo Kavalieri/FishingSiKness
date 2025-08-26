@@ -1,0 +1,7 @@
+[gd_resource type="Resource" format=3]
+
+id = "orilla"
+name = "Orilla"
+price_multiplier = 1.0
+entries = [ExtResource("res://data/loot_tables/zone_orilla_table.tres")]
+background = ExtResource("res://art/env/beach.png")

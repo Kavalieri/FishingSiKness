@@ -55,9 +55,14 @@ Eres un desarrollador profesional de videojuegos en Godot 4.4. Tu trabajo sigue 
 	- `project/tests/` = calidad del código del juego (Godot).
 	- `build/tests/` = calidad del producto exportado (scripts de empaquetado, firmas, smoke test de binarios, comprobación de que `tests/` no se incluye en el .apk/.exe/web).
 - No hay debate: los tests de Godot van en `project/tests/`. Las pruebas de pipeline van en `build/tests/`.
+- Usaremos GdUnit4, es más amigable con Godot 4
 
 ## Uso de Godot CLI
 - El ejecutable `godot.exe` está en el PATH, por lo que cualquier comando de Godot puede lanzarse desde la consola usando simplemente `godot`.
+
+## Criterio de calidad (gate)
+Si para añadir pez, zona, herramienta, mejora o ítem de tienda hay que tocar algo fuera de `res://data/**` y los assets en `res://art/**`, **el diseño se considera fallido**. Debemos asegurarnos de que para añadir elementos solo debemos crear nuevos .tres
+
 
 ## Adaptación y mejora
 Si el proyecto requiere reglas adicionales, instrucciones específicas o configuración extra, crea archivos en `.github` siguiendo este formato y documenta los cambios.

@@ -1,4 +1,12 @@
-# Fishing SiKness — GDD Global (Godot 4.4)
+# Fishing SiKness — G## 3) Progresión
+- **Divisas**
+  - **Monedas** (soft): venta de capturas, recompensas.
+  - **Gemas** (hard): packs IAP, logros/eventos, **anuncios recompensados**.
+- **Sistema de Experiencia**: XP por cada captura exitosa. Fórmula: `nivel = sqrt(xp / 100) + 1`
+- **Milestones**: Cada 5-10-15-20-25-30... niveles desbloquea beneficios permanentes (capacidad inventario, multiplicadores monedas, tiempo QTE, probabilidad peces raros).
+- **Upgrades** (lineales con coste geométrico): Caña, Carrete, Anzuelo, Cebo (temporal), Nevera (capacidad), Mapa (desbloqueo de zonas).
+- **Zonas** (biomas): Orilla → Lago → Río → Costa → Mar… Cada zona define **tabla de loot** y **multiplicador** de precio.
+- **Prestigio** (sistema fundamental incremental): Desbloqueado en nivel 75. Reset completo de progreso a cambio de multiplicadores permanentes y puntos de prestigio para mejoras exclusivas.al (Godot 4.4)
 
 > **Objetivo**: Juego de pesca 2D para smartphone (retrato) con navegación por pestañas permanentes, core loop mínimo y progresión infinita. Arquitectura **100% data‑driven** para que peces, zonas, herramientas y tienda se añadan creando **solo** nuevos `.tres` en `res://data/**` sin tocar código ni escenas. Monetización **no intrusiva** (gemas, boosters, cosméticos, ads recompensados) reservada desde el día 1.
 
@@ -30,38 +38,42 @@
 ---
 
 ## 4) Pantallas **(pestañas permanentes)**
-**Barra superior**: Monedas · **💎 Gemas [ + ]** (abre Tienda) · Zona · ⚙ Ajustes.
-**Barra inferior** (fija): `🐟 Pescar` · `🧊 Nevera` · `🛒 Mercado` · `⬆ Mejoras` · `🗺 Mapa`.
+**Barra superior**: Monedas · **💎 Gemas [ + ]** (abre Tienda) · **📈 Nivel [?]** (milestones) · Zona · ⚙ Ajustes.
+**Barra inferior** (fija): `🐟 Pescar` · `⭐ Prestigio` · `🛒 Mercado` · `⬆ Mejoras` · `🗺 Mapa`.
+**Sistema de guardado múltiple**: 5 slots de guardado accesibles desde menú principal.
 Badges en pestañas para novedades/acciones disponibles.
 
 ### 4.1 Pescar (home)
 ```
 +------------------------------------------------+
-| Monedas: 12,345   💎 120 [ + ]   Zona: Orilla [⚙]|
+| Monedas: 12,345  💎 120 [+] 📈 Nvl 15 [?] [⚙] |
 |------------------------------------------------|
 |                 ~ Agua animada ~               |
+|               [████████████▒▒▒▒]              |
+|               🟢████████🔴      (QTE Visual)   |
 |                                                |
-|                [   BARRA  QTE   ]              |
-|                     (aguja)                    |
-|                                                |
-|                     [ LANZAR ]                 |
-|                                                |
+|                  [ 🎯 ¡ATRAPAR! ]             |
+|             [🗑️ Gestionar Inventario]          |
 |------------------------------------------------|
-| 🐟 Pescar | 🧊 Nevera | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
+| 🐟 Pescar | ⭐ Prestigio | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
 +------------------------------------------------+
 ```
 
-### 4.2 Nevera (Inventario)
+### 4.2 Prestigio (nueva pestaña fundamental)
 ```
 +------------------------------------------------+
-| Capacidad 7/12      💎 120 [ + ]         [⚙]   |
+| PRESTIGIO               💎 120 [ + ]     [⚙]   |
 |------------------------------------------------|
-| [Sardina 12c] [Trucha 20c] [Lubina 30c]        |
-| [Atún 55c]    [Vacío]      [Vacío]             |
+| ⭐ Prestigio Nivel: 2   🎯 Puntos: 150          |
+| 💫 Puntos potenciales: +25                      |
+|                                                |
+| Beneficios Activos:                            |
+| 💰 Multiplicador monedas: x2.0                 |
+| 🎁 Mejoras exclusivas desbloqueadas            |
+|                                                |
+| [ 🌟 HACER PRESTIGIO (+25 puntos) ]           |
 |------------------------------------------------|
-| [ VENDER SELECCIÓN ]   [ VENDER TODO ]         |
-|------------------------------------------------|
-| 🐟 Pescar | 🧊 Nevera | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
+| 🐟 Pescar | ⭐ Prestigio | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
 +------------------------------------------------+
 ```
 
@@ -76,7 +88,7 @@ Badges en pestañas para novedades/acciones disponibles.
 | [ VENDER TODO ]   Precio x1.0 (zona Orilla)    |
 |  — Tip: Booster x2 valor 5 min en Tienda —     |
 |------------------------------------------------|
-| 🐟 Pescar | 🧊 Nevera | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
+| 🐟 Pescar | ⭐ Prestigio | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
 +------------------------------------------------+
 ```
 
@@ -92,7 +104,7 @@ Badges en pestañas para novedades/acciones disponibles.
 | — Te faltan 20c. Compra paquete de Monedas —   |
 | [ IR A TIENDA ]                                 |
 |------------------------------------------------|
-| 🐟 Pescar | 🧊 Nevera | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
+| 🐟 Pescar | ⭐ Prestigio | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
 +------------------------------------------------+
 ```
 
@@ -108,7 +120,7 @@ Badges en pestañas para novedades/acciones disponibles.
 | Peces: Sardina, Boquerón, Carpa, Trucha…       |
 | [ VIAJAR ]                                     |
 |------------------------------------------------|
-| 🐟 Pescar | 🧊 Nevera | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
+| 🐟 Pescar | ⭐ Prestigio | 🛒 Mercado | ⬆ Mejora | 🗺 Mapa |
 +------------------------------------------------+
 ```
 
@@ -281,10 +293,14 @@ res://
 - [ ] Core loop estable a 60 fps.
 - [ ] 1 bioma (Orilla), 10 peces con sprites placeholder.
 - [ ] 4 mejoras operativas.
-- [ ] Inventario (capacidad) + Mercado (vender todo/selección).
-- [ ] Guardado atómico + migración `schema`.
-- [ ] **TopBar con Gemas [ + ]** + **Tienda overlay** (UI + `StoreSystem` stub).
+- [ ] **Sistema de experiencia** con recompensas por hitos.
+- [ ] **Inventario dinámico** (capacidad aumenta por hitos) + Mercado (vender todo/selección).
+- [ ] **Sistema de prestigio** desbloqueado en nivel 75.
+- [ ] **Gestor de múltiples partidas** guardadas (5 slots).
+- [ ] Guardado atómico + migración `schema` v2 (experiencia, prestigio, slots).
+- [ ] **TopBar con Nivel y XP** + **Gemas [ + ]** + **Tienda overlay** expandida.
 - [ ] **Content** autoload cargando `data/**` (sin hardcode).
+- [ ] **5 pestañas UI**: Pescar | Prestigio | Mercado | Mejoras | Mapa.
 - [ ] Ads recompensados **stub** (sin SDK real aún) y límites.
 - [ ] Audio mínimo (1 música loop, 6 SFX) + vibración opcional.
 
@@ -318,7 +334,8 @@ res://
 ## 13) Monetización no intrusiva (detallado)
 - **Divisas**: Monedas (soft) y Gemas (hard) visibles en TopBar; `[ + ]` abre Tienda.
 - **IAP**: Google Play Billing (stub). SKUs como `gems_120`, `gems_650`, `gems_1400`.
-- **Boosters**: x2 valor 5 min, Auto‑fish 15 min → pagables con Gemas **o** **ad recompensado**. Caps: 10 ads/día, cool‑down 10 min.
+- **Tienda expandida**: Paquetes premium, boosters (x2 Valor, x2 XP, QTE Congelado, Mega Suerte), herramientas de progreso (Paquete Monedas, +5 Inventario, Desbloqueo Zona).
+- **Boosters**: x2 valor/XP 5 min, Auto‑fish 15 min → pagables con Gemas **o** **ad recompensado**. Caps: 3 ads/día, cool‑down 10 min.
 - **Cosméticos**: solo visual; sin ventaja de juego.
 - **Política UX**: sin intersticiales forzados; CTAs discretos en Mercado/Mejoras; confirmación en compras; botón **Restaurar**.
 
@@ -332,5 +349,5 @@ res://
 ---
 
 ## 15) Criterio de calidad (gate)
-> Si para añadir pez, zona, herramienta, mejora o ítem de tienda hay que tocar algo fuera de `res://data/**` y los assets en `res://art/**`, **el diseño se considera fallido**.
+> Si para añadir pez, zona, herramienta, mejora o ítem de tienda hay que tocar algo fuera de `res://data/**` y los assets en `res://art/**`, **el diseño se considera fallido**. Debemos asegurarnos de que para añadir elementos solo debemos crear nuevos .tres
 

@@ -1,0 +1,6 @@
+[gd_resource type="Resource" format=3]
+
+entries = [
+	{ "fish": ExtResource("res://data/fish/fish_sardina.tres"), "weight": 60 },
+	{ "fish": ExtResource("res://data/fish/fish_trucha.tres"), "weight": 40 }
+]

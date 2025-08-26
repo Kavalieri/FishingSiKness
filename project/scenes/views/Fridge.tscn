@@ -1,0 +1,142 @@
+[gd_scene format=3]
+
+[node name="Fridge" type="Control"]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.08
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+
+[node name="CapacityLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "Capacidad 7/12"
+size_flags_horizontal = 3
+vertical_alignment = 1
+
+[node name="GemsContainer" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="GemsLabel" type="Label" parent="TopBar/GemsContainer"]
+layout_mode = 2
+text = "💎 120"
+vertical_alignment = 1
+
+[node name="GemsButton" type="Button" parent="TopBar/GemsContainer"]
+layout_mode = 2
+text = "[ + ]"
+custom_minimum_size = Vector2(48, 48)
+
+[node name="SettingsButton" type="Button" parent="TopBar"]
+layout_mode = 2
+text = "[⚙]"
+custom_minimum_size = Vector2(48, 48)
+
+[node name="InventoryArea" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchor_top = 0.08
+anchor_right = 1.0
+anchor_bottom = 0.8
+margin_left = 10.0
+margin_right = -10.0
+
+[node name="InventoryGrid" type="GridContainer" parent="InventoryArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 3
+
+[node name="Fish1" type="Button" parent="InventoryArea/InventoryGrid"]
+layout_mode = 2
+text = "Sardina 12c"
+custom_minimum_size = Vector2(0, 60)
+
+[node name="Fish2" type="Button" parent="InventoryArea/InventoryGrid"]
+layout_mode = 2
+text = "Trucha 20c"
+custom_minimum_size = Vector2(0, 60)
+
+[node name="Fish3" type="Button" parent="InventoryArea/InventoryGrid"]
+layout_mode = 2
+text = "Lubina 30c"
+custom_minimum_size = Vector2(0, 60)
+
+[node name="Fish4" type="Button" parent="InventoryArea/InventoryGrid"]
+layout_mode = 2
+text = "Atún 55c"
+custom_minimum_size = Vector2(0, 60)
+
+[node name="Fish5" type="Button" parent="InventoryArea/InventoryGrid"]
+layout_mode = 2
+text = "Vacío"
+custom_minimum_size = Vector2(0, 60)
+
+[node name="Fish6" type="Button" parent="InventoryArea/InventoryGrid"]
+layout_mode = 2
+text = "Vacío"
+custom_minimum_size = Vector2(0, 60)
+
+[node name="ActionsArea" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchor_top = 0.8
+anchor_right = 1.0
+anchor_bottom = 0.9
+margin_left = 10.0
+margin_right = -10.0
+
+[node name="SellSelectionButton" type="Button" parent="ActionsArea"]
+layout_mode = 2
+text = "VENDER SELECCIÓN"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="SellAllButton" type="Button" parent="ActionsArea"]
+layout_mode = 2
+text = "VENDER TODO"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="BottomTabs" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchor_top = 0.9
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_right = -5.0
+
+[node name="FishingBtn" type="Button" parent="BottomTabs"]
+layout_mode = 2
+text = "🐟 Pescar"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="FridgeBtn" type="Button" parent="BottomTabs"]
+layout_mode = 2
+text = "🧊 Nevera"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="MarketBtn" type="Button" parent="BottomTabs"]
+layout_mode = 2
+text = "🛒 Mercado"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="UpgradesBtn" type="Button" parent="BottomTabs"]
+layout_mode = 2
+text = "⬆ Mejoras"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+
+[node name="MapBtn" type="Button" parent="BottomTabs"]
+layout_mode = 2
+text = "🗺 Mapa"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)

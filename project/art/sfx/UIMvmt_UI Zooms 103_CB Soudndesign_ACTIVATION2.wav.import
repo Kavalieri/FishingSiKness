@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://1f8oe2yu21r8"
+path="res://.godot/imported/UIMvmt_UI Zooms 103_CB Soudndesign_ACTIVATION2.wav-49a1bed46db29aa7088bfed38516efec.sample"
+
+[deps]
+
+source_file="res://art/sfx/UIMvmt_UI Zooms 103_CB Soudndesign_ACTIVATION2.wav"
+dest_files=["res://.godot/imported/UIMvmt_UI Zooms 103_CB Soudndesign_ACTIVATION2.wav-49a1bed46db29aa7088bfed38516efec.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

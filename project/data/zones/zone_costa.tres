@@ -1,0 +1,7 @@
+[gd_resource type="Resource" format=3]
+
+id = "costa"
+name = "Costa"
+price_multiplier = 1.6
+entries = []
+background = ExtResource("res://art/env/desert.png")

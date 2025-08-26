@@ -1,0 +1,40 @@
+[gd_scene format=3]
+[node name="Fishing" type="Control"]
+[node name="TopBar" type="Control" parent="."]
+[node name="CoinsLabel" type="Label" parent="TopBar"]
+text = "Monedas: 12,345"
+[node name="GemsLabel" type="Label" parent="TopBar"]
+text = "💎 120 [ + ]"
+[node name="ZoneLabel" type="Label" parent="TopBar"]
+text = "Zona: Orilla [⚙]"
+[node name="Water" type="ColorRect" parent="."]
+color = Color(0.2,0.5,0.8)
+size_flags_vertical = 3
+[node name="QTEBar" type="VBoxContainer" parent="."]
+[node name="QTELabel" type="Label" parent="QTEBar"]
+text = "[   BARRA QTE   ]"
+[node name="NeedleLabel" type="Label" parent="QTEBar"]
+text = "(aguja)"
+[node name="CastButton" type="Button" parent="."]
+text = "LANZAR"
+[node name="BottomTabs" type="Control" parent="."]
+[node name="FishingBtn" type="Button" parent="BottomTabs"]
+text = "🐟 Pescar"
+[node name="FridgeBtn" type="Button" parent="BottomTabs"]
+text = "🧊 Nevera"
+[node name="MarketBtn" type="Button" parent="BottomTabs"]
+text = "🛒 Mercado"
+[node name="UpgradesBtn" type="Button" parent="BottomTabs"]
+text = "⬆ Mejoras"
+[node name="MapBtn" type="Button" parent="BottomTabs"]
+text = "🗺 Mapa"
+[node name="FishingBadge" type="Label" parent="BottomTabs"]
+text = ""
+[node name="FridgeBadge" type="Label" parent="BottomTabs"]
+text = ""
+[node name="MarketBadge" type="Label" parent="BottomTabs"]
+text = ""
+[node name="UpgradesBadge" type="Label" parent="BottomTabs"]
+text = ""
+[node name="MapBadge" type="Label" parent="BottomTabs"]
+text = ""
