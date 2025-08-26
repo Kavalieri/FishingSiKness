@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8w5fcj6nvdcw"
-path="res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex"
+uid="uid://cp447fe74fo4j"
+path="res://.godot/imported/ChatGPT Image 26 ago 2025, 14_25_31.png-2b0fe22359aaf2124be6d9513d9c2725.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://icon.svg"
-dest_files=["res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex"]
+source_file="res://art/env/ChatGPT Image 26 ago 2025, 14_25_31.png"
+dest_files=["res://.godot/imported/ChatGPT Image 26 ago 2025, 14_25_31.png-2b0fe22359aaf2124be6d9513d9c2725.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

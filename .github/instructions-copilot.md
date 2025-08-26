@@ -33,6 +33,7 @@ Eres un desarrollador profesional de videojuegos en Godot 4.4. Tu trabajo sigue 
 - [Formato .tscn](https://docs.godotengine.org/en/4.4/contributing/development/file_formats/tscn.html)
 - [Style guide GDScript](https://docs.godotengine.org/en/4.4/tutorials/scripting/gdscript/gdscript_styleguide.html)
 - [Importación de imágenes](https://docs.godotengine.org/en/4.4/tutorials/assets_pipeline/importing_images.html)
+- [godot documentation](https://github.com/godotengine/awesome-godot#readme)
 
 ## Documentación y GDD
 - El Game Design Document (GDD) oficial se encuentra en `docs/GDD/GDD_0.1.0.md`. Todo el equipo debe consultarlo y mantenerlo actualizado.

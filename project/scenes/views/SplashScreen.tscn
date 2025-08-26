@@ -1,0 +1,101 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1x2y3z4abc123"]
+
+[ext_resource type="Script" path="res://src/views/SplashScreen.gd" id="1_splash"]
+[ext_resource type="Texture2D" path="res://art/env/main.png" id="2_background"]
+[ext_resource type="Texture2D" path="res://art/logo/logo.png" id="3_logo"]
+
+[node name="SplashScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_splash")
+
+[node name="Background" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("2_background")
+stretch_mode = 2
+
+[node name="MainContainer" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LogoArea" type="Control" parent="MainContainer"]
+anchor_left = 0.0
+anchor_right = 1.0
+anchor_top = 0.0
+anchor_bottom = 0.45
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LogoContainer" type="Control" parent="MainContainer/LogoArea"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -180.0
+offset_right = 400.0
+offset_bottom = 180.0
+
+[node name="LogoTexture" type="TextureRect" parent="MainContainer/LogoArea/LogoContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("3_logo")
+stretch_mode = 5
+expand_mode = 1
+
+[node name="ContentArea" type="Control" parent="MainContainer"]
+anchor_left = 0.0
+anchor_right = 1.0
+anchor_top = 0.45
+anchor_bottom = 0.85
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubtitleContainer" type="Control" parent="MainContainer/ContentArea"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.05
+anchor_bottom = 0.15
+offset_left = -400.0
+offset_right = 400.0
+
+[node name="TipsContainer" type="Control" parent="MainContainer/ContentArea"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.3
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_right = 400.0
+
+[node name="LoadingContainer" type="Control" parent="MainContainer/ContentArea"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.6
+anchor_bottom = 0.8
+offset_left = -300.0
+offset_right = 300.0
+
+[node name="FooterArea" type="Control" parent="MainContainer"]
+anchor_left = 0.0
+anchor_right = 1.0
+anchor_top = 0.85
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SocialContainer" type="Control" parent="MainContainer/FooterArea"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.2
+anchor_bottom = 0.7
+offset_left = -200.0
+offset_right = 200.0
+
+[node name="VersionContainer" type="Control" parent="MainContainer/FooterArea"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.7
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_right = 100.0
