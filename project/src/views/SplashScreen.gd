@@ -149,14 +149,14 @@ func setup_loading(container: Control):
 	vbox.add_child(progress_bar)
 
 func setup_social_buttons(container: Control):
-	"""Botones sociales"""
+	"""Botones sociales - SIN botón de opciones (está en esquina superior)"""
 	var hbox = HBoxContainer.new()
 	hbox.anchor_left = 0.5
 	hbox.anchor_right = 0.5
 	hbox.anchor_top = 0.5
 	hbox.anchor_bottom = 0.5
-	hbox.offset_left = -150
-	hbox.offset_right = 150
+	hbox.offset_left = -100 # Reducido porque hay menos botones
+	hbox.offset_right = 100
 	hbox.offset_top = -20
 	hbox.offset_bottom = 20
 	hbox.add_theme_constant_override("separation", 20)
@@ -173,17 +173,19 @@ func setup_social_buttons(container: Control):
 	twitter_button.custom_minimum_size = Vector2(80, 40)
 	hbox.add_child(twitter_button)
 
-	options_button = Button.new()
-	options_button.text = "Opciones"
-	options_button.custom_minimum_size = Vector2(80, 40)
-	hbox.add_child(options_button)
+	# Botón de opciones ELIMINADO - solo está en la esquina superior derecha
 
 func setup_version(container: Control):
-	"""Información de versión"""
+	"""Información de versión centrada"""
 	var vbox = VBoxContainer.new()
+	vbox.anchor_left = 0.0
 	vbox.anchor_right = 1.0
-	vbox.anchor_bottom = 1.0
+	vbox.anchor_top = 0.5
+	vbox.anchor_bottom = 0.5
+	vbox.offset_top = -30.0
+	vbox.offset_bottom = 30.0
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 8)
 	container.add_child(vbox)
 
 	version_label = Label.new()
@@ -321,7 +323,14 @@ func setup_options_button():
 	print("✅ Botón de opciones configurado en esquina superior derecha")
 
 func _on_options_pressed():
-	"""Manejar clic en botón de opciones"""
-	print("🔧 Botón de opciones presionado - NO iniciar juego")
-	# TODO: Abrir menú de opciones aquí
-	# Por ahora solo mostrar un mensaje sin continuar al juego
+	"""Manejar clic en botón de opciones - abrir menú de configuración"""
+	print("🔧 Abriendo menú de opciones desde splash screen")
+
+	# Cargar directamente SettingsMenu (más simple y confiable)
+	var SettingsMenuClass = preload("res://src/views/SettingsMenu.gd")
+	var settings_menu = SettingsMenuClass.new()
+
+	# Agregar al árbol de escena para que sea visible
+	get_tree().root.add_child(settings_menu)
+
+	print("✅ Menú de opciones abierto desde splash screen")
