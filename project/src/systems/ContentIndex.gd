@@ -33,10 +33,10 @@ func load_all():
 						catalogs[key].append(res)
 						# Validación mínima por tipo
 						if key == "fish":
-							if not res.has_method("get_id") and not res.has("id"):
+							if not res.has_method("get_id") and res.get("id") == null:
 								log_msgs.append("[WARN] FishDef sin id: %s" % file)
 						if key == "zones":
-							if not res.has("id") or not res.has("price_multiplier"):
+							if res.get("id") == null or res.get("price_multiplier") == null:
 								log_msgs.append("[WARN] ZoneDef incompleto: %s" % file)
 						# Se pueden añadir más validaciones por tipo
 					else:
