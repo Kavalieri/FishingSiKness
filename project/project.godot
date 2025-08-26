@@ -26,6 +26,7 @@ Logger="*res://src/autoload/Logger.gd"
 Experience="*res://src/autoload/Experience.gd"
 SkillTree="*res://src/autoload/SkillTree.gd"
 BackgroundManager="*res://src/autoload/BackgroundManager.gd"
+FloatingWindowManager="*res://src/autoload/FloatingWindowManager.gd"
 
 [display]
 

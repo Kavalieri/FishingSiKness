@@ -124,20 +124,21 @@ func _on_level_button_clicked():
 	show_milestones_panel()
 
 func show_store():
-	"""Mostrar tienda de gemas - NUEVO MENÚ ESTANDARIZADO"""
+	"""Mostrar tienda de gemas - SISTEMA ANTERIOR FUNCIONAL"""
+	print("ScreenManager: Mostrando tienda...")
+
+	# Cerrar tienda anterior si existe
 	if store_view:
 		store_view.queue_free()
+		store_view = null
 
-	# Crear nueva instancia usando clase BaseFloatingMenu
+	# Usar el sistema anterior que funciona
 	var StoreViewClass = preload("res://src/views/StoreView.gd")
 	store_view = StoreViewClass.new()
 	store_view.close_requested.connect(_on_store_closed)
-
-	# Asegurar máxima visibilidad
 	store_view.z_index = 100
 	get_tree().root.add_child(store_view)
-
-	print("✅ StoreView estandarizado mostrado")
+	print("✅ StoreView mostrado (sistema anterior funcional)")
 
 func show_pause_menu():
 	"""Mostrar menú de pausa - NUEVO MENÚ ESTANDARIZADO"""
