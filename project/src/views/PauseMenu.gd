@@ -1,5 +1,5 @@
 class_name PauseMenu
-extends Control
+extends BaseFloatingMenu
 
 signal resume_requested()
 signal save_and_exit_requested()
@@ -8,15 +8,13 @@ signal save_manager_requested()
 
 var main_panel: PanelContainer
 
-func _ready():
+func setup_menu():
+	"""Configurar interfaz del menú de pausa"""
+	name = "PauseMenu"
+
 	setup_ui()
 
 func setup_ui():
-	# Fondo de menú flotante usando BackgroundManager
-	if BackgroundManager:
-		BackgroundManager.setup_menu_background(self)
-		print("✅ Fondo de menú configurado en PauseMenu")
-
 	# Panel principal (centrado dinámicamente)
 	main_panel = PanelContainer.new()
 	add_child(main_panel)

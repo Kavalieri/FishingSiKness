@@ -1,21 +1,19 @@
 class_name MilestonesPanel
-extends Control
+extends BaseFloatingMenu
 
 signal close_requested()
 
 var main_panel: PanelContainer
 var milestones_container: VBoxContainer
 
-func _ready():
+func setup_menu():
+	"""Configurar interfaz del panel de hitos"""
+	name = "MilestonesPanel"
+
 	setup_ui()
 	refresh_display()
 
 func setup_ui():
-	# Fondo de menú flotante usando BackgroundManager
-	if BackgroundManager:
-		BackgroundManager.setup_menu_background(self)
-		print("✅ Fondo de menú configurado en MilestonesPanel")
-
 	# Panel principal centrado (centrado dinámicamente)
 	main_panel = PanelContainer.new()
 	main_panel.z_index = 1

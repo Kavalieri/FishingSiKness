@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhwbwwqvfxcaj"]
+
+[ext_resource type="Script" path="res://tests/integration/test_floating_menus.gd" id="1_fvjrm"]
+
+[node name="TestFloatingMenus" type="Node"]
+script = ExtResource("1_fvjrm")

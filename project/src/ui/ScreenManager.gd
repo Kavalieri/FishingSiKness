@@ -1,14 +1,6 @@
 class_name ScreenManager
 extends Control
 
-# Recursos precargados
-# Precargar escenas en lugar de clases
-const UnifiedMenuScene = preload("res://scenes/views/UnifiedMenu.tscn")
-const StoreViewScene = preload("res://scenes/views/StoreView.tscn")
-const InventoryPanelScene = preload("res://scenes/ui/InventoryPanel.tscn")
-const FishInfoPanelClass = preload("res://src/ui/FishInfoPanel.gd")
-const SpeciesLegendPanelClass = preload("res://src/ui/SpeciesLegendPanel.gd")
-
 # Enums para las pestañas (orden: Pescar, Mercado, Mejoras, Mapa, Prestigio)
 enum Tab {
 	FISHING = 0,
@@ -17,6 +9,15 @@ enum Tab {
 	MAP = 3,
 	PRESTIGE = 4
 }
+
+# Recursos precargados
+# Precargar escenas en lugar de clases
+const UnifiedMenuScene = preload("res://scenes/views/UnifiedMenu.tscn")
+const StoreViewScene = preload("res://scenes/views/StoreView.tscn")
+const InventoryPanelScene = preload("res://scenes/ui/InventoryPanel.tscn")
+const FishInfoPanelClass = preload("res://src/ui/FishInfoPanel.gd")
+const SpeciesLegendPanelClass = preload("res://src/ui/SpeciesLegendPanel.gd")
+const FishCardMenuClass = preload("res://src/ui/FishCardMenu.gd")
 
 var views = {}
 var current_tab = Tab.FISHING
@@ -192,7 +193,7 @@ func show_milestones_panel():
 	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
 	get_tree().root.add_child(milestones_panel)
 
-func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO"):
+func show_inventory(allow_selling: bool = true, _title: String = "🧊 INVENTARIO"):
 	if inventory_panel:
 		inventory_panel.queue_free()
 
@@ -244,6 +245,25 @@ func show_inventory_discard_mode():
 	inventory_panel.z_index = 100
 	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
 	get_tree().root.add_child(inventory_panel)
+
+func show_fish_card(fish_data: Dictionary):
+	"""Mostrar tarjeta de captura de pez - NUEVO MENÚ FLOTANTE ESTANDARIZADO"""
+	var fish_card = FishCardMenuClass.new(fish_data)
+
+	# Conectar señal de cierre
+	fish_card.card_closed.connect(_on_fish_card_closed.bind(fish_card))
+
+	# Asegurar máxima visibilidad
+	fish_card.z_index = 120 # Por encima de otros menús
+	get_tree().root.add_child(fish_card)
+
+	# Log para debugging
+	print("ScreenManager: Showing fish card for ", fish_data.get("name", "Unknown Fish"))
+
+func _on_fish_card_closed(card_instance: Control):
+	"""Cerrar tarjeta de captura"""
+	if is_instance_valid(card_instance):
+		card_instance.queue_free()
 
 func _on_store_closed():
 	if store_view:

@@ -1,19 +1,7 @@
 class_name StoreView
-extends ColorRect
+extends BaseFloatingMenu
 
 signal close_requested()
-
-# UI references (se conectan automáticamente desde la escena)
-@onready var store_container: VBoxContainer = $StoreContainer
-@onready var coins_label: Label = $StoreContainer/CurrencyContainer/CoinsLabel
-@onready var gems_label: Label = $StoreContainer/CurrencyContainer/GemsLabel
-@onready var store_items_container: VBoxContainer = $StoreContainer/StoreScrollContainer/StoreItemsContainer
-@onready var close_button: Button = $StoreContainer/HeaderContainer/CloseButton
-
-func _ready():
-	# Conectar señales de los botones
-	if close_button:
-		close_button.pressed.connect(_on_close_pressed)
 
 # Productos de la tienda
 var store_items = [
@@ -68,6 +56,76 @@ var store_items = [
 		"icon": "💰"
 	}
 ]
+
+# UI references
+var store_container: VBoxContainer
+var coins_label: Label
+var gems_label: Label
+var store_items_container: VBoxContainer
+var close_button: Button
+
+func setup_menu():
+	"""Configurar interfaz de la tienda"""
+	name = "StoreView"
+
+	# Crear contenedor principal
+	store_container = VBoxContainer.new()
+	store_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	store_container.offset_left = 20
+	store_container.offset_top = 20
+	store_container.offset_right = -20
+	store_container.offset_bottom = -20
+	add_child(store_container)
+
+	create_store_ui()
+
+func create_store_ui():
+	"""Crear la interfaz de la tienda"""
+	# Header con título y botón cerrar
+	var header_container = HBoxContainer.new()
+	store_container.add_child(header_container)
+
+	var title_label = Label.new()
+	title_label.text = "💎 TIENDA DE GEMAS"
+	title_label.add_theme_font_size_override("font_size", 24)
+	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header_container.add_child(title_label)
+
+	close_button = Button.new()
+	close_button.text = "✕"
+	close_button.custom_minimum_size = Vector2(40, 40)
+	close_button.pressed.connect(_on_close_pressed)
+	header_container.add_child(close_button)
+
+	# Separador
+	var separator = HSeparator.new()
+	store_container.add_child(separator)
+
+	# Container de monedas
+	var currency_container = HBoxContainer.new()
+	store_container.add_child(currency_container)
+
+	coins_label = Label.new()
+	coins_label.text = "🪙 0"
+	coins_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	currency_container.add_child(coins_label)
+
+	gems_label = Label.new()
+	gems_label.text = "💎 0"
+	gems_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	currency_container.add_child(gems_label)
+
+	# Scroll container para items
+	var store_scroll_container = ScrollContainer.new()
+	store_scroll_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	store_container.add_child(store_scroll_container)
+
+	store_items_container = VBoxContainer.new()
+	store_scroll_container.add_child(store_items_container)
+
+	# Actualizar display
+	update_currency_display()
+	populate_store_items()
 
 func refresh_display():
 	if not store_container:

@@ -1,5 +1,5 @@
 class_name SettingsMenu
-extends Control
+extends BaseFloatingMenu
 
 signal resume_requested()
 signal save_manager_requested()
@@ -7,15 +7,13 @@ signal settings_closed()
 
 var main_panel: PanelContainer
 
-func _ready():
+func setup_menu():
+	"""Configurar interfaz del menú de configuración"""
+	name = "SettingsMenu"
+
 	setup_ui()
 
 func setup_ui():
-	# Fondo de menú flotante usando BackgroundManager
-	if BackgroundManager:
-		BackgroundManager.setup_menu_background(self)
-		print("✅ Fondo de menú configurado en SettingsMenu")
-
 	# Panel principal
 	main_panel = PanelContainer.new()
 	main_panel.anchor_left = 0.2

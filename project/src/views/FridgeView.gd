@@ -1,26 +1,25 @@
-# FridgeView archivado (eliminado del diseño vertical de 4 pestañas)
-extends Control
+# FridgeView - Gestión de inventario como menú flotante estandarizado
+extends BaseFloatingMenu
 
-func _ready():
-	setup_background()
+func setup_menu():
+	"""Configurar interfaz de la nevera/inventario"""
+	name = "FridgeView"
+
 	setup_ui()
-
-func setup_background():
-	"""Configurar fondo principal usando BackgroundManager"""
-	if BackgroundManager:
-		BackgroundManager.setup_main_background(self)
-		print("✅ Fondo principal configurado en FridgeView")
-	else:
-		print("⚠️ BackgroundManager no disponible en FridgeView")
+	refresh_display()
 
 func refresh_display():
-	# Actualizar info del inventario
+	"""Actualizar info del inventario"""
 	var inventory = Save.get_inventory()
 	var max_inventory = Save.game_data.get("max_inventory", 12)
 
 	var info_label = get_node_or_null("MainVBox/InfoLabel")
 	if info_label:
 		info_label.text = "📦 %d/%d peces almacenados" % [inventory.size(), max_inventory]
+
+func setup_background():
+	"""Ya no necesario - BaseFloatingMenu maneja el fondo automáticamente"""
+	return
 
 func setup_ui():
 	# Limpiar hijos existentes
