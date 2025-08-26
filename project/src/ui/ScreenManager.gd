@@ -24,7 +24,7 @@ var current_tab = Tab.FISHING
 # Overlays
 var store_view: StoreView
 var pause_menu: Control # Cambiado de PauseMenu a Control para aceptar UnifiedMenu
-var inventory_panel: InventoryPanel
+var inventory_panel: Control # Cambiado de InventoryPanel a Control para aceptar la escena
 var fish_info_panel: FishInfoPanel
 var species_legend_panel: SpeciesLegendPanel
 var milestones_panel: Control
@@ -198,17 +198,35 @@ func show_inventory(allow_selling: bool = true, title: String = "🧊 INVENTARIO
 
 	# Instanciar escena con fondo negro configurado
 	inventory_panel = InventoryPanelScene.instantiate()
-	inventory_panel.close_requested.connect(_on_inventory_closed)
-	# inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
 
-	if allow_selling:
-		inventory_panel.sell_selected_requested.connect(_on_sell_selected_fish)
-		inventory_panel.sell_all_requested.connect(_on_sell_all_fish)
-		inventory_panel.discard_selected_requested.connect(_on_discard_selected_fish)
-		inventory_panel.discard_all_requested.connect(_on_discard_all_fish)
+	# Verificar que se instanció correctamente
+	if not inventory_panel:
+		push_error("Error: No se pudo instanciar InventoryPanelScene")
+		return
+
+	# Conectar señales con deferred para asegurar inicialización
+	call_deferred("_connect_inventory_signals", inventory_panel, allow_selling)
 
 	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
 	get_tree().root.add_child(inventory_panel)
+
+func _connect_inventory_signals(panel: Control, allow_selling: bool):
+	"""Conectar señales del panel de inventario de forma segura"""
+	if not panel or not is_instance_valid(panel):
+		return
+
+	if panel.has_signal("close_requested"):
+		panel.close_requested.connect(_on_inventory_closed)
+
+	if allow_selling:
+		if panel.has_signal("sell_selected_requested"):
+			panel.sell_selected_requested.connect(_on_sell_selected_fish)
+		if panel.has_signal("sell_all_requested"):
+			panel.sell_all_requested.connect(_on_sell_all_fish)
+		if panel.has_signal("discard_selected_requested"):
+			panel.discard_selected_requested.connect(_on_discard_selected_fish)
+		if panel.has_signal("discard_all_requested"):
+			panel.discard_all_requested.connect(_on_discard_all_fish)
 
 func show_inventory_discard_mode():
 	"""Mostrar inventario en modo descarte para liberar espacio durante la pesca"""

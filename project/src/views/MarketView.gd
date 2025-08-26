@@ -173,6 +173,9 @@ func _on_open_inventory_pressed():
 	if not screen_manager:
 		# Fallback: buscar en current_scene
 		screen_manager = get_tree().current_scene
+		if screen_manager and not screen_manager.has_method("show_inventory"):
+			# Buscar como hijo del current_scene
+			screen_manager = screen_manager.get_node_or_null("ScreenManager")
 
 	if screen_manager and screen_manager.has_method("show_inventory"):
 		screen_manager.show_inventory(true, "🧊 NEVERA - MERCADO")
@@ -181,6 +184,12 @@ func _on_open_inventory_pressed():
 		print("✅ Abriendo nevera desde MarketView")
 	else:
 		print("❌ ERROR: No se pudo encontrar ScreenManager o método show_inventory")
-		print("ScreenManager encontrado: ", screen_manager)
-		if screen_manager:
-			print("Métodos disponibles: ", screen_manager.get_method_list())
+		print("Current scene: ", get_tree().current_scene)
+		print("Current scene name: ", get_tree().current_scene.name if get_tree().current_scene else "null")
+		# Fallback: intentar abrir directamente
+		var direct_manager = get_tree().current_scene
+		if direct_manager and direct_manager.has_method("show_inventory"):
+			direct_manager.show_inventory(true, "🧊 NEVERA - MERCADO")
+			print("✅ Nevera abierta usando fallback directo")
+		else:
+			print("❌ Fallback también falló")

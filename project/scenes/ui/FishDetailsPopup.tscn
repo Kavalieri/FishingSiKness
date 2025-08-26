@@ -1,0 +1,152 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8p4k5q7r9mwz"]
+
+[ext_resource type="Script" path="res://src/ui/FishDetailsPopup.gd" id="1_fishdetails"]
+
+[node name="FishDetailsPopup" type="AcceptDialog"]
+title = "Detalles del Pescado"
+initial_position = 1
+size = Vector2i(400, 500)
+script = ExtResource("1_fishdetails")
+
+[node name="BackgroundPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -50.0
+
+[node name="MainContainer" type="VBoxContainer" parent="BackgroundPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="BackgroundPanel/MainContainer"]
+layout_mode = 2
+
+[node name="FishSprite" type="TextureRect" parent="BackgroundPanel/MainContainer/HeaderContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 80)
+size_flags_horizontal = 4
+stretch_mode = 5
+expand_mode = 2
+clip_contents = true
+
+[node name="TitleContainer" type="VBoxContainer" parent="BackgroundPanel/MainContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FishNameLabel" type="Label" parent="BackgroundPanel/MainContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+text = "Nombre del Pescado"
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+
+[node name="SpeciesLabel" type="Label" parent="BackgroundPanel/MainContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+text = "Categoría de especie"
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+modulate = Color(0.8, 0.8, 0.8, 1)
+
+[node name="HSeparator" type="HSeparator" parent="BackgroundPanel/MainContainer"]
+layout_mode = 2
+
+[node name="StatsContainer" type="VBoxContainer" parent="BackgroundPanel/MainContainer"]
+layout_mode = 2
+
+[node name="PriceContainer" type="HBoxContainer" parent="BackgroundPanel/MainContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="PriceIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/PriceContainer"]
+layout_mode = 2
+text = "💰"
+theme_override_font_sizes/font_size = 18
+
+[node name="PriceLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/PriceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Precio: 0c"
+theme_override_font_sizes/font_size = 16
+
+[node name="SizeContainer" type="HBoxContainer" parent="BackgroundPanel/MainContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="SizeIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/SizeContainer"]
+layout_mode = 2
+text = "📏"
+theme_override_font_sizes/font_size = 18
+
+[node name="SizeLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/SizeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tamaño: 0.0cm"
+theme_override_font_sizes/font_size = 16
+
+[node name="ZoneContainer" type="HBoxContainer" parent="BackgroundPanel/MainContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="ZoneIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/ZoneContainer"]
+layout_mode = 2
+text = "📍"
+theme_override_font_sizes/font_size = 18
+
+[node name="ZoneLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/ZoneContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Zona: Desconocida"
+theme_override_font_sizes/font_size = 16
+
+[node name="TimestampContainer" type="HBoxContainer" parent="BackgroundPanel/MainContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="TimestampIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/TimestampContainer"]
+layout_mode = 2
+text = "⏰"
+theme_override_font_sizes/font_size = 18
+
+[node name="TimestampLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/TimestampContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Capturado: Desconocido"
+theme_override_font_sizes/font_size = 16
+
+[node name="BonusContainer" type="HBoxContainer" parent="BackgroundPanel/MainContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="BonusIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/BonusContainer"]
+layout_mode = 2
+text = "✨"
+theme_override_font_sizes/font_size = 18
+
+[node name="BonusLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/BonusContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bonus zona: x1.0"
+theme_override_font_sizes/font_size = 16
+
+[node name="HSeparator2" type="HSeparator" parent="BackgroundPanel/MainContainer"]
+layout_mode = 2
+
+[node name="DescriptionContainer" type="VBoxContainer" parent="BackgroundPanel/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DescriptionTitle" type="Label" parent="BackgroundPanel/MainContainer/DescriptionContainer"]
+layout_mode = 2
+text = "📋 Descripción"
+theme_override_font_sizes/font_size = 16
+
+[node name="DescriptionLabel" type="Label" parent="BackgroundPanel/MainContainer/DescriptionContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Descripción del pescado..."
+autowrap_mode = 2
+vertical_alignment = 1

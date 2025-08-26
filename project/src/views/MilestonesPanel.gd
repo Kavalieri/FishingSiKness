@@ -26,6 +26,8 @@ func setup_ui():
 	# Panel principal centrado (centrado dinámicamente)
 	main_panel = PanelContainer.new()
 	main_panel.z_index = 1
+	# Asegurar que el panel también tenga fondo opaco
+	main_panel.add_theme_color_override("bg_color", Color(0.15, 0.15, 0.15, 1.0))
 	add_child(main_panel)
 
 	# Centrado dinámico en _ready
@@ -363,8 +365,10 @@ func _center_panel(panel: PanelContainer):
 	panel.size = panel_size
 	panel.position = (viewport_size - panel_size) / 2
 
-	# Hacer el panel semi-transparente para que se vea el fondo
+	# Hacer el panel completamente opaco
 	panel.modulate = Color(1, 1, 1, 1.0) # 100% opaco
+	# Forzar fondo del panel
+	panel.add_theme_color_override("bg_color", Color(0.15, 0.15, 0.15, 1.0))
 
 	# Asegurar que está visible
 	panel.show()

@@ -1,4 +1,4 @@
-class_name UnifiedMenu
+# Backup de UnifiedMenu (no usar class_name para evitar conflictos)
 extends ColorRect
 
 # Señales para comunicación con el sistema principal
@@ -326,13 +326,14 @@ func create_game_info_section(parent: VBoxContainer):
 
 # === CALLBACKS DE EVENTOS ===
 
-func _on_pause_button_pressed(action: String):
-	"""Manejar botones del menú de pausa"""
-	if SFX:
-		SFX.play_event("click")
-
-	match action:
-		"resume":
+# FUNCIÓN DUPLICADA COMENTADA - usar la anterior
+#func _on_pause_button_pressed(action: String):
+#	"""Manejar botones del menú de pausa"""
+#	if SFX:
+#		SFX.play_event("click")
+#
+#	match action:
+#		"resume":
 			emit_signal("resume_requested")
 			_close_menu()
 		"settings":

@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxn8p5q7r2mwv"]
+
+[ext_resource type="Script" path="res://src/ui/FishCard.gd" id="1_fishcard"]
+
+[node name="FishCard" type="Control"]
+custom_minimum_size = Vector2(180, 200)
+layout_mode = 2
+script = ExtResource("1_fishcard")
+
+[node name="CardBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="FishSprite" type="TextureRect" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 100)
+size_flags_vertical = 3
+stretch_mode = 5
+expand_mode = 1
+
+[node name="InfoContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="FishName" type="Label" parent="MainContainer/InfoContainer"]
+layout_mode = 2
+text = "Pescado"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+clip_contents = true
+
+[node name="FishCount" type="Label" parent="MainContainer/InfoContainer"]
+layout_mode = 2
+text = "0c"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SelectCheckBox" type="CheckBox" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 4

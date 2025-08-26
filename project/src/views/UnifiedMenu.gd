@@ -1,4 +1,4 @@
-class_name UnifiedMenu
+class_name UnifiedMenuMain
 extends ColorRect
 
 # Señales para comunicación con el sistema principal

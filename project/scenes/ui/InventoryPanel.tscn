@@ -14,10 +14,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 10.0
+offset_top = 80.0
+offset_right = -10.0
+offset_bottom = -80.0
 
 [node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
@@ -35,11 +35,15 @@ text = "X"
 [node name="FishScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="FishGridContainer" type="GridContainer" parent="MainContainer/FishScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 0
 columns = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
 
 [node name="ActionsContainer" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2

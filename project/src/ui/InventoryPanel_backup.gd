@@ -1,4 +1,4 @@
-class_name InventoryPanel
+# Backup de InventoryPanel (no usar class_name para evitar conflictos)
 extends ColorRect
 
 signal fish_selected(fish_index: int)
@@ -143,11 +143,12 @@ func refresh_display():
 		discard_all_btn.pressed.connect(_on_discard_all_pressed)
 		discard_row.add_child(discard_all_btn)
 
-func refresh_display():
-	if not inventory_grid or not info_container:
-		return
-
-	# Limpiar grid anterior
+# FUNCIÓN DUPLICADA COMENTADA - usar la anterior
+#func refresh_display():
+#	if not inventory_grid or not info_container:
+#		return
+#
+#	# Limpiar grid anterior
 	for child in inventory_grid.get_children():
 		child.queue_free()
 
