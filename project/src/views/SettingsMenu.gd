@@ -11,7 +11,15 @@ func _ready():
 	setup_ui()
 
 func setup_ui():
-	# Fondo semi-transparente
+	# Fondo de menú flotante usando BackgroundManager
+	if BackgroundManager:
+		BackgroundManager.setup_menu_background(self)
+		print("✅ Fondo de menú configurado en SettingsMenu")
+	else:
+		setup_fallback_background()
+
+func setup_fallback_background():
+	"""Fondo fallback si BackgroundManager no está disponible"""
 	var background = ColorRect.new()
 	background.color = Color(0, 0, 0, 0.8)
 	background.anchor_right = 1.0

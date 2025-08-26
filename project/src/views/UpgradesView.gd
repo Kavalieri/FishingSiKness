@@ -33,8 +33,17 @@ var available_upgrades = [
 ]
 
 func _ready():
+	setup_background()
 	setup_ui()
 	refresh_display()
+
+func setup_background():
+	"""Configurar fondo principal usando BackgroundManager"""
+	if BackgroundManager:
+		BackgroundManager.setup_main_background(self)
+		print("✅ Fondo principal configurado en UpgradesView")
+	else:
+		print("⚠️ BackgroundManager no disponible en UpgradesView")
 
 func setup_ui():
 	var main_vbox = VBoxContainer.new()

@@ -11,17 +11,23 @@ func _ready():
 	refresh_display()
 
 func setup_ui():
-	# FONDO COMPLETAMENTE OPACO - MÉTODO DIRECTO
+	# Fondo de menú flotante usando BackgroundManager
+	if BackgroundManager:
+		BackgroundManager.setup_menu_background(self)
+		print("✅ Fondo de menú configurado en MilestonesPanel")
+	else:
+		setup_fallback_background()
+
+func setup_fallback_background():
+	"""Fondo fallback si BackgroundManager no está disponible"""
 	var opaque_bg = ColorRect.new()
 	opaque_bg.color = Color.BLACK # Negro puro 100% opaco
 	opaque_bg.anchor_right = 1.0
 	opaque_bg.anchor_bottom = 1.0
 	opaque_bg.mouse_filter = Control.MOUSE_FILTER_STOP
 	opaque_bg.z_index = -1
-	add_child(opaque_bg)
-
-	# Evento para cerrar al hacer click en fondo
 	opaque_bg.gui_input.connect(_on_background_clicked)
+	add_child(opaque_bg)
 
 	# Panel principal centrado (centrado dinámicamente)
 	main_panel = PanelContainer.new()

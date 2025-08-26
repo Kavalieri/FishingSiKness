@@ -25,6 +25,18 @@ func _ready():
 	# Configurar el popup para que se cierre al hacer clic fuera o presionar escape
 	close_requested.connect(_on_close_requested)
 
+	# Configurar fondo de tarjeta de pez
+	setup_fishcard_background()
+
+func setup_fishcard_background():
+	"""Configurar fondo específico para tarjetas de pez"""
+	var background_panel = $BackgroundPanel
+	if background_panel and BackgroundManager:
+		BackgroundManager.setup_fishcard_background(background_panel)
+		print("✅ Fondo de tarjeta de pez configurado")
+	else:
+		print("⚠️ No se pudo configurar fondo de tarjeta de pez")
+
 func show_fish_details(fish_def: FishDef, capture_data: Dictionary):
 	"""Mostrar los detalles completos del pescado en el popup"""
 	if not fish_def or capture_data.is_empty():

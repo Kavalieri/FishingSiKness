@@ -25,6 +25,7 @@ SFX="*res://src/autoload/SFX.gd"
 Logger="*res://src/autoload/Logger.gd"
 Experience="*res://src/autoload/Experience.gd"
 SkillTree="*res://src/autoload/SkillTree.gd"
+BackgroundManager="*res://src/autoload/BackgroundManager.gd"
 
 [display]
 

@@ -12,7 +12,15 @@ func _ready():
 	update_display()
 
 func setup_prestige_ui():
-	# FONDO COMPLETAMENTE OPACO - MÉTODO DIRECTO
+	# Configurar fondo de menú usando BackgroundManager
+	if BackgroundManager:
+		BackgroundManager.setup_main_background(self)
+		print("✅ Fondo principal configurado en PrestigeView")
+	else:
+		setup_fallback_background()
+
+func setup_fallback_background():
+	"""Fondo fallback si BackgroundManager no está disponible"""
 	var opaque_bg = ColorRect.new()
 	opaque_bg.color = Color.BLACK # Negro puro 100% opaco
 	opaque_bg.anchor_right = 1.0

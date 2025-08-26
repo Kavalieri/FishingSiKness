@@ -49,8 +49,42 @@ var expert_tips = [
 ]
 
 func _ready():
+	setup_splash_background()
 	setup_ui_from_scene()
 	start_loading()
+
+func setup_splash_background():
+	"""Configurar fondo splash con BackgroundManager"""
+	if BackgroundManager:
+		BackgroundManager.setup_splash_background(self)
+		print("✅ Fondo splash configurado con BackgroundManager")
+	else:
+		print("⚠️ BackgroundManager no disponible, usando fallback")
+		setup_fallback_background()
+
+func setup_fallback_background():
+	"""Fondo fallback si BackgroundManager no está disponible"""
+	var background = TextureRect.new()
+	background.name = "Background"
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+
+	var splash_texture = load("res://art/env/splash.png")
+	if splash_texture:
+		background.texture = splash_texture
+	else:
+		var color_bg = ColorRect.new()
+		color_bg.name = "Background"
+		color_bg.anchor_right = 1.0
+		color_bg.anchor_bottom = 1.0
+		color_bg.color = Color(0.05, 0.15, 0.35)
+		add_child(color_bg)
+		return
+
+	add_child(background)
+	move_child(background, 0) # Mover al fondo
 
 func setup_ui_from_scene():
 	"""Configurar UI usando SOLO nodos del .tscn - versión limpia"""

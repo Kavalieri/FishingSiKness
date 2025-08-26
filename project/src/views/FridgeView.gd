@@ -2,7 +2,16 @@
 extends Control
 
 func _ready():
+	setup_background()
 	setup_ui()
+
+func setup_background():
+	"""Configurar fondo principal usando BackgroundManager"""
+	if BackgroundManager:
+		BackgroundManager.setup_main_background(self)
+		print("✅ Fondo principal configurado en FridgeView")
+	else:
+		print("⚠️ BackgroundManager no disponible en FridgeView")
 
 func refresh_display():
 	# Actualizar info del inventario

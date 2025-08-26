@@ -13,4 +13,4 @@ id = "costa"
 name = "Costa"
 price_multiplier = 1.6
 entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
-background = "res://art/env/desert.png"
+background = "res://art/env/beach.png"

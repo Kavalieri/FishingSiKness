@@ -86,13 +86,11 @@ layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.6
 
-[node name="WaterLabel" type="Label" parent="ScreenContainer/FishingView/WaterArea"]
+[node name="VisualEffectsLayer" type="Control" parent="ScreenContainer/FishingView/WaterArea"]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "~ Agua animada ~"
-horizontal_alignment = 1
-vertical_alignment = 1
+mouse_filter = 2
 
 [node name="GameplayArea" type="VBoxContainer" parent="ScreenContainer/FishingView"]
 layout_mode = 1

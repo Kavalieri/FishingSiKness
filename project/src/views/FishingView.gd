@@ -843,26 +843,56 @@ func _on_visibility_changed():
 		update_zone_background()
 
 func update_zone_background():
-	"""Actualizar el fondo basado en la zona actual"""
-	if not background_node or not Save or not Content:
+	"""Actualizar el fondo basado en la zona actual usando BackgroundManager"""
+	if not background_node or not Save:
 		return
 
 	var current_zone_id = Save.game_data.get("current_zone", "orilla")
-	var zone_def = Content.get_zone_by_id(current_zone_id)
 
+	if BackgroundManager:
+		BackgroundManager.setup_zone_background(self, current_zone_id)
+		print("✅ Fondo de zona actualizado:", current_zone_id)
+	else:
+		# Fallback manual si BackgroundManager no está disponible
+		setup_fallback_zone_background(current_zone_id)
+
+func setup_fallback_zone_background(zone_id: String):
+	"""Fallback para fondo de zona sin BackgroundManager"""
+	if not Content:
+		setup_color_background(zone_id)
+		return
+
+	var zone_def = Content.get_zone_by_id(zone_id)
 	if zone_def and zone_def.background:
-		# Si el fondo es una imagen, convertir ColorRect a TextureRect
-		if background_node is ColorRect and zone_def.background != "":
-			setup_texture_background(zone_def.background)
-		elif background_node is TextureRect:
-			var texture = load(zone_def.background)
-			if texture:
+		var texture = load(zone_def.background)
+		if texture:
+			# Convertir ColorRect a TextureRect si es necesario
+			if background_node is ColorRect:
+				var parent = background_node.get_parent()
+				var old_index = background_node.get_index()
+
+				background_node.queue_free()
+
+				var new_background = TextureRect.new()
+				new_background.name = "Background"
+				new_background.layout_mode = 1
+				new_background.anchor_right = 1.0
+				new_background.anchor_bottom = 1.0
+				new_background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+				new_background.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+				new_background.texture = texture
+
+				parent.add_child(new_background)
+				parent.move_child(new_background, old_index)
+				background_node = new_background
+			elif background_node is TextureRect:
 				background_node.texture = texture
 				background_node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 				background_node.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		else:
+			setup_color_background(zone_id)
 	else:
-		# Fallback a color sólido si no hay imagen
-		setup_color_background(current_zone_id)
+		setup_color_background(zone_id)
 
 func setup_texture_background(background_path: String):
 	"""Convertir ColorRect a TextureRect para mostrar imagen"""

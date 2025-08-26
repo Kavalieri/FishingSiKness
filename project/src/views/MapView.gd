@@ -9,8 +9,17 @@ var zone_info_panel: PanelContainer
 var zone_info_container: VBoxContainer
 
 func _ready():
+	setup_background()
 	setup_ui()
 	refresh_display()
+
+func setup_background():
+	"""Configurar fondo principal usando BackgroundManager"""
+	if BackgroundManager:
+		BackgroundManager.setup_main_background(self)
+		print("✅ Fondo principal configurado en MapView")
+	else:
+		print("⚠️ BackgroundManager no disponible en MapView")
 
 func setup_ui():
 	var main_vbox = VBoxContainer.new()
