@@ -36,16 +36,16 @@ var current_step := 0
 
 # Tips de experto
 var expert_tips = [
-	"💡 Tip de Experto: Los peces más raros se encuentran en aguas profundas",
-	"⚡ Consejo Pro: Mejora tu equipo para acceder a nuevas zonas",
-	"🎯 Experto: Domina el QTE para capturas perfectas",
-	"💰 Pro-tip: Los multiplicadores de zona maximizan tus ganancias",
-	"🌟 Maestro: Las rarezas legendarias pueden valer hasta 10x más",
-	"🎣 Experto: Cada zona tiene especies únicas que descubrir",
-	"💎 Consejo: Las gemas desbloquean mejoras especiales",
-	"🚀 Pro: Las zonas avanzadas tienen mejores recompensas",
-	"🔥 Maestro: La zona Infernal es para pescadores expertos",
-	"⭐ Tip: Tu experiencia crece con cada captura exitosa"
+	"💡 Tip de Experto\nLos peces más raros se encuentran en aguas profundas",
+	"⚡ Consejo Pro\nMejora tu equipo para acceder a nuevas zonas",
+	"🎯 Experto\nDomina el QTE para capturas perfectas",
+	"💰 Pro-tip\nLos multiplicadores de zona maximizan tus ganancias",
+	"🌟 Maestro\nLas rarezas legendarias pueden valer hasta 10x más",
+	"🎣 Experto\nCada zona tiene especies únicas que descubrir",
+	"💎 Consejo\nLas gemas desbloquean mejoras especiales",
+	"🚀 Pro\nLas zonas avanzadas tienen mejores recompensas",
+	"🔥 Maestro\nLa zona Infernal es para pescadores expertos",
+	"⭐ Tip\nTu experiencia crece con cada captura exitosa"
 ]
 
 func _ready():
@@ -187,14 +187,14 @@ func setup_version(container: Control):
 	container.add_child(vbox)
 
 	version_label = Label.new()
-	version_label.text = "v1.0.0"
+	version_label.text = "Fishing SiKness v0.1.0 pre-release alpha"
 	version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	version_label.add_theme_font_size_override("font_size", 16) # Aumentado de 12 a 16
 	version_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.8))
 	vbox.add_child(version_label)
 
 	license_label = Label.new()
-	license_label.text = "GNU GPL v3.0"
+	license_label.text = "© 2025 Kava - SiK Studio | Hecho 100% con Agentes IA | GNU GPL v3.0"
 	license_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	license_label.add_theme_font_size_override("font_size", 14) # Aumentado de 10 a 14
 	license_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.7))

@@ -1,0 +1,33 @@
+{
+    "game": {
+        "name": "Fishing SiKness",
+        "version": "0.1.0",
+        "status": "pre-release alpha",
+        "build_number": 1
+    },
+    "development": {
+        "developer": "Kava",
+        "studio": "SiK Studio",
+        "year": 2025,
+        "ai_powered": true,
+        "ai_description": "Hecho 100% con Agentes IA"
+    },
+    "license": {
+        "type": "GNU GPL v3.0",
+        "url": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "open_source": true
+    },
+    "build": {
+        "timestamp": "2025-08-26",
+        "environment": "development",
+        "godot_version": "4.4.1"
+    },
+    "display": {
+        "splash_footer": {
+            "line1": "{game.name} v{game.version} {game.status}",
+            "line2": "© {development.year} {development.developer} - {development.studio}",
+            "line3": "{development.ai_description}",
+            "line4": "{license.type} - Open Source"
+        }
+    }
+}
