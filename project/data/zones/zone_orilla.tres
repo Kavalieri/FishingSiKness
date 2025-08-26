@@ -1,7 +1,12 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
 
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/zone_orilla_table.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
 id = "orilla"
 name = "Orilla"
 price_multiplier = 1.0
-entries = [ExtResource("res://data/loot_tables/zone_orilla_table.tres")]
-background = ExtResource("res://art/env/beach.png")
+entries = [ExtResource("2")]
+background = "res://art/env/beach.png"

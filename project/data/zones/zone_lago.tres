@@ -1,7 +1,11 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
 
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
 id = "lago"
 name = "Lago"
 price_multiplier = 1.2
 entries = []
-background = ExtResource("res://art/env/forest.png")
+background = "res://art/env/forest.png"

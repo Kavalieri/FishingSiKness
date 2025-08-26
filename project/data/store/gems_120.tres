@@ -1,5 +1,9 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" script_class="StoreItemDef" load_steps=2 format=3]
 
+[ext_resource type="Script" path="res://src/resources/StoreItemDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
 sku = "gems_120"
 kind = "gems_pack"
 title = "120 Gemas"

@@ -1,9 +1,9 @@
-[gd_resource type="ToolDef" script_class="ToolDef" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ToolDef" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://src/resources/ToolDef.gd" id="1_1"]
+[ext_resource type="Script" path="res://src/resources/ToolDef.gd" id="1"]
 
 [resource]
-script = ExtResource("1_1")
+script = ExtResource("1")
 id = "rod_basic"
 tool_type = "rod"
 name = "Caña Básica"

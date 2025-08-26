@@ -1,6 +1,7 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" load_steps=3 format=3]
 
-entries = [
-	{ "fish": ExtResource("res://data/fish/fish_sardina.tres"), "weight": 60 },
-	{ "fish": ExtResource("res://data/fish/fish_trucha.tres"), "weight": 40 }
-]
+[ext_resource type="Resource" path="res://data/fish/fish_sardina.tres" id="1"]
+[ext_resource type="Resource" path="res://data/fish/fish_trucha.tres" id="2"]
+
+[resource]
+entries = Array[Resource]([ExtResource("1"), ExtResource("2")])
