@@ -27,7 +27,10 @@ func setup_ui():
 
 	# Centrado dinámico en _ready
 	call_deferred("_center_panel", main_panel)
+	call_deferred("_setup_panel_content", main_panel)
 
+func _setup_panel_content(main_panel: PanelContainer):
+	"""Configurar el contenido del panel después del centrado"""
 	var main_vbox = VBoxContainer.new()
 	main_vbox.add_theme_constant_override("separation", 20)
 	main_panel.add_child(main_vbox)

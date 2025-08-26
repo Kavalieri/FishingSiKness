@@ -38,7 +38,10 @@ func setup_ui():
 
 	# Centrado dinámico para ocupar toda la pantalla
 	call_deferred("_center_panel_fullscreen", main_panel)
+	call_deferred("_setup_panel_content", main_panel)
 
+func _setup_panel_content(main_panel: PanelContainer):
+	"""Configurar el contenido del panel después del centrado"""
 	var main_vbox = VBoxContainer.new()
 	main_vbox.add_theme_constant_override("separation", 10)
 	# Agregar margen interno

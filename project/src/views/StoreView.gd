@@ -81,57 +81,7 @@ func setup_ui():
 
 	# Centrado dinámico en _ready
 	call_deferred("_center_panel", main_panel)
-
-	var main_vbox = VBoxContainer.new()
-	main_panel.add_child(main_vbox)
-
-	# Header con título y botón cerrar
-	var header = HBoxContainer.new()
-	main_vbox.add_child(header)
-
-	var title = Label.new()
-	title.text = "🏪 TIENDA"
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_font_size_override("font_size", 28)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header.add_child(title)
-
-	var close_button = Button.new()
-	close_button.text = "❌"
-	close_button.custom_minimum_size = Vector2(48, 48)
-	close_button.pressed.connect(_on_close_pressed)
-	header.add_child(close_button)
-
-	# Estado de monedas y gemas
-	var currency_container = HBoxContainer.new()
-	currency_container.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_vbox.add_child(currency_container)
-
-	coins_label = Label.new()
-	coins_label.add_theme_font_size_override("font_size", 20)
-	currency_container.add_child(coins_label)
-
-	var separator = VSeparator.new()
-	separator.custom_minimum_size.x = 20
-	currency_container.add_child(separator)
-
-	gems_label = Label.new()
-	gems_label.add_theme_font_size_override("font_size", 20)
-	currency_container.add_child(gems_label)
-
-	# Separador
-	var hsep = HSeparator.new()
-	hsep.custom_minimum_size.y = 10
-	main_vbox.add_child(hsep)
-
-	# Scroll container para productos
-	var scroll = ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(scroll)
-
-	store_container = VBoxContainer.new()
-	store_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(store_container)
+	call_deferred("_setup_panel_content", main_panel)
 
 func refresh_display():
 	if not store_container:
@@ -281,6 +231,59 @@ func _input(event):
 	# Permitir cerrar con ESC
 	if event.is_action_pressed("ui_cancel"):
 		emit_signal("close_requested")
+
+func _setup_panel_content(main_panel: PanelContainer):
+	"""Configurar el contenido del panel después del centrado"""
+	var main_vbox = VBoxContainer.new()
+	main_panel.add_child(main_vbox)
+
+	# Header con título y botón cerrar
+	var header = HBoxContainer.new()
+	main_vbox.add_child(header)
+
+	var title = Label.new()
+	title.text = "🏪 TIENDA"
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.add_theme_font_size_override("font_size", 28)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_child(title)
+
+	var close_button = Button.new()
+	close_button.text = "❌"
+	close_button.custom_minimum_size = Vector2(48, 48)
+	close_button.pressed.connect(_on_close_pressed)
+	header.add_child(close_button)
+
+	# Estado de monedas y gemas
+	var currency_container = HBoxContainer.new()
+	currency_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	main_vbox.add_child(currency_container)
+
+	coins_label = Label.new()
+	coins_label.add_theme_font_size_override("font_size", 20)
+	currency_container.add_child(coins_label)
+
+	var separator = VSeparator.new()
+	separator.custom_minimum_size.x = 20
+	currency_container.add_child(separator)
+
+	gems_label = Label.new()
+	gems_label.add_theme_font_size_override("font_size", 20)
+	currency_container.add_child(gems_label)
+
+	# Separador
+	var hsep = HSeparator.new()
+	hsep.custom_minimum_size.y = 10
+	main_vbox.add_child(hsep)
+
+	# Scroll container para productos
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_vbox.add_child(scroll)
+
+	store_container = VBoxContainer.new()
+	store_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(store_container)
 
 func _center_panel(panel: PanelContainer):
 	"""Centrar el panel dinámicamente en la pantalla"""
