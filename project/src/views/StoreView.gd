@@ -69,29 +69,6 @@ var store_items = [
 	}
 ]
 
-func _ready():
-	setup_ui()
-	refresh_display()
-
-func setup_ui():
-	# MÉTODO ULTRA SIMPLE: ColorRect NEGRO DIRECTO
-	set_anchors_preset(Control.PRESET_FULL_RECT)
-	z_index = 9999 # Z_INDEX MÁXIMO
-	color = Color.BLACK # NEGRO DIRECTO
-	mouse_filter = Control.MOUSE_FILTER_STOP
-
-	# Conectar evento de clic directamente
-	gui_input.connect(_on_background_clicked)
-
-	# Panel principal (centrado dinámicamente)
-	var main_panel = PanelContainer.new()
-	main_panel.z_index = 1
-	add_child(main_panel)
-
-	# Centrado dinámico en _ready
-	call_deferred("_center_panel", main_panel)
-	call_deferred("_setup_panel_content", main_panel)
-
 func refresh_display():
 	if not store_container:
 		return

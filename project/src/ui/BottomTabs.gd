@@ -18,13 +18,14 @@ func _ready():
 	]
 
 	# Conectar las señales de los botones
+	print("🔄 BottomTabs: Inicializando conexiones de botones...")
 	for i in tab_buttons.size():
 		if tab_buttons[i]:
 			tab_buttons[i].pressed.connect(_on_tab_pressed.bind(i))
 			tab_buttons[i].custom_minimum_size = Vector2(60, 48) # Ajustado para 5 tabs
-			print("Connected button ", i, ": ", tab_buttons[i].name)
+			print("✅ Connected button ", i, ": ", tab_buttons[i].name)
 		else:
-			print("Button ", i, " is null!")
+			print("❌ Button ", i, " is null!")
 
 	# Accesibilidad: swap para modo zurdo
 	if left_handed:
@@ -35,7 +36,7 @@ func set_badge(_tab: int, _show_badge: bool):
 	pass
 
 func _on_tab_pressed(tab_idx: int):
-	print("BottomTabs: Button pressed ", tab_idx)
+	print("🔥 BottomTabs: Button pressed ", tab_idx, " - SIGNAL SHOULD FIRE")
 	current_tab = tab_idx
 
 	# Reproducir sonido
@@ -43,4 +44,5 @@ func _on_tab_pressed(tab_idx: int):
 		SFX.play_event("click")
 
 	# Emitir señal
+	print("🎯 BottomTabs: Emitting tab_selected signal with ", tab_idx)
 	emit_signal("tab_selected", tab_idx)

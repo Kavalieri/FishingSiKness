@@ -39,9 +39,17 @@ func _on_splash_finished():
 	"""Manejar finalización de splash screen"""
 	print("🎯 Splash finalizado - cargando juego principal...")
 
-	# Limpiar splash screen
+	# Eliminar solo el splash screen, no todos los hijos
+	var splash_screen = null
 	for child in get_children():
-		child.queue_free()
+		if child.has_signal("splash_finished"):
+			splash_screen = child
+			break
+
+	if splash_screen:
+		splash_screen.queue_free()
+		# Esperar a que se elimine completamente antes de cargar Main
+		await splash_screen.tree_exited
 
 	# Cargar juego principal
 	load_main_game()
