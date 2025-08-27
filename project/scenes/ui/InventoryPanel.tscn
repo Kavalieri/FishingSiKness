@@ -1,65 +1,101 @@
-[gd_scene load_steps=2 format=3 uid="uid://c4k6l8j9w2xmz"]
+[gd_scene load_steps=3 format=3 uid="uid://c4k6l8kaw2xm0"]
 
-[ext_resource type="Script" path="res://src/ui/InventoryPanel.gd" id="1_4m7pk"]
+[ext_resource type="PackedScene" uid="uid://dflvvy162pbf1" path="res://src/ui/base/BaseWindow.tscn" id="1_parent"]
+[ext_resource type="Script" uid="uid://b0u301p0100ws" path="res://src/ui/InventoryPanel.gd" id="2_script"]
 
-[node name="InventoryPanel" type="ColorRect"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
-script = ExtResource("1_4m7pk")
+[node name="InventoryPanel" instance=ExtResource("1_parent")]
+script = ExtResource("2_script")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 80.0
-offset_right = -10.0
-offset_bottom = -80.0
+[node name="WindowPanel" parent="." index="1"]
+offset_left = -493.0
+offset_top = -594.0
+offset_right = 493.0
+offset_bottom = 400.0
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="MainContainer" type="VBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer" index="0"]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderContainer"]
+[node name="TitleLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/HeaderContainer" index="0"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "INVENTARIO"
 horizontal_alignment = 1
 
-[node name="CloseButton" type="Button" parent="MainContainer/HeaderContainer"]
+[node name="FilterContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer" index="1"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "X"
+alignment = 1
 
-[node name="FishScrollContainer" type="ScrollContainer" parent="MainContainer"]
+[node name="FilterAll" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/FilterContainer" index="0"]
+layout_mode = 2
+text = "Todos"
+
+[node name="FilterCommon" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/FilterContainer" index="1"]
+layout_mode = 2
+text = "Común"
+
+[node name="FilterRare" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/FilterContainer" index="2"]
+layout_mode = 2
+text = "Raro"
+
+[node name="FilterEpic" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/FilterContainer" index="3"]
+layout_mode = 2
+text = "Épico"
+
+[node name="FilterLegendary" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/FilterContainer" index="4"]
+layout_mode = 2
+text = "Legendario"
+
+[node name="FishScrollContainer" type="ScrollContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer" index="2"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="FishGridContainer" type="GridContainer" parent="MainContainer/FishScrollContainer"]
+[node name="FishFlowContainer" type="HFlowContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/FishScrollContainer" index="0"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 0
-columns = 4
+size_flags_vertical = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 
-[node name="ActionsContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="ActionsContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer" index="3"]
+unique_name_in_owner = true
 layout_mode = 2
+alignment = 1
 
-[node name="SellSelectedButton" type="Button" parent="MainContainer/ActionsContainer"]
+[node name="SelectAllButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/ActionsContainer" index="0"]
+unique_name_in_owner = true
 layout_mode = 2
+text = "Seleccionar Todos"
+
+[node name="DeselectAllButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/ActionsContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Deseleccionar Todos"
+
+[node name="SellSelectedButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/ActionsContainer" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
 text = "Vender Seleccionados"
 
-[node name="SellAllButton" type="Button" parent="MainContainer/ActionsContainer"]
+[node name="SellAllButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/ActionsContainer" index="3"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Vender Todos"
 
-[node name="DiscardSelectedButton" type="Button" parent="MainContainer/ActionsContainer"]
+[node name="DiscardSelectedButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/ActionsContainer" index="4"]
+unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 text = "Descartar Seleccionados"
 
-[node name="DiscardAllButton" type="Button" parent="MainContainer/ActionsContainer"]
+[node name="DiscardAllButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainContainer/ActionsContainer" index="5"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Descartar Todos"

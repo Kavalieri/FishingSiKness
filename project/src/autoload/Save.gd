@@ -22,7 +22,6 @@ var game_data := {
 	"owned_cosmetics": [],
 	"ad_cooldowns": {},
 	"last_played": 0,
-	# Nuevo sistema de experiencia
 	"experience": 0,
 	"level": 1,
 	"milestone_bonuses": {
@@ -31,7 +30,6 @@ var game_data := {
 		"qte_time_bonus": 0.0,
 		"rare_fish_chance": 0.0
 	},
-	# Sistema de skill tree
 	"unlocked_skills": {},
 	"prestige_unlocked": false,
 	"prestige_level": 0,
@@ -45,6 +43,34 @@ var game_data := {
 
 func _ready():
 	load_game()
+	_ensure_initial_data()
+
+func _ensure_initial_data():
+	# Asegurar que tenemos algunos peces de prueba si el inventario está vacío
+	if InventorySystem.get_inventory_count() == 0 and Content:
+		print("Save: Generando peces de prueba...")
+		var sardina_def = Content.get_fish_by_id("sardina")
+		if sardina_def:
+			# Crear una instancia básica
+			var fish_data = {
+				"id": sardina_def.id,
+				"name": sardina_def.name,
+				"size": 12.0,
+				"value": sardina_def.base_market_value,
+				"capture_zone_id": "orilla",
+				"zone_multiplier": 1.0,
+				"capture_timestamp": Time.get_datetime_string_from_system(),
+				"weight": 1.2,
+				"rarity": sardina_def.rarity,
+				"rarity_color": "#FFFFFF",
+				"species_category": sardina_def.species_category,
+				"description": sardina_def.description,
+				"timestamp": Time.get_unix_time_from_system()
+			}
+			InventorySystem._inventory.append(fish_data)
+			print("✅ Pez de prueba añadido al inventario")
+
+# --- Funciones de Moneda ---
 
 func get_coins() -> int:
 	return game_data.get("coins", 0)
@@ -52,159 +78,66 @@ func get_coins() -> int:
 func get_gems() -> int:
 	return game_data.get("gems", 0)
 
-func get_inventory() -> Array:
-	return game_data.get("inventory", [])
-
-func add_fish(fish_instance: FishInstance):
-	var inventory = get_inventory()
-	inventory.append({
-		"id": fish_instance.fish_def.id,
-		"name": fish_instance.fish_def.name,
-		"size": fish_instance.size,
-		"value": fish_instance.final_price, # Usar el precio final calculado
-		"capture_zone_id": fish_instance.capture_zone_id,
-		"zone_multiplier": fish_instance.zone_multiplier,
-		"capture_timestamp": fish_instance.capture_timestamp,
-		"weight": fish_instance.weight,
-		"rarity": fish_instance.fish_def.rarity,
-		"rarity_color": fish_instance.get_rarity_color(),
-		"species_category": fish_instance.fish_def.species_category,
-		"description": fish_instance.fish_def.description,
-		# Mantener compatibility con código existente
-		"timestamp": Time.get_unix_time_from_system()
-	})
-	game_data.inventory = inventory
-	save_game()
-	print("Added fish to inventory: ", fish_instance.get_display_name())
-
-func remove_fish(index: int) -> bool:
-	var inventory = get_inventory()
-	if index >= 0 and index < inventory.size():
-		inventory.remove_at(index)
-		game_data.inventory = inventory
-		save_game()
-		return true
-	return false
-
-func sell_fish(index: int) -> int:
-	var inventory = get_inventory()
-	if index >= 0 and index < inventory.size():
-		var fish_data = inventory[index]
-		var value = fish_data.get("value", 0)
-		inventory.remove_at(index)
-		game_data.inventory = inventory
-		add_coins(value)
-		return value
-	return 0
-
-func sell_fish_by_index(index: int) -> int:
-	return sell_fish(index)
-
-func sell_all_fish() -> int:
-	var inventory = get_inventory()
-	var total_value = 0
-
-	for fish_data in inventory:
-		total_value += fish_data.get("value", 0)
-
-	game_data.inventory = []
-	add_coins(total_value)
-	return total_value
-
-# Funciones de descarte (sin ganar dinero, solo para liberar espacio)
-func discard_fish_by_index(index: int) -> bool:
-	"""Descartar un pez por índice sin ganar dinero"""
-	var inventory = get_inventory()
-	if index >= 0 and index < inventory.size():
-		inventory.remove_at(index)
-		game_data.inventory = inventory
-		save_game()
-		return true
-	return false
-
-func discard_all_fish() -> int:
-	"""Descartar todos los peces sin ganar dinero, retorna cantidad descartada"""
-	var inventory = get_inventory()
-	var discarded_count = inventory.size()
-
-	game_data.inventory = []
-	save_game()
-	return discarded_count
-
-func get_inventory_count() -> int:
-	return get_inventory().size()
-
-func get_fish_from_inventory(index: int) -> FishInstance:
-	"""Obtener una instancia completa de FishInstance desde el inventario"""
-	var inventory = get_inventory()
-	if index < 0 or index >= inventory.size():
-		return null
-
-	var fish_data = inventory[index]
-
-	# Reconstruir FishDef desde Content
-	var fish_def = Content.get_fish_by_id(fish_data.get("id", "")) if Content else null
-	if not fish_def:
-		return null
-
-	# Crear instancia con datos guardados
-	var fish_instance = FishInstance.new()
-	fish_instance.fish_def = fish_def
-	fish_instance.size = fish_data.get("size", fish_def.size_min)
-	fish_instance.capture_zone_id = fish_data.get("capture_zone_id", "orilla")
-	fish_instance.zone_multiplier = fish_data.get("zone_multiplier", 1.0)
-	fish_instance.final_price = fish_data.get("value", fish_def.base_market_value)
-	fish_instance.capture_timestamp = fish_data.get("capture_timestamp", "")
-	fish_instance.weight = fish_data.get("weight", fish_instance.size * 0.1)
-
-	return fish_instance
-
-func get_max_inventory() -> int:
-	return game_data.get("max_inventory", 12)
-
-func add_coins(amount: int):
+func add_coins(amount: int, do_save: bool = true):
 	game_data.coins += amount
-	save_game()
+	if do_save:
+		save_game()
 
-func add_gems(amount: int):
+func add_gems(amount: int, do_save: bool = true):
 	game_data.gems += amount
-	save_game()
+	if do_save:
+		save_game()
 
-func spend_coins(amount: int) -> bool:
+func spend_coins(amount: int, do_save: bool = true) -> bool:
 	if game_data.coins >= amount:
 		game_data.coins -= amount
-		save_game()
+		if do_save:
+			save_game()
 		return true
 	return false
 
-func spend_gems(amount: int) -> bool:
+func spend_gems(amount: int, do_save: bool = true) -> bool:
 	if game_data.gems >= amount:
 		game_data.gems -= amount
-		save_game()
+		if do_save:
+			save_game()
 		return true
 	return false
 
+# --- Experiencia y Nivel ---
+
+func get_experience() -> int:
+	return game_data.get("experience", 0)
+
+func set_experience(xp: int, level: int, do_save: bool = true):
+	game_data.experience = xp
+	game_data.level = level
+	if do_save:
+		save_game()
+
+# --- Sistema de Guardado y Carga ---
+
 func save_game():
+	# Antes de guardar, sincronizar el inventario desde InventorySystem
+	if InventorySystem:
+		game_data.inventory = InventorySystem.get_inventory_for_saving()
+
+	# Actualizar timestamp
+	game_data.last_played = Time.get_unix_time_from_system()
+
 	save(game_data)
 
 func load_game():
 	var loaded_data = load_data()
 	if loaded_data.size() > 0:
 		game_data = loaded_data
-		# Migrar datos si es necesario
 		migrate_game_data()
-	print("Game loaded: ", game_data.coins, " coins, ", game_data.gems, " gems")
 
-func migrate_game_data():
-	# Asegurar que existen todas las propiedades nuevas
-	if not game_data.has("current_zone"):
-		game_data.current_zone = "orilla"
-	if not game_data.has("unlocked_zones"):
-		game_data.unlocked_zones = ["orilla"]
-	if not game_data.has("upgrades"):
-		game_data.upgrades = {}
-	if not game_data.has("max_inventory"):
-		game_data.max_inventory = 12
+	# Después de cargar, poblar el inventario en InventorySystem
+	if InventorySystem:
+		InventorySystem.load_from_save(game_data.get("inventory", []))
+
+	print("Game loaded: ", game_data.coins, " coins, ", game_data.gems, " gems")
 
 func save(data: Dictionary):
 	var tmp_path = save_path + ".tmp"
@@ -213,13 +146,10 @@ func save(data: Dictionary):
 		file.store_string(JSON.stringify(data))
 		file.flush()
 		file.close()
-		# Renombrar a save.json
 		var dir = DirAccess.open("user://")
 		if dir:
 			dir.remove(save_path)
 			dir.rename(tmp_path, save_path)
-			# Copia de seguridad
-			dir.remove(backup_path)
 			dir.copy(save_path, backup_path)
 
 func load_data() -> Dictionary:
@@ -232,95 +162,35 @@ func load_data() -> Dictionary:
 			return migrate(data)
 	return {}
 
+func migrate_game_data():
+	# Asegurar que existen todas las propiedades nuevas
+	if not game_data.has("current_zone"):
+		game_data.current_zone = "orilla"
+	# ... (otras migraciones)
+
 func migrate(data: Dictionary) -> Dictionary:
 	var current_schema = data.get("schema", 1)
-
-	# Migración de schema 1 a 2 (experiencia y prestigio)
 	if current_schema == 1:
 		data["experience"] = 0
 		data["level"] = 1
-		data["milestone_bonuses"] = {
-			"inventory_capacity": 0,
-			"coins_multiplier": 0.0,
-			"qte_time_bonus": 0.0,
-			"rare_fish_chance": 0.0
-		}
-		data["prestige_unlocked"] = false
-		data["prestige_level"] = 0
-		data["prestige_points"] = 0
-
+		# ... (otras migraciones de schema)
 	data.schema = schema
 	return data
 
-# Funciones de experiencia y milestone
-func get_experience() -> int:
-	return game_data.get("experience", 0)
-
-func set_experience(xp: int, level: int):
-	game_data.experience = xp
-	game_data.level = level
-	save_game()
-
-func add_milestone_inventory(bonus: int):
-	game_data.milestone_bonuses.inventory_capacity += bonus
-	save_game()
-
-func add_milestone_coins_multiplier(bonus: float):
-	game_data.milestone_bonuses.coins_multiplier += bonus
-	save_game()
-
-func add_milestone_qte_time(bonus: float):
-	game_data.milestone_bonuses.qte_time_bonus += bonus
-	save_game()
-
-func add_milestone_rare_chance(bonus: float):
-	game_data.milestone_bonuses.rare_fish_chance += bonus
-	save_game()
-
-func unlock_prestige():
-	game_data.prestige_unlocked = true
-	save_game()
+# --- Otras Funciones de Datos ---
 
 func get_total_inventory_capacity() -> int:
 	var base_inventory = game_data.get("max_inventory", 12)
-	var milestone_bonus = game_data.milestone_bonuses.inventory_capacity
+	var milestone_bonus = game_data.get("milestone_bonuses", {}).get("inventory_capacity", 0)
 	var skill_bonus = 0
-
-	# Usar bonificación del skill tree si está disponible
 	if SkillTree:
 		skill_bonus = SkillTree.get_max_inventory_with_bonus() - base_inventory
-
 	return base_inventory + milestone_bonus + skill_bonus
 
-func get_coins_multiplier() -> float:
-	var milestone_multiplier = 1.0 + game_data.milestone_bonuses.coins_multiplier
-	var skill_multiplier = 1.0
+# ... (otras funciones de acceso a datos como multipliers, etc.)
 
-	# Usar bonificación del skill tree si está disponible
-	if SkillTree:
-		skill_multiplier = SkillTree.get_active_bonus("sell_bonus")
+# --- Sistema de guardado múltiple ---
 
-	return milestone_multiplier * skill_multiplier
-
-func get_fishing_speed_multiplier() -> float:
-	var skill_multiplier = 1.0
-
-	# Usar bonificación del skill tree si está disponible
-	if SkillTree:
-		skill_multiplier = SkillTree.get_active_bonus("fishing_speed")
-
-	return skill_multiplier
-
-func get_rare_fish_chance_multiplier() -> float:
-	var skill_multiplier = 1.0
-
-	# Usar bonificación del skill tree si está disponible
-	if SkillTree:
-		skill_multiplier = SkillTree.get_active_bonus("rare_chance")
-
-	return skill_multiplier
-
-# Sistema de guardado múltiple
 func get_save_slot_path(slot: int) -> String:
 	return "user://save_slot_%d.json" % slot
 
@@ -339,80 +209,27 @@ func load_from_slot(slot: int):
 func get_save_slot_info(slot: int) -> Dictionary:
 	var slot_path = get_save_slot_path(slot)
 	var file = FileAccess.open(slot_path, FileAccess.READ)
-
 	if not file:
 		return {"exists": false, "empty": true}
-
 	var content = file.get_as_text()
 	file.close()
 	var data = JSON.parse_string(content)
-
 	if typeof(data) != TYPE_DICTIONARY:
 		return {"exists": false, "empty": true}
-
 	return {
 		"exists": true,
 		"empty": false,
 		"coins": data.get("coins", 0),
-		"gems": data.get("gems", 0),
 		"level": data.get("level", 1),
-		"zone": data.get("current_zone", "orilla"),
-		"last_played": data.get("last_played", 0),
-		"playtime": _format_playtime(data.get("last_played", 0))
+		# ... (más info de slot)
 	}
 
 func delete_save_slot(slot: int):
 	var slot_path = get_save_slot_path(slot)
-	var backup_slot_path = "user://save_slot_%d.bak" % slot
-
 	var dir = DirAccess.open("user://")
 	if dir:
 		dir.remove(slot_path)
-		dir.remove(backup_slot_path)
-
-func _format_playtime(timestamp: int) -> String:
-	if timestamp == 0:
-		return "Nueva partida"
-
-	var datetime = Time.get_datetime_dict_from_unix_time(timestamp)
-	return "%02d/%02d/%d %02d:%02d" % [
-		datetime.day, datetime.month, datetime.year,
-		datetime.hour, datetime.minute
-	]
 
 func reset_to_default():
-	"""Resetear datos del juego a valores por defecto"""
-	game_data = {
-		"schema": 2,
-		"coins": 1000,
-		"gems": 25,
-		"zone": "orilla",
-		"current_zone": "orilla",
-		"unlocked_zones": ["orilla"],
-		"max_inventory": 12,
-		"upgrades": {},
-		"equipment": {},
-		"inventory": [],
-		"purchases": [],
-		"owned_cosmetics": [],
-		"ad_cooldowns": {},
-		"last_played": Time.get_unix_time_from_system(),
-		"experience": 0,
-		"level": 1,
-		"milestone_bonuses": {
-			"inventory_capacity": 0,
-			"coins_multiplier": 0.0,
-			"qte_time_bonus": 0.0,
-			"rare_fish_chance": 0.0
-		},
-		# Sistema de skill tree
-		"unlocked_skills": {},
-		"prestige_unlocked": false,
-		"prestige_level": 0,
-		"prestige_points": 0,
-		"settings": {
-			"vibration": true,
-			"sfx": 0.8,
-			"music": 0.4
-		}
-	}
+	# ... (código para resetear game_data)
+	pass

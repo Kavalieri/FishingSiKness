@@ -5,5 +5,5 @@ extends Node
 var screen_manager = null
 
 func _ready():
-	# Inicialización global
+	# La lógica de conexión de señales se ha eliminado debido al refactor a un InventorySystem estático.
 	pass

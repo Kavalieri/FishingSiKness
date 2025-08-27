@@ -18,7 +18,6 @@ boot_splash/minimum_display_time=2
 
 [autoload]
 
-App="*res://src/autoload/App.gd"
 Content="*res://src/autoload/Content.gd"
 Save="*res://src/autoload/Save.gd"
 SFX="*res://src/autoload/SFX.gd"
@@ -28,6 +27,8 @@ SkillTree="*res://src/autoload/SkillTree.gd"
 BackgroundManager="*res://src/autoload/BackgroundManager.gd"
 FloatingWindowManager="*res://src/autoload/FloatingWindowManager.gd"
 FishDataManager="*res://src/systems/FishDataManager.gd"
+InventorySystem="*res://src/systems/InventorySystem.gd"
+App="*res://src/autoload/App.gd"
 
 [display]
 

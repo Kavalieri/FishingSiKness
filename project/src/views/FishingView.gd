@@ -64,12 +64,26 @@ var rarity_emojis = {
 
 func _ready():
 	# Obtener referencias a los nodos existentes
-	cast_button = $GameplayArea/CastButton
+	cast_button = get_node_or_null("CastButton")
+	if not cast_button:
+		# Buscar en rutas alternativas
+		cast_button = find_child("CastButton", true, false)
+
 	if cast_button:
 		cast_button.pressed.connect(_on_cast_button_pressed)
+		print("✅ Cast button conectado")
+	else:
+		print("❌ ERROR: No se pudo encontrar CastButton")
 
 	# Obtener referencia al fondo
-	background_node = $Background
+	background_node = get_node_or_null("Background")
+	if not background_node:
+		background_node = find_child("Background", true, false)
+
+	if background_node:
+		print("✅ Background node encontrado")
+	else:
+		print("⚠️ Background node no encontrado")
 
 	# Inicializar sistema QTE
 	setup_qte_component()
@@ -451,7 +465,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 
 func _confirm_store_fish(fish_instance: FishInstance, rarity: String, rarity_multiplier: float):
 	"""Confirmar almacenamiento del pez capturado"""
-	Save.add_fish(fish_instance)
+	InventorySystem.add_fish(fish_instance)
 
 	# Añadir al historial con información de rareza
 	var rarity_emoji = get_rarity_emoji(rarity)
@@ -658,8 +672,8 @@ func start_fishing():
 	print("Starting fishing...")
 
 	# Verificar espacio en el inventario
-	var inventory = Save.get_inventory()
-	var max_inventory = Save.game_data.get("max_inventory", 12)
+	var inventory = InventorySystem.get_inventory()
+	var max_inventory = Save.get_total_inventory_capacity()
 
 	if inventory.size() >= max_inventory:
 		show_inventory_full_message()
