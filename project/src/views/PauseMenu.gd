@@ -1,124 +1,62 @@
 class_name PauseMenu
-extends BaseFloatingMenu
+extends BaseWindow
 
+# Señales que este menú puede emitir.
 signal resume_requested()
-signal save_and_exit_requested()
 signal settings_requested()
-signal save_manager_requested()
+signal save_and_exit_to_menu_requested()
+signal exit_to_desktop_requested()
 
-var main_panel: PanelContainer
+# --- NODOS DE LA ESCENA (se asignarán en el editor) ---
+@onready var resume_button: Button = %ResumeButton
+@onready var settings_button: Button = %SettingsButton
+@onready var save_and_exit_button: Button = %SaveAndExitButton
+@onready var exit_to_desktop_button: Button = %ExitToDesktopButton # NUEVO
 
-func setup_menu():
-	"""Configurar interfaz del menú de pausa"""
-	name = "PauseMenu"
+func _setup_content() -> void:
+	# Conectar las señales de los botones a las funciones de este script.
+	resume_button.pressed.connect(_on_resume_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
+	save_and_exit_button.pressed.connect(_on_save_and_exit_pressed)
+	exit_to_desktop_button.pressed.connect(_on_exit_to_desktop_pressed) # NUEVO
 
-	setup_ui()
+	# Cambiar el texto de los botones para mayor claridad
+	resume_button.text = "Reanudar"
+	settings_button.text = "Opciones"
+	save_and_exit_button.text = "Guardar y Salir al Menú"
+	exit_to_desktop_button.text = "Salir al Escritorio"
 
-func setup_ui():
-	# Panel principal (centrado dinámicamente)
-	main_panel = PanelContainer.new()
-	add_child(main_panel)
 
-	# Centrado dinámico en _ready
-	call_deferred("_center_panel", main_panel)
-	call_deferred("_setup_panel_content", main_panel)
-
-func _setup_panel_content(main_panel: PanelContainer):
-	"""Configurar el contenido del panel después del centrado"""
-	var main_vbox = VBoxContainer.new()
-	main_vbox.add_theme_constant_override("separation", 20)
-	main_panel.add_child(main_vbox)
-
-	# Título
-	var title = Label.new()
-	title.text = "⏸️ PAUSA"
-	title.add_theme_font_size_override("font_size", 32)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	main_vbox.add_child(title)
-
-	# Separador
-	var separator = HSeparator.new()
-	separator.custom_minimum_size.y = 20
-	main_vbox.add_child(separator)
-
-	# Botones del menú
-	var buttons_data = [
-		{"text": "▶️ CONTINUAR", "signal": "resume_requested"},
-		{"text": "💾 GESTOR DE PARTIDAS", "signal": "save_manager_requested"},
-		{"text": "💾 GUARDAR Y SALIR", "signal": "save_and_exit_requested"},
-		{"text": "⚙️ OPCIONES", "signal": "settings_requested"}
-	]
-
-	for button_data in buttons_data:
-		var button = Button.new()
-		button.text = button_data.text
-		button.custom_minimum_size.y = 60
-		button.add_theme_font_size_override("font_size", 20)
-		button.pressed.connect(_on_button_pressed.bind(button_data.signal ))
-		main_vbox.add_child(button)
-
-	# Información del juego
-	var spacer = Control.new()
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(spacer)
-
-	var info_vbox = VBoxContainer.new()
-	main_vbox.add_child(info_vbox)
-
-	var coins_label = Label.new()
-	coins_label.text = "🪙 Monedas: %d" % Save.get_coins()
-	coins_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	coins_label.add_theme_font_size_override("font_size", 16)
-	info_vbox.add_child(coins_label)
-
-	var gems_label = Label.new()
-	gems_label.text = "💎 Gemas: %d" % Save.get_gems()
-	gems_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	gems_label.add_theme_font_size_override("font_size", 16)
-	info_vbox.add_child(gems_label)
-
-	var version_label = Label.new()
-	version_label.text = "Fishing SiKness v0.1.0"
-	version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	version_label.add_theme_font_size_override("font_size", 12)
-	version_label.modulate = Color(0.7, 0.7, 0.7)
-	info_vbox.add_child(version_label)
-
-func _on_button_pressed(signal_name: String):
-	if SFX:
-		SFX.play_event("click")
-
-	match signal_name:
-		"resume_requested":
-			emit_signal("resume_requested")
-		"save_manager_requested":
-			emit_signal("save_manager_requested")
-		"save_and_exit_requested":
-			Save.save_game()
-			emit_signal("save_and_exit_requested")
-		"settings_requested":
-			emit_signal("settings_requested")
-
-func _input(event):
-	# Permitir cerrar con ESC o botón de atrás
+func _input(event: InputEvent) -> void:
+	# Permitir cerrar el menú de pausa con la tecla ESC.
 	if event.is_action_pressed("ui_cancel"):
-		emit_signal("resume_requested")
+		close()
+		get_viewport().set_input_as_handled()
 
-func _on_background_clicked(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		emit_signal("resume_requested")
 
-func _center_panel(panel: PanelContainer):
-	"""Centrar el panel dinámicamente en la pantalla"""
-	var viewport_size = get_viewport().get_visible_rect().size
-	var panel_size = Vector2(viewport_size.x * 0.5, viewport_size.y * 0.6) # PauseMenu más pequeño
+func _on_resume_pressed() -> void:
+	resume_requested.emit()
+	close()
 
-	panel.custom_minimum_size = panel_size
-	panel.size = panel_size
-	panel.position = (viewport_size - panel_size) / 2
 
-	# Hacer el panel semi-transparente para que se vea el fondo
-	panel.modulate = Color(1, 1, 1, 1.0) # 100% opaco
+func _on_settings_pressed() -> void:
+	settings_requested.emit()
 
-	# Asegurar que está visible
-	panel.show()
+
+func _on_save_and_exit_pressed() -> void:
+	# Primero guardamos el juego, luego emitimos la señal para salir al menú principal.
+	if Save:
+		Save.save_game()
+	save_and_exit_to_menu_requested.emit()
+	close()
+
+
+func _on_exit_to_desktop_pressed() -> void:
+	# NUEVO: Emitir señal para que el gestor principal cierre el juego.
+	exit_to_desktop_requested.emit()
+
+# Sobrescribir la función close para emitir la señal de reanudar.
+# Esto asegura que si se cierra con ESC, el juego también se reanude.
+func close():
+	resume_requested.emit()
+	super.close()

@@ -1,3 +1,4 @@
+class_name SkillTreeDebugPanel
 extends Control
 
 # Panel de debug para testing del Skill Tree
@@ -104,17 +105,9 @@ func create_debug_controls():
 	windows_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	debug_container.add_child(windows_title)
 
-	# Botón tienda nueva
-	var new_store_btn = Button.new()
-	new_store_btn.text = "🔥 NUEVA TIENDA (StoreWindow)"
-	new_store_btn.pressed.connect(_on_test_new_store)
-	debug_container.add_child(new_store_btn)
+	
 
-	# Botón tarjeta de captura
-	var capture_card_btn = Button.new()
-	capture_card_btn.text = "🐟 TARJETA CAPTURA (CaptureCard)"
-	capture_card_btn.pressed.connect(_on_test_capture_card)
-	debug_container.add_child(capture_card_btn)
+	
 
 	# Estado del FloatingWindowManager
 	var manager_status = Label.new()
@@ -226,55 +219,7 @@ func _input(event):
 			update_info_display()
 		get_viewport().set_input_as_handled()
 
-# === FUNCIONES DE TESTING DEL NUEVO SISTEMA ===
 
-func _on_test_new_store():
-	"""Probar la nueva StoreWindow"""
-	print("🔥 DEBUG: Probando nueva StoreWindow...")
-
-	if not FloatingWindowManager:
-		print("❌ FloatingWindowManager no disponible")
-		return
-
-	# Verificar si ya hay una ventana abierta
-	if FloatingWindowManager.is_window_type_open(FloatingWindowManager.WindowType.MENU):
-		print("⚠️ Ya hay una ventana de menú abierta")
-		FloatingWindowManager.close_all_windows()
-		return
-
-	# Crear StoreWindow directamente (sin preload que causa error de compilación)
-	var store_window_script = load("res://src/windows/StoreWindow.gd")
-	if store_window_script:
-		var store_window = store_window_script.new()
-		if FloatingWindowManager.open_window(store_window, FloatingWindowManager.WindowType.MENU):
-			print("✅ StoreWindow abierta exitosamente")
-		else:
-			print("❌ Error al abrir StoreWindow")
-	else:
-		print("❌ No se pudo cargar StoreWindow.gd")
-
-func _on_test_capture_card():
-	"""Probar CaptureCard con datos de prueba"""
-	print("🐟 DEBUG: Probando CaptureCard...")
-
-	if not FloatingWindowManager:
-		print("❌ FloatingWindowManager no disponible")
-		return
-
-	# Crear datos ficticios para la tarjeta
-	var fake_capture_result = {
-		"xp": 50,
-		"coins": 100
-	}
-
-	# Crear CaptureCard directamente (sin preload que causa error de compilación)
-	var capture_card_script = load("res://src/windows/CaptureCard.gd")
-	if capture_card_script and capture_card_script.has_method("show_capture_in_corner"):
-		capture_card_script.show_capture_in_corner(null, fake_capture_result, 5.0)
-		print("✅ CaptureCard mostrada en esquina")
-	else:
-		print("❌ No se pudo cargar CaptureCard.gd o método show_capture_in_corner")
-	print("✅ CaptureCard mostrada en esquina")
 
 func update_manager_status(status_label: Label):
 	"""Actualizar estado del FloatingWindowManager"""

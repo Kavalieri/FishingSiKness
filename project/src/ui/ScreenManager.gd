@@ -11,9 +11,7 @@ enum Tab {
 }
 
 # Recursos precargados
-# Precargar escenas en lugar de clases
-const UnifiedMenuScene = preload("res://scenes/views/UnifiedMenu.tscn")
-const StoreViewScene = preload("res://scenes/views/StoreView.tscn")
+
 const InventoryPanelScene = preload("res://scenes/ui/InventoryPanel.tscn")
 const FishInfoPanelClass = preload("res://src/ui/FishInfoPanel.gd")
 const SpeciesLegendPanelClass = preload("res://src/ui/SpeciesLegendPanel.gd")
@@ -23,13 +21,10 @@ var views = {}
 var current_tab = Tab.FISHING
 
 # Overlays
-var store_view: StoreView
-var pause_menu: Control # Cambiado de PauseMenu a Control para aceptar UnifiedMenu
-var inventory_panel: Control # Cambiado de InventoryPanel a Control para aceptar la escena
+var inventory_panel: Control
 var fish_info_panel: FishInfoPanel
 var species_legend_panel: SpeciesLegendPanel
 var milestones_panel: Control
-var settings_menu: Control
 var save_manager: Control
 var debug_panel: Control
 
@@ -71,11 +66,18 @@ func _ready():
 	if map_view and map_view.has_signal("zone_changed"):
 		map_view.zone_changed.connect(_on_zone_changed)
 
+	# Conectar con el gestor de ventanas global
+	if FloatingWindowManager:
+		FloatingWindowManager.window_opened.connect(_on_any_window_opened)
+		FloatingWindowManager.window_closed.connect(_on_any_window_closed)
+
 	# Mostrar la pestaña inicial
 	show_tab(Tab.FISHING)
 
 	# Crear debug panel (accesible con F2)
 	create_debug_panel()
+
+	App.screen_manager = self
 
 func register_view(index: int, view_node: Node):
 	if view_node:
@@ -107,10 +109,6 @@ func show_tab(tab: int):
 	else:
 		print("Warning: View not found for tab ", tab)
 
-func preload_core():
-	# Precargar las vistas más importantes
-	pass
-
 func _on_gems_button_clicked():
 	print("ScreenManager: Gems button clicked")
 	show_store()
@@ -124,284 +122,35 @@ func _on_level_button_clicked():
 	show_milestones_panel()
 
 func show_store():
-	"""Mostrar tienda de gemas - SISTEMA ANTERIOR FUNCIONAL"""
-	print("ScreenManager: Mostrando tienda...")
-
-	# Cerrar tienda anterior si existe
-	if store_view:
-		store_view.queue_free()
-		store_view = null
-
-	# Usar el sistema anterior que funciona
-	var StoreViewClass = preload("res://src/views/StoreView.gd")
-	store_view = StoreViewClass.new()
-	store_view.close_requested.connect(_on_store_closed)
-	store_view.z_index = 100
-	get_tree().root.add_child(store_view)
-	print("✅ StoreView mostrado (sistema anterior funcional)")
+	FloatingWindowManager.open_window("res://scenes/views/StoreView.tscn", {"title": "Tienda"})
 
 func show_pause_menu():
-	"""Mostrar menú de pausa - NUEVO MENÚ ESTANDARIZADO"""
-	# Cerrar menú anterior si existe
-	if pause_menu:
-		pause_menu.queue_free()
-		pause_menu = null
-
-	# Crear nueva instancia usando clase BaseFloatingMenu
-	var PauseMenuClass = preload("res://src/views/PauseMenu.gd")
-	pause_menu = PauseMenuClass.new()
-
-	# Conectar señales
-	pause_menu.resume_requested.connect(_on_pause_menu_closed)
-	pause_menu.save_and_exit_requested.connect(_on_save_and_exit)
-	pause_menu.settings_requested.connect(show_settings_menu)
-	pause_menu.save_manager_requested.connect(_on_save_manager_requested_from_pause)
-
-	# Asegurar máxima visibilidad
-	pause_menu.z_index = 100
-	get_tree().root.add_child(pause_menu)
-
-	print("✅ PauseMenu estandarizado mostrado")
+	print("--- PAUSE MENU REQUESTED ---")
+	FloatingWindowManager.open_window("res://scenes/views/PauseMenu.tscn", {"title": "Pausa"})
 
 func show_settings_menu():
-	"""Mostrar menú de configuración - NUEVO MENÚ ESTANDARIZADO"""
-	# Evitar crear múltiples instancias
-	if settings_menu:
-		settings_menu.queue_free()
-		settings_menu = null
-
-	# Cerrar menú de pausa si existe
-	if pause_menu:
-		pause_menu.queue_free()
-		pause_menu = null
-
-	# Crear nueva instancia usando clase BaseFloatingMenu
-	var SettingsMenuClass = preload("res://src/views/SettingsMenu.gd")
-	settings_menu = SettingsMenuClass.new()
-
-	# Conectar señales
-	settings_menu.settings_closed.connect(_on_settings_closed)
-	settings_menu.resume_requested.connect(_on_settings_closed)
-	settings_menu.save_manager_requested.connect(_on_save_manager_requested_from_settings)
-
-	# Asegurar máxima visibilidad
-	settings_menu.z_index = 100
-	get_tree().root.add_child(settings_menu)
-
-	print("✅ SettingsMenu estandarizado mostrado")
+	FloatingWindowManager.open_window("res://scenes/views/SettingsMenu.tscn", {"title": "Opciones"})
 
 func show_milestones_panel():
-	"""Mostrar panel de hitos - NUEVO MENÚ ESTANDARIZADO"""
-	# Evitar crear múltiples instancias
-	if milestones_panel:
-		return
+	FloatingWindowManager.open_window("res://scenes/views/MilestonesPanel.tscn", {"title": "🌟 ÁRBOL DE HABILIDADES"})
 
-	# Crear nueva instancia usando clase BaseFloatingMenu
-	var MilestonesClass = preload("res://src/views/MilestonesPanel.gd")
-	milestones_panel = MilestonesClass.new()
-	milestones_panel.close_requested.connect(_on_milestones_closed)
-	milestones_panel.tree_exiting.connect(_on_milestones_closed)
+func _on_any_window_opened(window: Control):
+	# Conectar señales dinámicamente cuando se abre una ventana
+	if window is PauseMenu:
+		window.resume_requested.connect(_on_pause_menu_closed)
+		window.save_and_exit_to_menu_requested.connect(_on_save_and_exit)
+		window.settings_requested.connect(show_settings_menu)
+		#window.save_manager_requested.connect(_on_save_manager_requested_from_pause)
+	elif window is SettingsMenu:
+		#window.save_manager_requested.connect(_on_save_manager_requested_from_settings)
+		pass
 
-	# Asegurar máxima visibilidad
-	milestones_panel.z_index = 100
-	get_tree().root.add_child(milestones_panel)
-
-	print("✅ MilestonesPanel estandarizado mostrado")
-
-func show_fridge():
-	"""Mostrar nevera/inventario - NUEVO MENÚ ESTANDARIZADO"""
-	var FridgeViewClass = preload("res://src/views/FridgeView.gd")
-	var fridge_view = FridgeViewClass.new()
-
-	# Asegurar máxima visibilidad
-	fridge_view.z_index = 100
-	get_tree().root.add_child(fridge_view)
-
-	print("✅ FridgeView estandarizado mostrado")
-
-func show_inventory(allow_selling: bool = true, _title: String = "🧊 INVENTARIO"):
-	if inventory_panel:
-		inventory_panel.queue_free()
-
-	# Instanciar escena con fondo negro configurado
-	inventory_panel = InventoryPanelScene.instantiate()
-
-	# Verificar que se instanció correctamente
-	if not inventory_panel:
-		push_error("Error: No se pudo instanciar InventoryPanelScene")
-		return
-
-	# Conectar señales con deferred para asegurar inicialización
-	call_deferred("_connect_inventory_signals", inventory_panel, allow_selling)
-
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
-	get_tree().root.add_child(inventory_panel)
-
-func _connect_inventory_signals(panel: Control, allow_selling: bool):
-	"""Conectar señales del panel de inventario de forma segura"""
-	if not panel or not is_instance_valid(panel):
-		return
-
-	if panel.has_signal("close_requested"):
-		panel.close_requested.connect(_on_inventory_closed)
-
-	if allow_selling:
-		if panel.has_signal("sell_selected_requested"):
-			panel.sell_selected_requested.connect(_on_sell_selected_fish)
-		if panel.has_signal("sell_all_requested"):
-			panel.sell_all_requested.connect(_on_sell_all_fish)
-		if panel.has_signal("discard_selected_requested"):
-			panel.discard_selected_requested.connect(_on_discard_selected_fish)
-		if panel.has_signal("discard_all_requested"):
-			panel.discard_all_requested.connect(_on_discard_all_fish)
-
-func show_inventory_discard_mode():
-	"""Mostrar inventario en modo descarte para liberar espacio durante la pesca"""
-	if inventory_panel:
-		inventory_panel.queue_free()
-
-	# Instanciar escena con fondo negro configurado
-	inventory_panel = InventoryPanelScene.instantiate()
-	inventory_panel.close_requested.connect(_on_inventory_closed)
-	# inventory_panel.fish_info_requested.connect(_on_fish_info_requested)
-	inventory_panel.sell_selected_requested.connect(_on_discard_selected_fish)
-	inventory_panel.sell_all_requested.connect(_on_discard_all_fish)
-
-	# Asegurar que el overlay esté en el nivel superior
-	inventory_panel.z_index = 100
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
-	get_tree().root.add_child(inventory_panel)
-
-func show_fish_card(fish_data: Dictionary):
-	"""Mostrar tarjeta de captura de pez - NUEVO MENÚ FLOTANTE ESTANDARIZADO"""
-	var fish_card = FishCardMenuClass.new(fish_data)
-
-	# Conectar señal de cierre
-	fish_card.card_closed.connect(_on_fish_card_closed.bind(fish_card))
-
-	# Asegurar máxima visibilidad
-	fish_card.z_index = 120 # Por encima de otros menús
-	get_tree().root.add_child(fish_card)
-
-	# Log para debugging
-	print("ScreenManager: Showing fish card for ", fish_data.get("name", "Unknown Fish"))
-
-func _on_fish_card_closed(card_instance: Control):
-	"""Cerrar tarjeta de captura"""
-	if is_instance_valid(card_instance):
-		card_instance.queue_free()
-
-func _on_store_closed():
-	if store_view:
-		store_view.queue_free()
-		store_view = null
-
-	# Actualizar TopBar después de posibles compras
-	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
-
-func _on_pause_menu_closed():
-	if pause_menu:
-		pause_menu.queue_free()
-		pause_menu = null
-
-func _on_save_and_exit():
-	if pause_menu:
-		pause_menu.queue_free()
-		pause_menu = null
-	get_tree().quit()
-
-func show_save_manager():
-	# Evitar crear múltiples instancias
-	if save_manager:
-		return
-
-	if pause_menu:
-		pause_menu.queue_free()
-		pause_menu = null
-
-	var SaveManagerClass = preload("res://src/views/SaveManagerView.gd")
-	save_manager = SaveManagerClass.new()
-	save_manager.save_loaded.connect(_on_save_loaded)
-	save_manager.save_created.connect(_on_save_created)
-	save_manager.tree_exiting.connect(_on_save_manager_closed)
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
-	get_tree().root.add_child(save_manager)
-
-func _on_save_loaded(slot: int):
-	print("Save loaded from slot: ", slot)
-	# Actualizar toda la UI después de cargar
-	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
-
-func _on_save_created(slot: int):
-	print("New save created in slot: ", slot)
-	# Actualizar toda la UI después de crear nueva partida
-	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
-
-func _on_milestones_closed():
-	if milestones_panel:
-		milestones_panel.queue_free()
-		milestones_panel = null
-
-func _on_settings_closed():
-	if settings_menu:
-		settings_menu.queue_free()
-		settings_menu = null
-
-func _on_save_manager_requested_from_settings():
-	"""Gestor de guardado solicitado desde opciones"""
-	_on_settings_closed()
-	show_save_manager()
-
-func _on_save_manager_requested_from_pause():
-	"""Gestor de guardado solicitado desde pausa"""
-	_on_pause_menu_closed()
-	show_save_manager()
-
-func _on_save_manager_closed():
-	save_manager = null
-
-func _on_inventory_closed():
-	if inventory_panel:
-		inventory_panel.queue_free()
-		inventory_panel = null
-
-func _on_sell_selected_fish():
-	if not inventory_panel:
-		return
-
-	var selected_indices = inventory_panel.get_selected_fish_indices()
-	var total_value = 0
-
-	# Vender peces seleccionados (en orden inverso para no alterar índices)
-	selected_indices.sort()
-	for i in range(selected_indices.size() - 1, -1, -1):
-		var fish_value = Save.sell_fish_by_index(selected_indices[i])
-		total_value += fish_value
-
-	print("Sold selected fish for: ", total_value, " coins")
-
-	# Actualizar displays
-	inventory_panel.refresh_display()
-	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
-
-func _on_sell_all_fish():
-	var total_value = Save.sell_all_fish()
-	print("Sold all fish for: ", total_value, " coins")
-
-	# Actualizar displays
-	if inventory_panel:
-		inventory_panel.refresh_display()
-	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
+func _on_any_window_closed(window: Control):
+	# Si la ventana que se cerró es la tienda, actualizamos la TopBar.
+	if window is StoreView:
+		var top_bar = $TopBar
+		if top_bar and top_bar.has_method("update_display"):
+			top_bar.update_display()
 
 func _on_fish_caught(fish_name: String, value: int):
 	print("ScreenManager: Fish caught - ", fish_name, " worth ", value)
@@ -424,79 +173,49 @@ func _on_zone_changed(zone_id: String):
 	if fishing_view and fishing_view.has_method("update_zone_background"):
 		fishing_view.update_zone_background()
 
-# Funciones para modo descarte (liberar espacio sin ganar dinero)
-func _on_discard_selected_fish():
-	"""Descartar peces seleccionados sin ganar dinero"""
-	if not inventory_panel:
-		return
+func _on_pause_menu_closed():
+	# La ventana se cierra sola a través de FloatingWindowManager, no necesitamos hacer nada aquí.
+	pass
 
-	var selected_indices = inventory_panel.get_selected_fish_indices()
-	var discarded_count = 0
+func _on_save_and_exit():
+	get_tree().quit()
 
-	# Descartar peces seleccionados (en orden inverso para no alterar índices)
-	selected_indices.sort()
-	for i in range(selected_indices.size() - 1, -1, -1):
-		Save.discard_fish_by_index(selected_indices[i])
-		discarded_count += 1
+func _on_save_manager_requested_from_pause():
+	# Primero cerramos el menú de pausa, luego abrimos el gestor de guardado.
+	var pause_menu = FloatingWindowManager.get_top_window()
+	if pause_menu is PauseMenu:
+		pause_menu.close()
+	
+	# TODO: Refactorizar SaveManagerView
+	print("TODO: Refactorizar SaveManagerView y abrirlo aquí")
 
-	print("Discarded ", discarded_count, " fish to free inventory space")
+func _on_save_manager_requested_from_settings():
+	# Primero cerramos el menú de opciones, luego abrimos el gestor de guardado.
+	var settings_menu = FloatingWindowManager.get_top_window()
+	if settings_menu is SettingsMenu:
+		settings_menu.close()
+	
+	# TODO: Refactorizar SaveManagerView
+	print("TODO: Refactorizar SaveManagerView y abrirlo aquí")
 
-	# Actualizar display del inventario solamente
-	inventory_panel.refresh_display()
-
-func _on_discard_all_fish():
-	"""Descartar todos los peces sin ganar dinero"""
-	var discarded_count = Save.discard_all_fish()
-	print("Discarded all fish (", discarded_count, " total) to free inventory space")
-
-	# Actualizar display del inventario solamente
-	if inventory_panel:
-		inventory_panel.refresh_display()
+# --- Resto de funciones sin cambios por ahora ---
 
 func create_debug_panel():
-	"""Crear panel de debug para testing del skill tree"""
 	var DebugPanelClass = preload("res://src/ui/SkillTreeDebugPanel.gd")
 	debug_panel = DebugPanelClass.new()
 	add_child(debug_panel)
 
-func _on_fish_info_requested(fish_index: int):
-	"""Manejar solicitud de mostrar información detallada de un pez"""
-	var fish_instance = Save.get_fish_from_inventory(fish_index)
-	if fish_instance:
-		show_fish_info_panel(fish_instance)
+func show_inventory(show: bool, title: String = "Inventario"):
+	if show:
+		if not is_instance_valid(inventory_panel):
+			inventory_panel = InventoryPanelScene.instantiate()
+			add_child(inventory_panel)
+			inventory_panel.close_requested.connect(hide_inventory)
+		inventory_panel.visible = true
+		inventory_panel.refresh_display()
+	else:
+		hide_inventory()
 
-func show_fish_info_panel(fish_instance: FishInstance):
-	"""Mostrar panel de información detallada del pez"""
-	if fish_info_panel:
-		fish_info_panel.queue_free()
-
-	fish_info_panel = FishInfoPanelClass.new()
-	fish_info_panel.closed.connect(_on_fish_info_closed)
-	fish_info_panel.z_index = 150 # Por encima del inventario
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
-	get_tree().root.add_child(fish_info_panel)
-
-	fish_info_panel.show_fish_info(fish_instance)
-
-func _on_fish_info_closed():
-	"""Manejar cierre del panel de información de peces"""
-	if fish_info_panel:
-		fish_info_panel.queue_free()
-		fish_info_panel = null
-
-func show_species_legend():
-	"""Mostrar panel de leyenda de especies"""
-	if species_legend_panel:
-		species_legend_panel.queue_free()
-
-	species_legend_panel = SpeciesLegendPanelClass.new()
-	species_legend_panel.closed.connect(_on_species_legend_closed)
-	species_legend_panel.z_index = 120 # Por encima de otros paneles
-	# AGREGAR AL ROOT DEL SCENE TREE PARA MÁXIMA VISIBILIDAD
-	get_tree().root.add_child(species_legend_panel)
-
-func _on_species_legend_closed():
-	"""Manejar cierre del panel de leyenda de especies"""
-	if species_legend_panel:
-		species_legend_panel.queue_free()
-		species_legend_panel = null
+func hide_inventory():
+	if is_instance_valid(inventory_panel):
+		inventory_panel.visible = false

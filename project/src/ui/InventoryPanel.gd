@@ -1,3 +1,4 @@
+@tool
 class_name InventoryPanelMain
 extends ColorRect
 
@@ -169,10 +170,17 @@ func _create_individual_fish_card(fish_data: Dictionary, fish_index: int):
 
 	fish_grid_container.add_child(card)
 
-	# Crear un FishDef temporal desde los datos guardados
-	var fish_def = _create_fish_def_from_data(fish_data)
+	var fish_id = fish_data.get("id")
+	if not fish_id:
+		push_warning("InventoryPanel: El dato de pescado en el índice %d no tiene ID." % fish_index)
+		return
 
-	# Configurar la tarjeta con datos individuales del pescado
+	var fish_def = FishDataManager.get_fish_def(fish_id)
+	if not fish_def:
+		push_warning("InventoryPanel: No se encontró FishDef para el ID '%s'. Omitiendo tarjeta." % fish_id)
+		return
+
+	# Configurar la tarjeta con el FishDef correcto y los datos de instancia
 	card.setup_individual_card(fish_def, fish_data, fish_index)
 
 	# Guardar el índice para poder identificar qué pez seleccionar
@@ -183,22 +191,6 @@ func _create_individual_fish_card(fish_data: Dictionary, fish_index: int):
 	card.details_requested.connect(_on_fish_details_requested)
 
 	fish_cards.append(card)
-
-func _create_fish_def_from_data(fish_data: Dictionary) -> FishDef:
-	var fish_def = FishDef.new()
-	fish_def.id = fish_data.get("id", "unknown")
-	fish_def.name = fish_data.get("name", "Pescado")
-	fish_def.description = fish_data.get("description", "")
-	fish_def.rarity = fish_data.get("rarity", 0)
-	fish_def.base_market_value = fish_data.get("value", 10)
-	fish_def.species_category = fish_data.get("species_category", "")
-
-	# Cargar sprite del pescado
-	var sprite_path = "res://art/fish/%s.png" % fish_def.id
-	if ResourceLoader.exists(sprite_path):
-		fish_def.sprite = load(sprite_path)
-
-	return fish_def
 
 func _on_individual_fish_card_selection_changed(card: Control, is_selected: bool):
 	var fish_index = card.get_meta("fish_index") as int

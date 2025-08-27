@@ -1,5 +1,5 @@
 class_name SaveManagerView
-extends BaseFloatingMenu
+extends Control
 
 signal save_loaded(slot: int)
 signal save_created(slot: int)

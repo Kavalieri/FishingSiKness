@@ -14,7 +14,7 @@ enum BackgroundType {
 const BACKGROUND_PATHS = {
 	BackgroundType.SPLASH: "res://art/env/splash.png",
 	BackgroundType.MAIN_FALLBACK: "res://art/env/main.png",
-	BackgroundType.FISHCARD: "res://art/ui/fishcard.png"
+	BackgroundType.FISHCARD: "res://art/ui/fishcard-square.png"
 }
 
 # Cache de texturas cargadas

@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3 uid="uid://d5h9m0x1v8ynk_milestones"]
+
+[ext_resource type="PackedScene" uid="uid://dflvvy162pbf1" path="res://src/ui/base/BaseWindow.tscn" id="1_parent"]
+[ext_resource type="Script" path="res://src/views/MilestonesPanel.gd" id="2_script"]
+
+[node name="MilestonesPanel" instance=ExtResource("1_parent")]
+script = ExtResource("2_script")
+
+[node name="MainVBox" type="VBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="CurrentSkillInfoVBox" type="VBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LevelHBox" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox" index="0"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox/LevelHBox" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🎯 Nivel: 1"
+
+[node name="PointsLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox/LevelHBox" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "✨ Puntos: 0"
+
+[node name="NextPointLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+text = "⏳ 5 niveles para próximo punto de skill"
+
+[node name="XPProgressBar" type="ProgressBar" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox" index="2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+show_percentage = false
+
+[node name="Separator" type="HSeparator" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox" index="1"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox" index="2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 2
+size_flags_vertical = 3

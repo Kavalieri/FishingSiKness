@@ -3,59 +3,53 @@ extends Control
 const SPLASH_SCENE = preload("res://scenes/views/SplashScreen.tscn")
 const MAIN_GAME_SCENE = preload("res://scenes/core/Main.tscn")
 
+var main_game_instance: Control
+
 func _ready():
-	print("🎮 GameMain: Inicializando sistema limpio...")
+	print("🎮 GameMain: Initializing...")
+	await get_tree().process_frame
 
-	# Cargar autoloads si no están disponibles
-	await ensure_autoloads_ready()
+	# 1. Instantiate the main game scene but keep it invisible and paused.
+	main_game_instance = MAIN_GAME_SCENE.instantiate()
+	main_game_instance.visible = false
+	main_game_instance.process_mode = Node.PROCESS_MODE_DISABLED
+	add_child(main_game_instance)
+	print("✅ Main game instance created and paused.")
 
-	# Cargar y mostrar splash screen desde .tscn
+	# 2. Show the splash screen.
 	show_splash_screen()
 
-func ensure_autoloads_ready():
-	"""Asegurar que los autoloads estén listos"""
-	var max_wait = 60
-	var wait_count = 0
-
-	while (not Save or not Content or not SFX) and wait_count < max_wait:
-		await get_tree().process_frame
-		wait_count += 1
-
-	if wait_count >= max_wait:
-		print("⚠️ Warning: Some autoloads may not be ready")
-
 func show_splash_screen():
-	"""Mostrar splash screen desde .tscn"""
 	var splash_instance = SPLASH_SCENE.instantiate()
 
-	# Conectar señal de finalización
+	# Connect signals
 	splash_instance.splash_finished.connect(_on_splash_finished)
+	
+	# The main_game_instance is the ScreenManager. We connect the splash's pause request to it.
+	if main_game_instance.has_method("show_pause_menu"):
+		splash_instance.pause_requested.connect(main_game_instance.show_pause_menu)
+		print("✅ Connected splash screen's pause_requested to ScreenManager")
+	else:
+		print("ERROR: Main game instance does not have show_pause_menu method.")
 
-	# Agregar a la escena
 	add_child(splash_instance)
-	print("✅ Splash Screen cargado desde .tscn limpio")
+	print("✅ Splash Screen loaded.")
 
 func _on_splash_finished():
-	"""Manejar finalización de splash screen"""
-	print("🎯 Splash finalizado - cargando juego principal...")
+	print("🎯 Splash finished - transitioning to main game...")
 
-	# Eliminar solo el splash screen, no todos los hijos
+	# Free the splash screen
 	var splash_screen = null
 	for child in get_children():
-		if child.has_signal("splash_finished"):
+		if child is Control and child.has_signal("splash_finished"):
 			splash_screen = child
 			break
-
 	if splash_screen:
 		splash_screen.queue_free()
-		# Esperar a que se elimine completamente antes de cargar Main
 		await splash_screen.tree_exited
 
-	# Cargar juego principal
-	load_main_game()
-
-func load_main_game():
-	"""Cargar la interfaz principal del juego"""
-	var main_instance = MAIN_GAME_SCENE.instantiate()
-	add_child(main_instance)
-	print("🎮 Juego principal cargado")
+	# 3. Make the main game visible and active.
+	if main_game_instance:
+		main_game_instance.visible = true
+		main_game_instance.process_mode = Node.PROCESS_MODE_INHERIT
+		print("🎮 Main game is now active.")

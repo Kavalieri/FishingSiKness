@@ -43,3 +43,7 @@ func vibrate():
 	# Para Android, requiere plugin nativo (no disponible por defecto en Godot 4)
 	# if OS.has_feature("Android"):
 	#     # Requiere implementación nativa o plugin
+
+func set_sfx_volume(volume_linear: float):
+	if sfx_player:
+		sfx_player.volume_db = linear_to_db(clamp(volume_linear, 0.0, 1.0))

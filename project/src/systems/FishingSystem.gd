@@ -30,4 +30,4 @@ func finish_fishing():
 	else:
 		SFX.play_event("error")
 	# Calcular resultado según qte_score
-	return {"score": qte_score"}
+	return {"score": qte_score}

@@ -26,7 +26,7 @@ func purchase(sku: String):
 func ad_reward(placement: String):
 	if can_show_ad():
 		ads_shown_today += 1
-		last_ad_time = Time.get_unix_time()
+		last_ad_time = Time.get_unix_time_from_system()
 		emit_signal("ad_reward_requested", placement)
 		# Simular recompensa
 		emit_signal("reward_granted", placement)
@@ -36,6 +36,6 @@ func ad_reward(placement: String):
 func can_show_ad() -> bool:
 	if ads_shown_today >= MAX_ADS_PER_DAY:
 		return false
-	if Time.get_unix_time() - last_ad_time < AD_COOLDOWN:
+	if Time.get_unix_time_from_system() - last_ad_time < AD_COOLDOWN:
 		return false
 	return true

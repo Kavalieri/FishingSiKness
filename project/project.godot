@@ -27,6 +27,7 @@ Experience="*res://src/autoload/Experience.gd"
 SkillTree="*res://src/autoload/SkillTree.gd"
 BackgroundManager="*res://src/autoload/BackgroundManager.gd"
 FloatingWindowManager="*res://src/autoload/FloatingWindowManager.gd"
+FishDataManager="*res://src/systems/FishDataManager.gd"
 
 [display]
 
@@ -45,4 +46,4 @@ renderer/rendering_method.mobile="gl_compatibility"
 
 [run]
 
-main_scene="res://scenes/core/Main.tscn"
+main_scene="res://scenes/core/MainWithSplash.tscn"

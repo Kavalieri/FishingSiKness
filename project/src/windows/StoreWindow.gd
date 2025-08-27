@@ -1,4 +1,4 @@
-extends "res://src/windows/BaseFloatingWindow.gd"
+extends Control
 # StoreWindow.gd - Implementación de tienda usando FloatingWindowManager
 # Sistema modular completamente separado del ScreenManager existente
 

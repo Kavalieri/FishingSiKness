@@ -1,5 +1,5 @@
 # FridgeView - Gestión de inventario como menú flotante estandarizado
-extends BaseFloatingMenu
+extends Control
 
 func setup_menu():
 	"""Configurar interfaz de la nevera/inventario"""
@@ -85,8 +85,9 @@ func setup_ui():
 	main_vbox.add_child(info_label)
 
 func _on_open_inventory_pressed():
-	var screen_manager = get_tree().current_scene
-	if screen_manager and screen_manager.has_method("show_inventory"):
-		screen_manager.show_inventory(true, "🧊 NEVERA - GESTIÓN")
+	if App.screen_manager and App.screen_manager.has_method("show_inventory"):
+		App.screen_manager.show_inventory(true, "🧊 NEVERA - GESTIÓN")
 		if SFX:
 			SFX.play_event("click")
+	else:
+		push_error("FridgeView: No se pudo encontrar App.screen_manager o el método show_inventory.")

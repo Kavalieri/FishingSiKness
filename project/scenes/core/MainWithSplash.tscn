@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://clean_main_splash"]
+[gd_scene load_steps=2 format=3 uid="uid://4hf48y8ima4q"]
 
-[ext_resource type="Script" path="res://src/core/GameMain.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://dry4hpro433lm" path="res://src/core/GameMain.gd" id="1_main"]
 
 [node name="GameMain" type="Control"]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_main")

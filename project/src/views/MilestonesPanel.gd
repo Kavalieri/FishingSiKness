@@ -1,134 +1,58 @@
 class_name MilestonesPanel
-extends BaseFloatingMenu
+extends BaseWindow
 
-signal close_requested()
+@onready var level_label: Label = %LevelLabel
+@onready var points_label: Label = %PointsLabel
+@onready var next_point_label: Label = %NextPointLabel
+@onready var xp_progress_bar: ProgressBar = %XPProgressBar
+@onready var scroll_container: ScrollContainer = %ScrollContainer
 
-var main_panel: PanelContainer
-var milestones_container: VBoxContainer
-
-func setup_menu():
-	"""Configurar interfaz del panel de hitos"""
-	name = "MilestonesPanel"
-
-	setup_ui()
-	# Diferir refresh_display para después de que se configuren los elementos UI
-	call_deferred("refresh_display")
-
-func setup_ui():
-	# Panel principal centrado (centrado dinámicamente)
-	main_panel = PanelContainer.new()
-	main_panel.z_index = 1
-	add_child(main_panel)
-
-	# Centrado dinámico en _ready
-	call_deferred("_center_panel", main_panel)
-	call_deferred("_setup_panel_content", main_panel)
-
-func _setup_panel_content(main_panel: PanelContainer):
-	"""Configurar el contenido del panel después del centrado"""
-	var main_vbox = VBoxContainer.new()
-	main_vbox.add_theme_constant_override("separation", 15)
-	main_panel.add_child(main_vbox)
-
-	# Título
-	var title_hbox = HBoxContainer.new()
-	main_vbox.add_child(title_hbox)
-
-	var title = Label.new()
-	title.text = "🌟 ÁRBOL DE HABILIDADES"
-	title.add_theme_font_size_override("font_size", 24)
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_hbox.add_child(title)
-
-	var close_btn = Button.new()
-	close_btn.text = "❌"
-	close_btn.custom_minimum_size = Vector2(48, 48)
-	close_btn.pressed.connect(_on_close_pressed)
-	title_hbox.add_child(close_btn)
-
-	# Información actual del skill tree
-	var current_info = create_current_skill_info()
-	main_vbox.add_child(current_info)
-
-	# Separador
-	var separator = HSeparator.new()
-	main_vbox.add_child(separator)
-
-	# Scroll para skills
-	var scroll = ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(scroll)
-
-	milestones_container = VBoxContainer.new()
-	milestones_container.add_theme_constant_override("separation", 15)
-	scroll.add_child(milestones_container)
-
-func create_current_skill_info() -> VBoxContainer:
-	var info_vbox = VBoxContainer.new()
-	info_vbox.add_theme_constant_override("separation", 8)
-
-	# Nivel actual y puntos de skill
-	var level_hbox = HBoxContainer.new()
-	info_vbox.add_child(level_hbox)
-
-	var current_level = Experience.current_level if Experience else Save.game_data.get("level", 1)
-	var level_label = Label.new()
-	level_label.text = "🎯 Nivel: %d" % current_level
-	level_label.add_theme_font_size_override("font_size", 18)
-	level_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	level_hbox.add_child(level_label)
-
-	var available_points = SkillTree.get_available_skill_points()
-	var points_label = Label.new()
-	points_label.text = "✨ Puntos: %d" % available_points
-	points_label.add_theme_font_size_override("font_size", 18)
-	if available_points > 0:
-		points_label.add_theme_color_override("font_color", Color.GOLD)
-	else:
-		points_label.add_theme_color_override("font_color", Color.GRAY)
-	level_hbox.add_child(points_label)
-
-	# Barra de progreso XP para próximo skill point
-	if Experience:
-		var progress_info = Experience.get_xp_progress()
-		var levels_to_next_point = 5 - (current_level % 5)
-		if levels_to_next_point == 5:
-			levels_to_next_point = 0
-
-		var next_point_label = Label.new()
-		if levels_to_next_point > 0:
-			next_point_label.text = "⏳ %d niveles para próximo punto de skill" % levels_to_next_point
-		else:
-			next_point_label.text = "🎉 ¡Punto de skill disponible!"
-		next_point_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		next_point_label.add_theme_font_size_override("font_size", 14)
-		if levels_to_next_point == 0:
-			next_point_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
-		else:
-			next_point_label.add_theme_color_override("font_color", Color.LIGHT_BLUE)
-		info_vbox.add_child(next_point_label)
-
-		var xp_bar = ProgressBar.new()
-		xp_bar.custom_minimum_size.y = 15
-		xp_bar.value = progress_info.percentage * 100
-		xp_bar.show_percentage = false
-		info_vbox.add_child(xp_bar)
-
-	return info_vbox
+func _ready():
+	super._ready()
+	refresh_display()
 
 func refresh_display():
-	# Verificar que milestones_container esté inicializado
-	if not milestones_container or not is_instance_valid(milestones_container):
-		print("⚠️ MilestonesPanel: milestones_container no inicializado aún")
-		return
+	_update_header_info()
+	_populate_milestones_grid()
 
-	# Limpiar skills existentes
-	for child in milestones_container.get_children():
+func _update_header_info():
+	var current_level = Experience.current_level
+	var available_points = SkillTree.get_available_skill_points()
+	var progress_info = Experience.get_xp_progress()
+	var levels_to_next_point = 5 - (current_level % 5)
+	if levels_to_next_point == 5: levels_to_next_point = 0
+
+	level_label.text = "🎯 Nivel: %d" % current_level
+	points_label.text = "✨ Puntos: %d" % available_points
+	points_label.modulate = Color.GOLD if available_points > 0 else Color.GRAY
+
+	if levels_to_next_point > 0:
+		next_point_label.text = "⏳ %d niveles para próximo punto de skill" % levels_to_next_point
+		next_point_label.modulate = Color.LIGHT_BLUE
+	else:
+		next_point_label.text = "🎉 ¡Punto de skill disponible!"
+		next_point_label.modulate = Color.LIGHT_GREEN
+
+	xp_progress_bar.value = progress_info.percentage * 100
+
+func _populate_milestones_grid():
+	# Limpiar el contenedor principal
+	for child in scroll_container.get_children():
 		child.queue_free()
+
+	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 15)
+	scroll_container.add_child(main_vbox)
 
 	# Mostrar skills por tiers
 	var skills_by_tier = SkillTree.get_skills_by_tier()
+	print("--- SKILLS BY TIER ---")
+	for tier in skills_by_tier:
+		print("Tier %d:" % tier)
+		for skill in skills_by_tier[tier]:
+			print("  - %s" % skill.id)
+	print("----------------------")
+
 	var sorted_tiers = skills_by_tier.keys()
 	sorted_tiers.sort()
 
@@ -139,14 +63,14 @@ func refresh_display():
 		tier_title.add_theme_font_size_override("font_size", 20)
 		tier_title.add_theme_color_override("font_color", get_tier_color(tier))
 		tier_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		milestones_container.add_child(tier_title)
+		main_vbox.add_child(tier_title)
 
 		# Grid para las skills del tier
 		var tier_grid = GridContainer.new()
 		tier_grid.columns = 2
 		tier_grid.add_theme_constant_override("h_separation", 15)
 		tier_grid.add_theme_constant_override("v_separation", 10)
-		milestones_container.add_child(tier_grid)
+		main_vbox.add_child(tier_grid)
 
 		# Agregar skills del tier
 		for skill_info in skills_by_tier[tier]:
@@ -156,7 +80,7 @@ func refresh_display():
 		if tier < sorted_tiers.max():
 			var separator = HSeparator.new()
 			separator.custom_minimum_size.y = 15
-			milestones_container.add_child(separator)
+			main_vbox.add_child(separator)
 
 func get_tier_color(tier: int) -> Color:
 	match tier:
@@ -175,11 +99,11 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 
 	# Fondo de la carta según estado
 	if is_unlocked:
-		card.add_theme_color_override("bg_color", Color(0, 0.4, 0, 0.3))
+		card.add_theme_stylebox_override("panel", preload("res://art/ui/panel_skill_unlocked.tres"))
 	elif can_unlock:
-		card.add_theme_color_override("bg_color", Color(0.4, 0.4, 0, 0.3))
+		card.add_theme_stylebox_override("panel", preload("res://art/ui/panel_skill_available.tres"))
 	else:
-		card.add_theme_color_override("bg_color", Color(0.2, 0.2, 0.2, 0.3))
+		card.add_theme_stylebox_override("panel", preload("res://art/ui/panel_skill_locked.tres"))
 
 	var card_vbox = VBoxContainer.new()
 	card_vbox.add_theme_constant_override("separation", 5)
@@ -267,103 +191,3 @@ func _on_skill_unlock_pressed(skill_id: String):
 			SFX.play_event("skill_unlock")
 		refresh_display()
 		print("Skill unlocked: ", skill_id)
-
-func get_past_milestones(current_level: int, count: int) -> Array:
-	var past_milestones = []
-	var all_milestones = Experience.milestones
-
-	for milestone_level in all_milestones.keys():
-		if milestone_level <= current_level:
-			past_milestones.append({
-				"level": milestone_level,
-				"info": all_milestones[milestone_level]
-			})
-
-	past_milestones.sort_custom(func(a, b): return a.level > b.level)
-	return past_milestones.slice(0, count)
-
-func create_milestone_card(level: int, info: Dictionary, completed: bool):
-	var card = PanelContainer.new()
-	card.custom_minimum_size = Vector2(0, 80)
-	milestones_container.add_child(card)
-
-	var card_hbox = HBoxContainer.new()
-	card_hbox.add_theme_constant_override("separation", 15)
-	card.add_child(card_hbox)
-
-	# Icono y nivel
-	var level_vbox = VBoxContainer.new()
-	level_vbox.custom_minimum_size.x = 80
-	card_hbox.add_child(level_vbox)
-
-	var level_label = Label.new()
-	level_label.text = "📈 Nivel %d" % level
-	level_label.add_theme_font_size_override("font_size", 16)
-	level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	level_vbox.add_child(level_label)
-
-	var status_icon = Label.new()
-	status_icon.add_theme_font_size_override("font_size", 24)
-	status_icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	if completed:
-		status_icon.text = "✅"
-		status_icon.add_theme_color_override("font_color", Color.LIGHT_GREEN)
-		card.add_theme_color_override("bg_color", Color(0, 0.3, 0, 0.3))
-	else:
-		status_icon.text = "⏳"
-		status_icon.add_theme_color_override("font_color", Color.ORANGE)
-		card.add_theme_color_override("bg_color", Color(0.3, 0.3, 0, 0.3))
-
-	level_vbox.add_child(status_icon)
-
-	# Descripción del bonus
-	var desc_vbox = VBoxContainer.new()
-	desc_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	card_hbox.add_child(desc_vbox)
-
-	var desc_label = Label.new()
-	desc_label.text = info.get("desc", "Sin descripción")
-	desc_label.add_theme_font_size_override("font_size", 16)
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc_vbox.add_child(desc_label)
-
-	var type_label = Label.new()
-	type_label.text = "Tipo: %s | Valor: %s" % [info.get("type", ""), str(info.get("value", ""))]
-	type_label.add_theme_font_size_override("font_size", 12)
-	type_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-	desc_vbox.add_child(type_label)
-
-func _on_close_pressed():
-	if SFX:
-		SFX.play_event("click")
-	emit_signal("close_requested")
-	queue_free()
-
-func _on_background_clicked(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		emit_signal("close_requested")
-		queue_free()
-
-func _input(event):
-	# Permitir cerrar con ESC
-	if event.is_action_pressed("ui_cancel"):
-		emit_signal("close_requested")
-		queue_free()
-
-func _center_panel(panel: PanelContainer):
-	"""Centrar el panel dinámicamente en la pantalla"""
-	var viewport_size = get_viewport().get_visible_rect().size
-	var panel_size = Vector2(viewport_size.x * 0.9, viewport_size.y * 0.9)
-
-	panel.custom_minimum_size = panel_size
-	panel.size = panel_size
-	panel.position = (viewport_size - panel_size) / 2
-
-	# Hacer el panel completamente opaco
-	panel.modulate = Color(1, 1, 1, 1.0) # 100% opaco
-	# Forzar fondo del panel
-	panel.add_theme_color_override("bg_color", Color(0.15, 0.15, 0.15, 1.0))
-
-	# Asegurar que está visible
-	panel.show()

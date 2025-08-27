@@ -1,5 +1,5 @@
 class_name FishCardMenu
-extends BaseFloatingMenu
+extends Control
 ## Menú flotante para mostrar información de una captura de pez
 ##
 ## Este es el nuevo menú que solicitaste: "tarjeta de captura"

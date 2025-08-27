@@ -1,6 +1,7 @@
 extends Control
 
 signal splash_finished()
+signal pause_requested()
 
 # Variables principales
 var logo_texture: TextureRect
@@ -372,27 +373,10 @@ func setup_options_button():
 	print("✅ Botón de opciones configurado en esquina superior derecha")
 
 func _on_options_pressed():
-	"""Manejar clic en botón de opciones - abrir menú unificado"""
-	print("🔧 Abriendo menú de opciones desde splash screen")
-
-	# Usar la escena de menú unificado
-	var UnifiedMenuScene = preload("res://scenes/views/UnifiedMenu.tscn")
-	var options_menu = UnifiedMenuScene.instantiate()
-
-	# Conectar señales
-	options_menu.menu_closed.connect(_on_options_menu_closed)
-	options_menu.save_manager_requested.connect(_on_save_manager_requested)
-
-	# Agregar al árbol de escena
-	get_tree().root.add_child(options_menu)
-
-	print("✅ Menú de opciones unificado abierto desde splash screen")
-
-func _on_options_menu_closed():
-	"""Callback cuando el menú de opciones se cierra"""
-	print("📴 Menú de opciones cerrado")
-
-func _on_save_manager_requested():
-	"""Callback cuando se solicita el gestor de guardado"""
-	print("💾 Gestor de guardado solicitado desde splash screen")
-	# TODO: Implementar gestor de guardado si es necesario en splash
+	"""
+	Manejar clic en botón de opciones.
+	En lugar de abrir un menú aquí, solo emitimos una señal.
+	Un gestor central se encargará de abrir el menú de pausa correcto.
+	"""
+	print("🔧 Pause requested from splash screen.")
+	pause_requested.emit()

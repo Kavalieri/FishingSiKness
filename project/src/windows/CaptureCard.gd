@@ -1,4 +1,4 @@
-extends "res://src/windows/BaseFloatingWindow.gd"
+extends Control
 # CaptureCard.gd - Tarjeta flotante para mostrar resultados de captura
 # Se muestra en esquina y desaparece automáticamente
 
