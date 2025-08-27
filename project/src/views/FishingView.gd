@@ -50,9 +50,9 @@ var rarity_chances = {
 
 var rarity_colors = {
 	"común": Color.WHITE,
-	"rara": Color.CYAN,
-	"épica": Color.MAGENTA,
-	"legendaria": Color.GOLD
+	"rara": Color.BLUE,
+	"épica": Color.PURPLE,
+	"legendaria": Color.ORANGE
 }
 
 var rarity_emojis = {
@@ -391,6 +391,17 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	fish_info.add_theme_constant_override("separation", 10)
 	main_vbox.add_child(fish_info)
 
+	# Sprite del pescado
+	var fish_sprite = TextureRect.new()
+	var sprite_path = "res://art/fish/%s.png" % fish_instance.fish_def.name.to_lower()
+	var texture = load(sprite_path)
+	if texture:
+		fish_sprite.texture = texture
+		fish_sprite.custom_minimum_size = Vector2(120, 120)
+		fish_sprite.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		fish_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		fish_info.add_child(fish_sprite)
+
 	var fish_name_label = Label.new()
 	fish_name_label.text = "🐟 %s" % fish_instance.fish_def.name
 	fish_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -399,7 +410,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	fish_info.add_child(fish_name_label)
 
 	var size_label = Label.new()
-	size_label.text = "📏 Tamaño: %.1fcm" % fish_instance.size
+	size_label.text = "📏 Tamaño: %.1fcm • 🎣 Peso: %.1fkg" % [fish_instance.size, fish_instance.weight]
 	size_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	size_label.add_theme_font_size_override("font_size", 16)
 	fish_info.add_child(size_label)
@@ -427,6 +438,30 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	final_price_label.add_theme_font_size_override("font_size", 18)
 	final_price_label.add_theme_color_override("font_color", Color.GOLD)
 	price_info.add_child(final_price_label)
+
+	# Información de experiencia
+	var xp_info = VBoxContainer.new()
+	xp_info.add_theme_constant_override("separation", 5)
+	main_vbox.add_child(xp_info)
+
+	var base_xp = calculate_xp_reward(fish_instance)
+	var rarity_xp_bonus = int(base_xp * (rarity_multiplier - 1.0))
+	var total_xp = base_xp + rarity_xp_bonus
+
+	var xp_label = Label.new()
+	xp_label.text = "🌟 EXPERIENCIA GANADA: %d XP" % total_xp
+	xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	xp_label.add_theme_font_size_override("font_size", 16)
+	xp_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
+	xp_info.add_child(xp_label)
+
+	if rarity_xp_bonus > 0:
+		var bonus_label = Label.new()
+		bonus_label.text = "✨ Bonus de rareza: +%d XP" % rarity_xp_bonus
+		bonus_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		bonus_label.add_theme_font_size_override("font_size", 14)
+		bonus_label.add_theme_color_override("font_color", Color.LIGHT_BLUE)
+		xp_info.add_child(bonus_label)
 
 	# Botones de acción
 	var button_container = HBoxContainer.new()

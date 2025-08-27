@@ -70,12 +70,12 @@ func setup_ui():
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	main_vbox.add_child(scroll)
 
-	# Grid container para los peces (4 columnas para mejor aprovechamiento)
+	# Grid container para los peces (3 columnas para mejor espacio)
 	inventory_grid = GridContainer.new()
-	inventory_grid.columns = 4
+	inventory_grid.columns = 3
 	inventory_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	inventory_grid.add_theme_constant_override("h_separation", 10)
-	inventory_grid.add_theme_constant_override("v_separation", 10)
+	inventory_grid.add_theme_constant_override("h_separation", 15)
+	inventory_grid.add_theme_constant_override("v_separation", 15)
 	scroll.add_child(inventory_grid)
 
 	# Botones de venta
@@ -135,7 +135,7 @@ func refresh_display():
 		inventory_grid.add_child(fish_button)
 
 	# Llenar espacios vacíos hasta completar algunas filas
-	var visible_slots = max(max_count, ((current_count / 4) + 2) * 4) # Mostrar al menos 2 filas extra
+	var visible_slots = max(max_count, ((current_count / 3) + 2) * 3) # Mostrar al menos 2 filas extra para 3 columnas
 	var empty_slots = visible_slots - current_count
 	for i in range(empty_slots):
 		var empty_button = create_empty_slot()
@@ -146,23 +146,111 @@ func create_fish_button(fish_data: Dictionary, index: int) -> Button:
 	var name = fish_data.get("name", "Pez")
 	var size = fish_data.get("size", 0.0)
 	var value = fish_data.get("value", 0)
-	var rarity = fish_data.get("rarity", "common")
+	var rarity = fish_data.get("rarity", "común")
 
-	# Formato del botón con información del pez
-	button.text = "%s\n%.1fcm\n💰%d" % [name, size, value]
-	button.custom_minimum_size = Vector2(140, 100)
+	# Debug: imprimir rareza para verificar valores
+	print("MarketView: Fish %s has rarity: '%s' (type: %s)" % [name, rarity, typeof(rarity)])
+
+	# Crear un VBoxContainer para organizar el contenido
+	var vbox = VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	button.add_child(vbox)
+
+	# Contenedor superior con sprite y botón info
+	var top_container = HBoxContainer.new()
+	top_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(top_container)
+
+	# Cargar y mostrar el sprite del pescado
+	var fish_sprite = TextureRect.new()
+	var sprite_path = "res://art/fish/%s.png" % name.to_lower()
+	var texture = load(sprite_path)
+	if texture:
+		fish_sprite.texture = texture
+		fish_sprite.custom_minimum_size = Vector2(60, 60)
+		fish_sprite.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		fish_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		fish_sprite.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		top_container.add_child(fish_sprite)
+
+	# Botón de información detallada (esquina superior derecha)
+	var info_button = Button.new()
+	info_button.text = "ℹ️"
+	info_button.custom_minimum_size = Vector2(20, 20)
+	info_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	info_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	info_button.pressed.connect(_on_fish_info_pressed.bind(fish_data))
+	top_container.add_child(info_button)
+
+	# Información del pez
+	var info_label = Label.new()
+	info_label.text = "%s\n%.1fcm\n💰%d" % [name, size, value]
+	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	info_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(info_label)
+
+	button.custom_minimum_size = Vector2(180, 140)
 	button.toggle_mode = true
 
-	# Color según rareza
-	match str(rarity).to_lower():
-		"common":
-			button.add_theme_color_override("font_color", Color.WHITE)
-		"rare":
-			button.add_theme_color_override("font_color", Color.CYAN)
-		"epic":
-			button.add_theme_color_override("font_color", Color.MAGENTA)
-		"legendary":
-			button.add_theme_color_override("font_color", Color.GOLD)
+	# Crear Panel con borde de rareza
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0.2, 0.2, 0.2, 0.9) # Fondo semi-transparente
+	style_box.border_width_left = 4
+	style_box.border_width_right = 4
+	style_box.border_width_top = 4
+	style_box.border_width_bottom = 4
+	style_box.corner_radius_top_left = 8
+	style_box.corner_radius_top_right = 8
+	style_box.corner_radius_bottom_left = 8
+	style_box.corner_radius_bottom_right = 8
+
+	# Color del borde según rareza
+	var border_color: Color
+	var rarity_name: String
+
+	# Mapear valores numéricos a nombres de rareza
+	var rarity_value = rarity if typeof(rarity) == TYPE_FLOAT or typeof(rarity) == TYPE_INT else 0
+	match rarity_value:
+		0, 0.0:
+			rarity_name = "común"
+			border_color = Color.WHITE
+		1, 1.0:
+			rarity_name = "rara"
+			border_color = Color.BLUE
+		2, 2.0:
+			rarity_name = "épica"
+			border_color = Color.PURPLE
+		3, 3.0:
+			rarity_name = "legendaria"
+			border_color = Color.ORANGE
+		_:
+			rarity_name = str(rarity).to_lower()
+			# Fallback para strings
+			match rarity_name:
+				"común":
+					border_color = Color.WHITE
+				"rara":
+					border_color = Color.BLUE
+				"épica":
+					border_color = Color.PURPLE
+				"legendaria":
+					border_color = Color.ORANGE
+				_:
+					border_color = Color.GRAY
+
+	# Mantener texto en blanco para legibilidad
+	info_label.add_theme_color_override("font_color", Color.WHITE)
+
+	style_box.border_color = border_color
+	button.add_theme_stylebox_override("normal", style_box)
+
+	# Stylebox para cuando está presionado
+	var style_box_pressed = style_box.duplicate()
+	style_box_pressed.bg_color = Color(0.3, 0.3, 0.3, 1.0)
+	button.add_theme_stylebox_override("pressed", style_box_pressed)
 
 	button.pressed.connect(_on_fish_selected.bind(index, button))
 	return button
@@ -170,7 +258,7 @@ func create_fish_button(fish_data: Dictionary, index: int) -> Button:
 func create_empty_slot() -> Control:
 	var button = Button.new()
 	button.text = "Vacío"
-	button.custom_minimum_size = Vector2(140, 100)
+	button.custom_minimum_size = Vector2(180, 140) # Mismo tamaño que las tarjetas de peces
 	button.disabled = true
 	button.add_theme_color_override("font_color", Color.GRAY)
 	return button
@@ -246,3 +334,104 @@ func _on_sell_all_pressed():
 		SFX.play_event("success")
 
 	refresh_display()
+
+func _on_fish_info_pressed(fish_data: Dictionary):
+	"""Mostrar información detallada del pescado en una ventana flotante"""
+	show_fish_detail_dialog(fish_data)
+
+func show_fish_detail_dialog(fish_data: Dictionary):
+	"""Crear y mostrar ventana flotante con información detallada del pescado"""
+
+	# Determinar la rareza correcta ANTES de usarla
+	var rarity = fish_data.get("rarity", "común")
+	var rarity_name: String = "común" # Valor por defecto
+
+	# Mapear valores numéricos a nombres de rareza
+	if typeof(rarity) == TYPE_FLOAT or typeof(rarity) == TYPE_INT:
+		match rarity:
+			0, 0.0:
+				rarity_name = "común"
+			1, 1.0:
+				rarity_name = "rara"
+			2, 2.0:
+				rarity_name = "épica"
+			3, 3.0:
+				rarity_name = "legendaria"
+			_:
+				rarity_name = "común"
+	else:
+		rarity_name = str(rarity).to_lower()
+
+	# Crear ventana flotante
+	var dialog = AcceptDialog.new()
+	dialog.title = "🐟 Información Detallada"
+	dialog.size = Vector2(400, 350)
+	dialog.popup_window = true
+
+	# Contenido principal
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+
+	# Sprite del pescado (más grande)
+	var fish_sprite = TextureRect.new()
+	var sprite_path = "res://art/fish/%s.png" % fish_data.get("name", "").to_lower()
+	var texture = load(sprite_path)
+	if texture:
+		fish_sprite.texture = texture
+		fish_sprite.custom_minimum_size = Vector2(100, 100)
+		fish_sprite.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		fish_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		vbox.add_child(fish_sprite)
+
+	# Información básica
+	var title_label = Label.new()
+	title_label.text = fish_data.get("name", "Pez Desconocido")
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(title_label)
+
+	# Datos específicos (ahora rarity_name ya tiene el valor correcto)
+	var info_text = """
+📏 Tamaño: %.1f cm
+💰 Valor: %d monedas
+🌟 Rareza: %s
+🎣 Peso: %.1f kg
+📍 Zona de captura: %s
+📅 Capturado: %s
+📝 Descripción: %s
+""" % [
+		fish_data.get("size", 0.0),
+		fish_data.get("value", 0),
+		rarity_name.capitalize(),
+		fish_data.get("weight", 0.0),
+		fish_data.get("capture_zone_id", "Desconocida"),
+		Time.get_datetime_string_from_unix_time(fish_data.get("timestamp", 0)),
+		fish_data.get("description", "Sin descripción disponible")
+	]
+
+	var info_label = RichTextLabel.new()
+	info_label.text = info_text.strip_edges()
+	info_label.fit_content = true
+	info_label.custom_minimum_size.y = 200
+	vbox.add_child(info_label)
+
+	# Aplicar color del título según rareza
+	match rarity_name:
+		"común":
+			title_label.add_theme_color_override("font_color", Color.WHITE)
+		"rara":
+			title_label.add_theme_color_override("font_color", Color.BLUE)
+		"épica":
+			title_label.add_theme_color_override("font_color", Color.PURPLE)
+		"legendaria":
+			title_label.add_theme_color_override("font_color", Color.ORANGE)
+		_:
+			title_label.add_theme_color_override("font_color", Color.WHITE)
+
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+	# Auto-eliminar cuando se cierre
+	dialog.confirmed.connect(func(): dialog.queue_free())
+	dialog.close_requested.connect(func(): dialog.queue_free())

@@ -5,6 +5,7 @@ extends BaseWindow
 @onready var points_label: Label = %PointsLabel
 @onready var next_point_label: Label = %NextPointLabel
 @onready var xp_progress_bar: ProgressBar = %XPProgressBar
+# @onready var xp_numeric_label: Label = %XPNumericLabel  # Temporalmente comentado
 @onready var scroll_container: ScrollContainer = %ScrollContainer
 
 func _ready():
@@ -34,6 +35,11 @@ func _update_header_info():
 		next_point_label.modulate = Color.LIGHT_GREEN
 
 	xp_progress_bar.value = progress_info.percentage * 100
+
+	# Mostrar información numérica de experiencia (temporalmente deshabilitado)
+	# var current_xp = progress_info.current_xp
+	# var required_xp = progress_info.required_xp
+	# xp_numeric_label.text = "%d / %d XP" % [current_xp, required_xp]
 
 func _populate_milestones_grid():
 	# Limpiar el contenedor principal
