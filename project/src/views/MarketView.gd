@@ -1,190 +1,248 @@
-@tool
-class_name MarketView
-extends BaseWindow
+class_name MarketViewNew
+extends Control
 
-# --- Preloads ---
-const FishCardScene = preload("res://scenes/ui/FishCard.tscn")
-const FishDetailsPopupScene = preload("res://scenes/ui/FishDetailsPopup.tscn")
+# Variables para la UI
+var inventory_grid: GridContainer
+var sell_selected_btn: Button
+var sell_all_btn: Button
+var capacity_label: Label
+var total_value_label: Label
 
-# --- Variables ---
-var fish_cards: Array = []
-var selected_fish_indices: Array[int] = []
-var details_popup: AcceptDialog = null
-var confirmation_dialog: ConfirmationDialog = null
-var _current_rarity_filter: String = "All"
-var _pending_confirmation_action: String = ""
-
-# --- Referencias a UI ---
-var fish_flow_container: HFlowContainer
-var sell_selected_button: Button
-var filter_container: HBoxContainer
-var select_all_button: Button
-var deselect_all_button: Button
+# Variables de estado
+var selected_fish_indices := []
 
 func _ready():
-	super._ready()
+	setup_background()
+	setup_ui()
+	# Conectar señal de visibilidad para refrescar cuando se muestre
+	visibility_changed.connect(_on_visibility_changed)
 
-	print("🔍 MarketView: Iniciando búsqueda de nodos...")
+func setup_background():
+	"""Configurar fondo usando BackgroundManager"""
+	if BackgroundManager:
+		BackgroundManager.setup_main_background(self)
+		print("✅ Fondo principal configurado en MarketView")
+	else:
+		print("⚠️ BackgroundManager no disponible en MarketView")
 
-	# Buscar nodos usando find_child para evitar problemas de rutas
-	fish_flow_container = find_child("FishFlowContainer", true, false)
-	print("🔍 FishFlowContainer found: ", fish_flow_container != null)
+func setup_ui():
+	# Crear la interfaz principal
+	var main_vbox = VBoxContainer.new()
+	add_child(main_vbox)
+	main_vbox.anchor_right = 1.0
+	main_vbox.anchor_bottom = 1.0
+	main_vbox.offset_left = 20
+	main_vbox.offset_right = -20
+	main_vbox.offset_top = 20
+	main_vbox.offset_bottom = -20
 
-	sell_selected_button = find_child("SellSelectedButton", true, false)
-	print("🔍 SellSelectedButton found: ", sell_selected_button != null)
+	# Título del mercado
+	var title = Label.new()
+	title.text = "🏪 MERCADO DE PECES"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_color_override("font_color", Color.GOLD)
+	main_vbox.add_child(title)
 
-	filter_container = find_child("FilterContainer", true, false)
-	print("🔍 FilterContainer found: ", filter_container != null)
+	# Separador
+	var separator = HSeparator.new()
+	separator.custom_minimum_size.y = 10
+	main_vbox.add_child(separator)
 
-	select_all_button = find_child("SelectAllButton", true, false)
-	print("🔍 SelectAllButton found: ", select_all_button != null)
+	# Información del inventario
+	var info_container = HBoxContainer.new()
+	main_vbox.add_child(info_container)
 
-	deselect_all_button = find_child("DeselectAllButton", true, false)
-	print("🔍 DeselectAllButton found: ", deselect_all_button != null)
+	capacity_label = Label.new()
+	capacity_label.text = "Inventario: 0/12"
+	capacity_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_container.add_child(capacity_label)
 
-	# Verificar que todos los nodos necesarios existan
-	if not fish_flow_container:
-		print("❌ ERROR: FishFlowContainer no encontrado en MarketView")
-		return
-	if not sell_selected_button:
-		print("❌ ERROR: SellSelectedButton no encontrado en MarketView")
-		return
-	if not filter_container:
-		print("❌ ERROR: FilterContainer no encontrado en MarketView")
-		return
-	if not select_all_button:
-		print("❌ ERROR: SelectAllButton no encontrado en MarketView")
-		return
-	if not deselect_all_button:
-		print("❌ ERROR: DeselectAllButton no encontrado en MarketView")
-		return
+	total_value_label = Label.new()
+	total_value_label.text = "Valor total: 0💰"
+	total_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	total_value_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	total_value_label.add_theme_color_override("font_color", Color.YELLOW)
+	info_container.add_child(total_value_label)
 
-	print("✅ MarketView: Todos los nodos encontrados correctamente")
+	# Scroll container para el inventario
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_vbox.add_child(scroll)
 
-	# Popups
-	details_popup = FishDetailsPopupScene.instantiate()
-	add_child(details_popup)
+	# Grid container para los peces (4 columnas para mejor aprovechamiento)
+	inventory_grid = GridContainer.new()
+	inventory_grid.columns = 4
+	inventory_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	inventory_grid.add_theme_constant_override("h_separation", 10)
+	inventory_grid.add_theme_constant_override("v_separation", 10)
+	scroll.add_child(inventory_grid)
 
-	# Conexiones
-	_connect_buttons()
+	# Botones de venta
+	var button_container = HBoxContainer.new()
+	button_container.add_theme_constant_override("separation", 10)
+	main_vbox.add_child(button_container)
 
-	# Conectar al botón de cierre de la BaseWindow
-	var base_close_button = get_node_or_null("%CloseButton")
-	if base_close_button:
-		base_close_button.pressed.connect(_on_close_pressed)
+	sell_selected_btn = Button.new()
+	sell_selected_btn.text = "🛒 VENDER SELECCIONADOS"
+	sell_selected_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sell_selected_btn.custom_minimum_size.y = 50
+	sell_selected_btn.pressed.connect(_on_sell_selected_pressed)
+	button_container.add_child(sell_selected_btn)
 
-	call_deferred("refresh_display") func _connect_buttons():
-	if sell_selected_button:
-		sell_selected_button.pressed.connect(_on_sell_selected_pressed)
-	if select_all_button:
-		select_all_button.pressed.connect(_on_select_all_pressed)
-	if deselect_all_button:
-		deselect_all_button.pressed.connect(_on_deselect_all_pressed)
+	sell_all_btn = Button.new()
+	sell_all_btn.text = "💰 VENDER TODO"
+	sell_all_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sell_all_btn.custom_minimum_size.y = 50
+	sell_all_btn.pressed.connect(_on_sell_all_pressed)
+	button_container.add_child(sell_all_btn)
 
-	if filter_container:
-		for button in filter_container.get_children():
-			var rarity_filter = button.text.to_lower().capitalize()
-			if button.name == "FilterAll": rarity_filter = "All"
-			button.pressed.connect(_on_filter_changed.bind(rarity_filter))
-
-# --- Lógica de Botones y Acciones ---
-
-func _on_filter_changed(new_filter: String):
-	_current_rarity_filter = new_filter
-	refresh_display()
-
-func _on_select_all_pressed():
-	for card in fish_cards:
-		card.set_selected(true)
-	selected_fish_indices.clear()
-	for card in fish_cards:
-		selected_fish_indices.append(card.get_meta("fish_index"))
-	_update_buttons_state()
-
-func _on_deselect_all_pressed():
-	for card in fish_cards:
-		card.set_selected(false)
-	selected_fish_indices.clear()
-	_update_buttons_state()
-
-func _on_sell_selected_pressed():
-	if selected_fish_indices.is_empty(): return
-	InventorySystem.sell_fishes(selected_fish_indices)
-	refresh_display()
-
-func _on_close_pressed():
-	Save.save_game()
-	hide()
-
-# --- Lógica de Renderizado y Selección ---
+func _on_visibility_changed():
+	if visible:
+		refresh_display()
 
 func refresh_display():
 	print("🔄 MarketView: Refreshing display...")
-	_clear_cards()
-	_load_fish_cards()
-	_update_buttons_state()
+	if not inventory_grid:
+		return
 
-func _clear_cards():
-	print("🧹 MarketView: Clearing ", fish_cards.size(), " cards")
-	for card in fish_cards:
-		if is_instance_valid(card):
-			card.queue_free()
-	fish_cards.clear()
+	# Limpiar grid
+	for child in inventory_grid.get_children():
+		child.queue_free()
+
 	selected_fish_indices.clear()
 
-func _load_fish_cards():
+	# Obtener inventario del InventorySystem
 	var inventory = InventorySystem.get_inventory()
-	print("🐟 MarketView: Loading fish cards. Inventory size: ", inventory.size())
-	for i in range(inventory.size()):
+	var current_count = inventory.size()
+	var max_count = 12 # TODO: obtener del sistema de mejoras
+
+	# Actualizar etiquetas de información
+	capacity_label.text = "Inventario: %d/%d peces" % [current_count, max_count]
+
+	# Calcular valor total
+	var total_value = 0
+	for fish_data in inventory:
+		total_value += fish_data.get("value", 0)
+	total_value_label.text = "Valor total: %d💰" % total_value
+
+	print("🐟 MarketView: Loading %d fish" % current_count)
+
+	# Añadir peces al grid
+	for i in range(current_count):
 		var fish_data = inventory[i]
-		print("🐟 Processing fish ", i, ": ", fish_data.get("name", "Unknown"))
-		if _current_rarity_filter == "All" or fish_data.get("rarity") == _current_rarity_filter:
-			_create_individual_fish_card(fish_data, i)
+		var fish_button = create_fish_button(fish_data, i)
+		inventory_grid.add_child(fish_button)
 
-func _create_individual_fish_card(fish_data: Dictionary, fish_index: int):
-	if not fish_flow_container:
-		print("❌ ERROR: fish_flow_container is null in _create_individual_fish_card")
-		return
+	# Llenar espacios vacíos hasta completar algunas filas
+	var visible_slots = max(max_count, ((current_count / 4) + 2) * 4) # Mostrar al menos 2 filas extra
+	var empty_slots = visible_slots - current_count
+	for i in range(empty_slots):
+		var empty_button = create_empty_slot()
+		inventory_grid.add_child(empty_button)
 
-	var card = FishCardScene.instantiate()
-	card.custom_minimum_size = Vector2(180, 220)
-	fish_flow_container.add_child(card)
-	var fish_def = FishDataManager.get_fish_def(fish_data.get("id"))
-	if not fish_def:
-		print("❌ ERROR: No se pudo obtener fish_def para ID: ", fish_data.get("id"))
-		return
-	card.setup_individual_card(fish_def, fish_data, fish_index)
-	card.set_meta("fish_index", fish_index)
-	card.selection_changed.connect(_on_individual_fish_card_selection_changed)
-	card.details_requested.connect(_on_fish_details_requested)
-	fish_cards.append(card)
+func create_fish_button(fish_data: Dictionary, index: int) -> Button:
+	var button = Button.new()
+	var name = fish_data.get("name", "Pez")
+	var size = fish_data.get("size", 0.0)
+	var value = fish_data.get("value", 0)
+	var rarity = fish_data.get("rarity", "common")
 
-func _on_individual_fish_card_selection_changed(card: Control, is_selected: bool):
-	var fish_index = card.get_meta("fish_index") as int
-	if is_selected:
-		if not selected_fish_indices.has(fish_index):
-			selected_fish_indices.append(fish_index)
+	# Formato del botón con información del pez
+	button.text = "%s\n%.1fcm\n💰%d" % [name, size, value]
+	button.custom_minimum_size = Vector2(140, 100)
+	button.toggle_mode = true
+
+	# Color según rareza
+	match str(rarity).to_lower():
+		"common":
+			button.add_theme_color_override("font_color", Color.WHITE)
+		"rare":
+			button.add_theme_color_override("font_color", Color.CYAN)
+		"epic":
+			button.add_theme_color_override("font_color", Color.MAGENTA)
+		"legendary":
+			button.add_theme_color_override("font_color", Color.GOLD)
+
+	button.pressed.connect(_on_fish_selected.bind(index, button))
+	return button
+
+func create_empty_slot() -> Control:
+	var button = Button.new()
+	button.text = "Vacío"
+	button.custom_minimum_size = Vector2(140, 100)
+	button.disabled = true
+	button.add_theme_color_override("font_color", Color.GRAY)
+	return button
+
+func _on_fish_selected(index: int, button: Button):
+	if button.button_pressed:
+		selected_fish_indices.append(index)
 	else:
-		var idx_pos = selected_fish_indices.find(fish_index)
-		if idx_pos != -1:
-			selected_fish_indices.remove_at(idx_pos)
-	_update_buttons_state()
+		selected_fish_indices.erase(index)
 
-func _update_buttons_state():
-	var has_selection = not selected_fish_indices.is_empty()
-	var has_inventory = not InventorySystem.get_inventory().is_empty()
+	# Actualizar botón de vender selección
+	if selected_fish_indices.size() > 0:
+		sell_selected_btn.text = "🛒 VENDER SELECCIONADOS (%d)" % selected_fish_indices.size()
+	else:
+		sell_selected_btn.text = "🛒 VENDER SELECCIONADOS"
 
-	if sell_selected_button:
-		sell_selected_button.disabled = not has_selection
-	if select_all_button:
-		select_all_button.disabled = not has_inventory
-	if deselect_all_button:
-		deselect_all_button.disabled = not has_inventory or not has_selection
+func _on_sell_selected_pressed():
+	if selected_fish_indices.size() == 0:
+		return
 
-func _on_fish_details_requested(card: Control):
-	if details_popup:
-		details_popup.show_fish_details(card.fish_data, card.individual_fish_data)
+	print("MarketView: Selling %d selected fish" % selected_fish_indices.size())
+	var total_earned = InventorySystem.sell_fishes(selected_fish_indices)
+	print("MarketView: Earned %d coins from sale" % total_earned)
+	print("MarketView: Current coins after sale: %d" % Save.get_coins())
 
-func _input(event):
-	if event.is_action_pressed("ui_cancel"):
-		_on_close_pressed()
+	# Actualizar la TopBar para mostrar las nuevas monedas
+	var screen_manager = get_tree().current_scene
+	print("MarketView: Screen manager found: ", screen_manager != null)
+	if screen_manager:
+		# La TopBar está dentro del nodo Main, no directamente en el ScreenManager
+		var top_bar = screen_manager.get_node_or_null("Main/TopBar")
+		print("MarketView: TopBar found: ", top_bar != null)
+		if top_bar and top_bar.has_method("update_display"):
+			top_bar.update_display()
+			print("✅ TopBar actualizada después de la venta")
+		else:
+			print("❌ TopBar no encontrada o no tiene update_display()")
+
+	if SFX:
+		SFX.play_event("success")
+
+	refresh_display()
+
+func _on_sell_all_pressed():
+	var inventory = InventorySystem.get_inventory()
+	if inventory.size() == 0:
+		return
+
+	print("MarketView: Selling all %d fish" % inventory.size())
+	# Crear array con todos los índices
+	var all_indices = []
+	for i in range(inventory.size()):
+		all_indices.append(i)
+
+	var total_earned = InventorySystem.sell_fishes(all_indices)
+	print("MarketView: Earned %d coins from selling all fish" % total_earned)
+	print("MarketView: Current coins after sale: %d" % Save.get_coins())
+
+	# Actualizar la TopBar para mostrar las nuevas monedas
+	var screen_manager = get_tree().current_scene
+	print("MarketView: Screen manager found: ", screen_manager != null)
+	if screen_manager:
+		# La TopBar está dentro del nodo Main, no directamente en el ScreenManager
+		var top_bar = screen_manager.get_node_or_null("Main/TopBar")
+		print("MarketView: TopBar found: ", top_bar != null)
+		if top_bar and top_bar.has_method("update_display"):
+			top_bar.update_display()
+			print("✅ TopBar actualizada después de la venta")
+		else:
+			print("❌ TopBar no encontrada o no tiene update_display()")
+
+	if SFX:
+		SFX.play_event("success")
+
+	refresh_display()

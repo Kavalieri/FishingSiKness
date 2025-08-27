@@ -1,4 +1,3 @@
-@tool
 class_name InventoryPanelMain
 extends BaseWindow
 
@@ -63,7 +62,9 @@ func _ready():
 	if base_close_button:
 		base_close_button.pressed.connect(_on_close_pressed)
 
-	call_deferred("refresh_display") func _connect_buttons():
+	call_deferred("refresh_display")
+
+func _connect_buttons():
 	if sell_selected_button:
 		sell_selected_button.pressed.connect(_on_sell_selected_pressed)
 	if sell_all_button:

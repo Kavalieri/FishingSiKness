@@ -178,6 +178,8 @@ func _on_pause_menu_closed():
 	pass
 
 func _on_save_and_exit():
+	print("Saving game before exit...")
+	Save.save_game()
 	get_tree().quit()
 
 func _on_save_manager_requested_from_pause():
@@ -185,7 +187,7 @@ func _on_save_manager_requested_from_pause():
 	var pause_menu = FloatingWindowManager.get_top_window()
 	if pause_menu is PauseMenu:
 		pause_menu.close()
-	
+
 	# TODO: Refactorizar SaveManagerView
 	print("TODO: Refactorizar SaveManagerView y abrirlo aquí")
 
@@ -194,7 +196,7 @@ func _on_save_manager_requested_from_settings():
 	var settings_menu = FloatingWindowManager.get_top_window()
 	if settings_menu is SettingsMenu:
 		settings_menu.close()
-	
+
 	# TODO: Refactorizar SaveManagerView
 	print("TODO: Refactorizar SaveManagerView y abrirlo aquí")
 

@@ -45,6 +45,28 @@ func _ready():
 	load_game()
 	_ensure_initial_data()
 
+	# Guardar automáticamente cuando se cierre el juego
+	get_tree().auto_accept_quit = false
+	get_tree().quit_on_go_back = false
+
+	# Timer para guardado automático cada 30 segundos
+	var auto_save_timer = Timer.new()
+	auto_save_timer.wait_time = 30.0
+	auto_save_timer.autostart = true
+	auto_save_timer.timeout.connect(_auto_save)
+	add_child(auto_save_timer)
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("Auto-saving before quit...")
+		save_game()
+		get_tree().quit()
+
+func _auto_save():
+	"""Guardado automático periódico"""
+	print("Auto-save triggered")
+	save_game()
+
 func _ensure_initial_data():
 	# Asegurar que tenemos algunos peces de prueba si el inventario está vacío
 	if InventorySystem.get_inventory_count() == 0 and Content:

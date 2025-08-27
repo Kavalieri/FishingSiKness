@@ -58,7 +58,7 @@ static func sell_fishes(indices: Array) -> int:
 				new_inventory.append(fish)
 		_inventory = new_inventory
 
-		Save.add_coins(total_value, false)
+		Save.add_coins(total_value, true) # Cambiar a true para guardar automáticamente
 		SFX.play_event("sell")
 
 	return total_value
