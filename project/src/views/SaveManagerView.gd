@@ -12,7 +12,8 @@ func setup_menu():
 	name = "SaveManagerView"
 
 	setup_save_manager_ui()
-	refresh_save_slots()
+	# Diferir refresh_save_slots hasta que la UI esté completamente configurada
+	call_deferred("refresh_save_slots")
 
 func setup_save_manager_ui():
 	"""Configurar interfaz del gestor de guardado con estilo unificado"""
@@ -97,8 +98,15 @@ func _setup_panel_content(panel: PanelContainer):
 	save_slots_container.add_theme_constant_override("separation", 10)
 	scroll.add_child(save_slots_container)
 
+	print("SaveManagerView: save_slots_container configurado correctamente")
+
 func refresh_save_slots():
 	"""Refrescar la lista de slots de guardado"""
+	# Verificar que save_slots_container existe antes de usarlo
+	if not save_slots_container:
+		print("Warning: save_slots_container is null, cannot refresh save slots")
+		return
+
 	# Limpiar slots existentes
 	for child in save_slots_container.get_children():
 		child.queue_free()
