@@ -115,7 +115,8 @@ func refresh_display():
 	# Obtener inventario del InventorySystem
 	var inventory = InventorySystem.get_inventory()
 	var current_count = inventory.size()
-	var max_count = 12 # TODO: obtener del sistema de mejoras
+	# Obtener capacidad real del sistema de mejoras
+	var max_count = Save.game_data.get("max_inventory", 12)
 
 	# Actualizar etiquetas de información
 	capacity_label.text = "Inventario: %d/%d peces" % [current_count, max_count]
@@ -164,7 +165,10 @@ func create_fish_button(fish_data: Dictionary, index: int) -> Button:
 
 	# Cargar y mostrar el sprite del pescado
 	var fish_sprite = TextureRect.new()
-	var sprite_path = "res://art/fish/%s.png" % name.to_lower()
+	# Manejar casos especiales con tildes y caracteres especiales
+	var sprite_name = name.to_lower()
+	sprite_name = sprite_name.replace("ó", "o").replace("á", "a").replace("é", "e").replace("í", "i").replace("ú", "u")
+	var sprite_path = "res://art/fish/%s.png" % sprite_name
 	var texture = load(sprite_path)
 	if texture:
 		fish_sprite.texture = texture
@@ -374,7 +378,10 @@ func show_fish_detail_dialog(fish_data: Dictionary):
 
 	# Sprite del pescado (más grande)
 	var fish_sprite = TextureRect.new()
-	var sprite_path = "res://art/fish/%s.png" % fish_data.get("name", "").to_lower()
+	# Manejar casos especiales con tildes y caracteres especiales
+	var sprite_name = fish_data.get("name", "").to_lower()
+	sprite_name = sprite_name.replace("ó", "o").replace("á", "a").replace("é", "e").replace("í", "i").replace("ú", "u")
+	var sprite_path = "res://art/fish/%s.png" % sprite_name
 	var texture = load(sprite_path)
 	if texture:
 		fish_sprite.texture = texture

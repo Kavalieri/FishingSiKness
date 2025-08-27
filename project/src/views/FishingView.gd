@@ -314,13 +314,29 @@ func get_rarity_color_from_fish_name(fish_name: String) -> Color:
 	return Color.WHITE
 
 func roll_rarity_bonus() -> String:
-	"""Sistema gacha: determinar rareza aleatoria de la captura"""
+	"""Sistema gacha: determinar rareza aleatoria de la captura con bonus de mejoras"""
 	var roll = randf() * 100.0 # 0-100
-	var cumulative = 0.0
 
+	# Aplicar bonus de anzuelo para mejorar probabilidades de rareza
+	var rarity_bonus = Save.game_data.get("rarity_bonus", 0.0)
+
+	# Modificar probabilidades base con el bonus
+	var modified_chances = {}
+	for rarity in rarity_chances:
+		modified_chances[rarity] = rarity_chances[rarity]
+
+	# Transferir probabilidad desde común hacia rarezas superiores
+	if rarity_bonus > 0.0:
+		var bonus_per_tier = rarity_bonus * 100.0 / 3.0 # Dividir bonus entre las 3 rarezas superiores
+		modified_chances["legendaria"] += bonus_per_tier
+		modified_chances["épica"] += bonus_per_tier
+		modified_chances["rara"] += bonus_per_tier
+		modified_chances["común"] = max(10.0, modified_chances["común"] - (bonus_per_tier * 3.0))
+
+	var cumulative = 0.0
 	# Orden de probabilidad: común -> rara -> épica -> legendaria
 	for rarity in ["común", "rara", "épica", "legendaria"]:
-		cumulative += rarity_chances[rarity]
+		cumulative += modified_chances[rarity]
 		if roll <= cumulative:
 			return rarity
 
@@ -787,10 +803,20 @@ func catch_successful():
 	# Generar tamaño aleatorio
 	var random_size = randf_range(selected_fish.size_min, selected_fish.size_max)
 
-	# Crear instancia de pez con multiplicadores combinados (zona + rareza)
+	# Crear instancia de pez con multiplicadores combinados (zona + rareza + mejoras)
 	var base_price = selected_fish.base_market_value
 	var zone_multiplier = zone_def.price_multiplier
-	var final_multiplier = zone_multiplier * rarity_multiplier
+
+	# Aplicar bonus de multiplicador de zona de mejoras
+	var zone_bonus = Save.game_data.get("zone_multiplier_bonus", 0.0)
+	var enhanced_zone_multiplier = zone_multiplier + zone_bonus
+
+	# Aplicar bonus de valor del cebo
+	var value_bonus = Save.game_data.get("value_bonus", 0.0)
+	var value_multiplier = 1.0 + value_bonus
+
+	# Calcular multiplicador final
+	var final_multiplier = enhanced_zone_multiplier * rarity_multiplier * value_multiplier
 	var final_price = int(base_price * final_multiplier)
 
 	# Crear fish_instance personalizada con rareza

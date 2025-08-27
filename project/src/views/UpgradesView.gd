@@ -4,23 +4,17 @@ extends Control
 var upgrades_container: VBoxContainer
 var coins_label: Label
 
-# Datos de mejoras temporales
+# Datos de mejoras mejoradas
 var available_upgrades = [
-	{
-		"id": "rod",
-		"name": "Caña",
-		"description": "Mejora la velocidad de pesca",
-		"base_cost": 100,
-		"cost_multiplier": 2.0,
-		"max_level": 5
-	},
 	{
 		"id": "fridge",
 		"name": "Nevera",
 		"description": "Aumenta la capacidad de almacenamiento",
 		"base_cost": 150,
 		"cost_multiplier": 1.8,
-		"max_level": 10
+		"max_level": 10,
+		"bonus_per_level": 3,
+		"bonus_type": "capacidad"
 	},
 	{
 		"id": "hook",
@@ -28,7 +22,39 @@ var available_upgrades = [
 		"description": "Aumenta la probabilidad de peces raros",
 		"base_cost": 200,
 		"cost_multiplier": 2.2,
-		"max_level": 3
+		"max_level": 3,
+		"bonus_per_level": 15.0,
+		"bonus_type": "rareza"
+	},
+	{
+		"id": "bait_quality",
+		"name": "Calidad del Cebo",
+		"description": "Aumenta el valor de los peces capturados",
+		"base_cost": 250,
+		"cost_multiplier": 2.0,
+		"max_level": 5,
+		"bonus_per_level": 20.0,
+		"bonus_type": "valor"
+	},
+	{
+		"id": "fishing_speed",
+		"name": "Velocidad de Pesca",
+		"description": "Reduce el tiempo entre capturas",
+		"base_cost": 180,
+		"cost_multiplier": 1.9,
+		"max_level": 4,
+		"bonus_per_level": 0.5,
+		"bonus_type": "velocidad"
+	},
+	{
+		"id": "zone_multiplier",
+		"name": "Conocimiento Local",
+		"description": "Aumenta el multiplicador de zona",
+		"base_cost": 300,
+		"cost_multiplier": 2.5,
+		"max_level": 3,
+		"bonus_per_level": 0.25,
+		"bonus_type": "multiplicador"
 	}
 ]
 
@@ -117,6 +143,14 @@ func create_upgrade_button(upgrade_data: Dictionary):
 	desc_label.add_theme_font_size_override("font_size", 14)
 	info_vbox.add_child(desc_label)
 
+	# Mostrar bonus actual y próximo
+	if current_level > 0:
+		var bonus_label = Label.new()
+		bonus_label.text = get_bonus_text(upgrade_data, current_level)
+		bonus_label.add_theme_font_size_override("font_size", 12)
+		bonus_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
+		info_vbox.add_child(bonus_label)
+
 	# Botón de compra
 	var buy_button = Button.new()
 	buy_button.custom_minimum_size = Vector2(100, 60)
@@ -162,15 +196,44 @@ func _on_upgrade_purchased(upgrade_data: Dictionary, cost: int):
 		if SFX:
 			SFX.play_event("error")
 
+func get_bonus_text(upgrade_data: Dictionary, level: int) -> String:
+	var bonus_per_level = upgrade_data.get("bonus_per_level", 0)
+	var bonus_type = upgrade_data.get("bonus_type", "")
+	var total_bonus = bonus_per_level * level
+
+	match bonus_type:
+		"capacidad":
+			return "📦 Bonus actual: +%d espacios" % total_bonus
+		"rareza":
+			return "✨ Bonus actual: +%.1f%% rareza" % total_bonus
+		"valor":
+			return "💰 Bonus actual: +%.1f%% valor" % total_bonus
+		"velocidad":
+			return "⚡ Bonus actual: -%.1fs tiempo" % total_bonus
+		"multiplicador":
+			return "🎯 Bonus actual: +%.2fx multiplicador" % total_bonus
+		_:
+			return "Bonus actual: +%s" % str(total_bonus)
+
 func apply_upgrade_effect(upgrade_id: String, level: int):
 	match upgrade_id:
 		"fridge":
 			# Aumentar capacidad de la nevera
 			Save.game_data.max_inventory = 12 + (level * 3)
 			print("Fridge capacity increased to: ", Save.game_data.max_inventory)
-		"rod":
-			# Por ahora solo mostrar en logs, después afectará QTE
-			print("Rod level increased to: ", level)
 		"hook":
-			# Por ahora solo mostrar en logs, después afectará rareza
-			print("Hook level increased to: ", level)
+			# Mejorar probabilidad de rareza - se aplicará en FishingSystem
+			Save.game_data.rarity_bonus = level * 0.15 # 15% por nivel
+			print("Hook rarity bonus increased to: +%.1f%%" % (Save.game_data.rarity_bonus * 100))
+		"bait_quality":
+			# Aumentar valor de los peces - se aplicará en captura
+			Save.game_data.value_bonus = level * 0.20 # 20% por nivel
+			print("Bait quality value bonus increased to: +%.1f%%" % (Save.game_data.value_bonus * 100))
+		"fishing_speed":
+			# Reducir tiempo entre capturas - se aplicará en FishingSystem
+			Save.game_data.speed_bonus = level * 0.5 # 0.5s menos por nivel
+			print("Fishing speed bonus increased to: -%.1fs" % Save.game_data.speed_bonus)
+		"zone_multiplier":
+			# Aumentar multiplicador de zona
+			Save.game_data.zone_multiplier_bonus = level * 0.25 # 0.25x más por nivel
+			print("Zone multiplier bonus increased to: +%.2fx" % Save.game_data.zone_multiplier_bonus)
