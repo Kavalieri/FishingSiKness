@@ -1,0 +1,19 @@
+{
+  "image": "res://ui/fishcard-square.png",
+  "size": {
+    "w": 909,
+    "h": 905
+  },
+  "ninepatch_margins_px": {
+    "left": 76,
+    "right": 74,
+    "top": 77,
+    "bottom": 80
+  },
+  "suggested_content_inner_padding_px": 24,
+  "godot_4_ninepatchrect_settings": {
+    "draw_center": true,
+    "axis_stretch_horizontal": "STRETCH",
+    "axis_stretch_vertical": "STRETCH"
+  }
+}

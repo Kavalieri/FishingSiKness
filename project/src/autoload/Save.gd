@@ -1,5 +1,11 @@
 extends Node
 
+# Señales para notificar cambios importantes
+signal data_loaded(slot: int)
+signal data_saved(slot: int)
+signal coins_changed(new_amount: int)
+signal gems_changed(new_amount: int)
+
 # Sistema de guardado y migración
 var save_path := "user://save.json"
 var backup_path := "user://save.bak"
@@ -102,17 +108,20 @@ func get_gems() -> int:
 
 func add_coins(amount: int, do_save: bool = true):
 	game_data.coins += amount
+	coins_changed.emit(game_data.coins)
 	if do_save:
 		save_game()
 
 func add_gems(amount: int, do_save: bool = true):
 	game_data.gems += amount
+	gems_changed.emit(game_data.gems)
 	if do_save:
 		save_game()
 
 func spend_coins(amount: int, do_save: bool = true) -> bool:
 	if game_data.coins >= amount:
 		game_data.coins -= amount
+		coins_changed.emit(game_data.coins)
 		if do_save:
 			save_game()
 		return true
@@ -121,6 +130,7 @@ func spend_coins(amount: int, do_save: bool = true) -> bool:
 func spend_gems(amount: int, do_save: bool = true) -> bool:
 	if game_data.gems >= amount:
 		game_data.gems -= amount
+		gems_changed.emit(game_data.gems)
 		if do_save:
 			save_game()
 		return true
@@ -221,12 +231,16 @@ func save_to_slot(slot: int):
 	save_path = get_save_slot_path(slot)
 	backup_path = "user://save_slot_%d.bak" % slot
 	save_game()
+	# Emitir señal para notificar guardado
+	data_saved.emit(slot)
 
 func load_from_slot(slot: int):
 	current_save_slot = slot
 	save_path = get_save_slot_path(slot)
 	backup_path = "user://save_slot_%d.bak" % slot
 	load_game()
+	# Emitir señal para que otros sistemas se actualicen
+	data_loaded.emit(slot)
 
 func get_save_slot_info(slot: int) -> Dictionary:
 	var slot_path = get_save_slot_path(slot)
@@ -238,13 +252,47 @@ func get_save_slot_info(slot: int) -> Dictionary:
 	var data = JSON.parse_string(content)
 	if typeof(data) != TYPE_DICTIONARY:
 		return {"exists": false, "empty": true}
+
+	# Calcular tiempo de juego aproximado basado en nivel y experiencia
+	var level = data.get("level", 1)
+	var experience = data.get("experience", 0)
+	var estimated_playtime = _calculate_playtime(level, experience)
+
 	return {
 		"exists": true,
 		"empty": false,
 		"coins": data.get("coins", 0),
-		"level": data.get("level", 1),
-		# ... (más info de slot)
+		"gems": data.get("gems", 0),
+		"level": level,
+		"experience": experience,
+		"zone": _get_zone_display_name(data.get("current_zone", "orilla")),
+		"playtime": estimated_playtime,
+		"last_played": data.get("last_played", 0)
 	}
+
+func _calculate_playtime(level: int, experience: int) -> String:
+	# Estimación muy básica del tiempo de juego basada en progreso
+	var total_minutes = (level - 1) * 15 + (experience / 100) * 5
+	if total_minutes < 60:
+		return "%d min" % total_minutes
+	else:
+		var hours = total_minutes / 60
+		var minutes = int(total_minutes) % 60
+		return "%dh %dm" % [hours, minutes]
+
+func _get_zone_display_name(zone_id: String) -> String:
+	var zone_names = {
+		"orilla": "Orilla",
+		"lago": "Lago",
+		"rio": "Río",
+		"costa": "Costa",
+		"mar": "Mar",
+		"glaciar": "Glaciar",
+		"industrial": "Industrial",
+		"abismo": "Abismo",
+		"infernal": "Infernal"
+	}
+	return zone_names.get(zone_id, zone_id.capitalize())
 
 func delete_save_slot(slot: int):
 	var slot_path = get_save_slot_path(slot)
@@ -253,5 +301,44 @@ func delete_save_slot(slot: int):
 		dir.remove(slot_path)
 
 func reset_to_default():
-	# ... (código para resetear game_data)
-	pass
+	"""Resetear game_data a valores por defecto para nueva partida"""
+	game_data = {
+		"schema": 2,
+		"coins": 1000,
+		"gems": 25,
+		"zone": "orilla",
+		"current_zone": "orilla",
+		"unlocked_zones": ["orilla"],
+		"max_inventory": 12,
+		"upgrades": {},
+		"equipment": {},
+		"inventory": [],
+		"purchases": [],
+		"owned_cosmetics": [],
+		"ad_cooldowns": {},
+		"last_played": Time.get_unix_time_from_system(),
+		"experience": 0,
+		"level": 1,
+		"milestone_bonuses": {
+			"inventory_capacity": 0,
+			"coins_multiplier": 0.0,
+			"qte_time_bonus": 0.0,
+			"rare_fish_chance": 0.0
+		},
+		"unlocked_skills": {},
+		"prestige_unlocked": false,
+		"prestige_level": 0,
+		"prestige_points": 0,
+		"settings": {
+			"vibration": true,
+			"sfx": 0.8,
+			"music": 0.4
+		}
+	}
+
+	# Limpiar también el inventario del sistema
+	if InventorySystem:
+		InventorySystem._inventory.clear()
+
+	# Asegurar datos iniciales
+	_ensure_initial_data()

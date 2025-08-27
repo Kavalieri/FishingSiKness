@@ -1,14 +1,11 @@
 class_name SettingsMenu
 extends BaseWindow
 
-signal save_manager_requested()
-
 # Referencias a los nodos de la escena
 @onready var master_slider: HSlider = %MasterSlider
 @onready var music_slider: HSlider = %MusicSlider
 @onready var sfx_slider: HSlider = %SfxSlider
 @onready var vibration_checkbox: CheckBox = %VibrationCheckBox
-@onready var save_manager_button: Button = %SaveManagerButton
 
 
 func _setup_content() -> void:
@@ -17,7 +14,6 @@ func _setup_content() -> void:
 	music_slider.value_changed.connect(_on_music_volume_changed)
 	sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 	vibration_checkbox.toggled.connect(_on_vibration_toggled)
-	save_manager_button.pressed.connect(_on_save_manager_pressed)
 
 	# Cargar los valores guardados y aplicarlos a la UI
 	load_settings()
@@ -53,11 +49,6 @@ func _on_sfx_volume_changed(value: float) -> void:
 func _on_vibration_toggled(is_pressed: bool) -> void:
 	Save.game_data["vibration_enabled"] = is_pressed
 	print("Vibration set to: ", is_pressed)
-
-
-func _on_save_manager_pressed() -> void:
-	save_manager_requested.emit()
-
 
 func _notification(what: int) -> void:
 	# Guardar los cambios cuando la ventana se cierra

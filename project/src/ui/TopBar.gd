@@ -26,13 +26,19 @@ func _ready():
 	# Crear elementos de nivel dinámicamente si no existen
 	setup_level_display()
 
-	# Conectar señales
+	# Conectar señales de botones
 	if gems_button:
 		gems_button.pressed.connect(_on_gems_button_pressed)
 	if settings_button:
 		settings_button.pressed.connect(_on_settings_button_pressed)
 	if level_button:
 		level_button.pressed.connect(_on_level_button_pressed)
+
+	# Conectar señales del sistema de guardado para actualizaciones automáticas
+	if Save:
+		Save.data_loaded.connect(_on_save_data_loaded)
+		Save.coins_changed.connect(_on_coins_changed)
+		Save.gems_changed.connect(_on_gems_changed)
 
 	# Configurar tamaños mínimos para accesibilidad
 	if gems_button:
@@ -155,3 +161,28 @@ func _on_settings_button_pressed():
 		SFX.play_event("click")
 	emit_signal("settings_button_clicked")
 	print("TopBar: Settings button pressed")
+
+func _on_save_data_loaded(slot: int):
+	"""Actualizar TopBar cuando se carga una nueva partida"""
+	print("TopBar: Nueva partida cargada desde slot %d, actualizando display..." % slot)
+	update_display()
+
+func _on_coins_changed(new_amount: int):
+	"""Actualizar solo las monedas cuando cambien"""
+	if coins_label:
+		coins_label.text = "🪙 " + format_currency(new_amount)
+
+func _on_gems_changed(new_amount: int):
+	"""Actualizar solo las gemas cuando cambien"""
+	if gems_label:
+		gems_label.text = "💎 " + str(new_amount)
+
+func format_currency(amount: int) -> String:
+	# Formatear números grandes de manera elegante
+	if amount >= 1000000000:
+		return "%.1fB" % (amount / 1000000000.0)
+	if amount >= 1000000:
+		return "%.1fM" % (amount / 1000000.0)
+	if amount >= 1000:
+		return "%.1fK" % (amount / 1000.0)
+	return str(amount)

@@ -1,6 +1,8 @@
 [gd_scene load_steps=3 format=3 uid="uid://b5w5g5f5d6e7h"]
 
-[ext_resource type="PackedScene" uid="uid://dflvvy162pbf1" path="res://src/ui/base/BaseWindow.tscn" id="1_parent"]
+[ext_resource type="Pac[node name="DataLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="6"]
+layout_mode = 2
+text = "DATOS"" uid="uid://dflvvy162pbf1" path="res://src/ui/base/BaseWindow.tscn" id="1_parent"]
 [ext_resource type="Script" path="res://src/views/SettingsMenu.gd" id="2_script"]
 
 [node name="SettingsMenu" instance=ExtResource("1_parent")]
