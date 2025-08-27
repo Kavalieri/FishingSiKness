@@ -24,6 +24,16 @@ func open(alias: String) -> void:
 		var scene_path = WINDOW_SCENE_PATHS[alias]
 		print("WindowManager: Opening window for alias: %s (Path: %s)" % [alias, scene_path])
 
+		# Definir títulos específicos para cada alias
+		var title_mapping = {
+			"money": "💰 Mercado",
+			"diamonds": "💎 Tienda de Gemas",
+			"zone": "🗺️ Mapa de Zonas",
+			"level": "🌟 Progreso y Habilidades",
+			"xp": "⭐ Experiencia y Niveles",
+			"options": "⚙️ Configuración"
+		}
+
 		# Manejo especial para ciertas ventanas que no son BaseWindow
 		match alias:
 			"zone", "money":
@@ -36,9 +46,10 @@ func open(alias: String) -> void:
 						screen_manager.show_tab(1) # MARKET tab
 			"options":
 				# Usar PauseMenu que tiene SettingsMenu integrado
-				floating_window_manager.open_window("res://scenes/views/PauseMenu.tscn", {"title": "Opciones"})
+				floating_window_manager.open_window("res://scenes/views/PauseMenu.tscn", {"title": title_mapping[alias]})
 			_:
-				# Para el resto, intentar abrir normalmente
-				floating_window_manager.open_window(scene_path)
+				# Para el resto, intentar abrir normalmente con título
+				var config = {"title": title_mapping.get(alias, "Ventana")}
+				floating_window_manager.open_window(scene_path, config)
 	else:
 		printerr("WindowManager: Unknown alias received: " + alias)

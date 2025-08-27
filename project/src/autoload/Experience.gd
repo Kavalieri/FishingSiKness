@@ -3,6 +3,7 @@ extends Node
 # Sistema de experiencia y niveles
 signal level_up(new_level: int)
 signal milestone_reached(milestone_level: int)
+signal experience_changed(current_xp: int, current_level: int)
 
 var current_xp: int = 0
 var current_level: int = 1
@@ -44,6 +45,9 @@ func add_experience(amount: int):
 				emit_signal("milestone_reached", milestone_level)
 
 	save_experience()
+
+	# Emitir señal de cambio de experiencia para actualizaciones en tiempo real
+	emit_signal("experience_changed", current_xp, current_level)
 
 func calculate_level_from_xp(xp: int) -> int:
 	"""Fórmula: nivel = sqrt(xp / 100)"""

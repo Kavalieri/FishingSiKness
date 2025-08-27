@@ -1,76 +1,50 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://bcpcr83t1dfvl"]
 
-[ext_resource type="Script" path="res://src/ui/TopBar.gd" id=1]
+[ext_resource type="Script" path="res://src/ui/TopBar.gd" id="1_xwyhj"]
 
 [node name="TopBar" type="VBoxContainer"]
-unique_name_in_owner = true
-script = ExtResource("1")
-custom_minimum_size = Vector2(0, 120)
-theme_override_constants/separation = 8
+script = ExtResource("1_xwyhj")
+custom_minimum_size = Vector2(0, 100)
 
 [node name="Row1" type="HBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 12
 
-[node name="BtnMoney" type="Button" parent="Row1"]
-unique_name_in_owner = true
+[node name="MoneyGemsBlock" type="HBoxContainer" parent="Row1"]
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(100, 40)
+
+[node name="BtnMoney" type="Button" parent="Row1/MoneyGemsBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "🪙 0"
 
-[node name="BtnGems" type="Button" parent="Row1"]
-unique_name_in_owner = true
+[node name="BtnGems" type="Button" parent="Row1/MoneyGemsBlock"]
 layout_mode = 2
-size_flags_horizontal = 2
-custom_minimum_size = Vector2(80, 40)
+size_flags_horizontal = 3
 text = "💎 0"
 
-[node name="BtnZone" type="Button" parent="Row1"]
-unique_name_in_owner = true
+[node name="ZoneBlock" type="HBoxContainer" parent="Row1"]
 layout_mode = 2
-size_flags_horizontal = 4
-custom_minimum_size = Vector2(120, 40)
+size_flags_horizontal = 3
+
+[node name="BtnZone" type="Button" parent="Row1/ZoneBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "🌊 Zona"
 
-[node name="BtnOptions" type="Button" parent="Row1"]
-unique_name_in_owner = true
+[node name="OptionsBlock" type="HBoxContainer" parent="Row1"]
 layout_mode = 2
-size_flags_horizontal = 2
-custom_minimum_size = Vector2(48, 40)
+size_flags_horizontal = 3
+
+[node name="BtnOptions" type="Button" parent="Row1/OptionsBlock"]
+layout_mode = 2
+size_flags_horizontal = 8
 text = "⚙"
 
 [node name="Row2" type="HBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 12
 
-[node name="BtnLevel" type="Button" parent="Row2"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 2
-custom_minimum_size = Vector2(100, 40)
-text = "📊 Nivel 1"
-
-[node name="XPBlock" type="HBoxContainer" parent="Row2"]
-unique_name_in_owner = true
+[node name="XPProgressButton" type="Button" parent="Row2"]
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(200, 40)
-theme_override_constants/separation = 8
-
-[node name="BtnXP" type="Button" parent="Row2/XPBlock"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 2
-custom_minimum_size = Vector2(60, 40)
-flat = false
-text = "⭐ XP"
-
-[node name="XPBar" type="ProgressBar" parent="Row2/XPBlock"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 40)
-value = 0.0
-max_value = 100.0
-show_percentage = false
+text = "⭐ Nivel 1 - 0 / 100 XP"
