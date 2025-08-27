@@ -42,6 +42,7 @@ func _populate_milestones_grid():
 
 	var main_vbox = VBoxContainer.new()
 	main_vbox.add_theme_constant_override("separation", 15)
+	main_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll_container.add_child(main_vbox)
 
 	# Mostrar skills por tiers
@@ -65,16 +66,15 @@ func _populate_milestones_grid():
 		tier_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		main_vbox.add_child(tier_title)
 
-		# Grid para las skills del tier
-		var tier_grid = GridContainer.new()
-		tier_grid.columns = 2
-		tier_grid.add_theme_constant_override("h_separation", 15)
-		tier_grid.add_theme_constant_override("v_separation", 10)
-		main_vbox.add_child(tier_grid)
+		# VBox para las skills del tier (una sola columna)
+		var tier_vbox = VBoxContainer.new()
+		tier_vbox.add_theme_constant_override("separation", 10)
+		tier_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		main_vbox.add_child(tier_vbox)
 
 		# Agregar skills del tier
 		for skill_info in skills_by_tier[tier]:
-			create_skill_card(tier_grid, skill_info.id, skill_info.data)
+			create_skill_card(tier_vbox, skill_info.id, skill_info.data)
 
 		# Separador entre tiers
 		if tier < sorted_tiers.max():
@@ -91,7 +91,8 @@ func get_tier_color(tier: int) -> Color:
 
 func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary):
 	var card = PanelContainer.new()
-	card.custom_minimum_size = Vector2(300, 120)
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.custom_minimum_size = Vector2(0, 120) # Solo altura mínima, ancho flexible
 	parent.add_child(card)
 
 	var is_unlocked = SkillTree.is_skill_unlocked(skill_id)
@@ -129,7 +130,7 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 	header_hbox.add_child(name_label)
 
 	var cost_label = Label.new()
-	cost_label.text = "💎 %d" % skill_data.cost
+	cost_label.text = "✨ %d" % skill_data.cost # Mostrar coste en puntos de skill
 	cost_label.add_theme_font_size_override("font_size", 14)
 	if is_unlocked:
 		cost_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
