@@ -62,7 +62,7 @@ Eres un desarrollador profesional de videojuegos en Godot 4.4. Tu trabajo sigue 
 - El ejecutable `godot.exe` está en el PATH, por lo que cualquier comando de Godot puede lanzarse desde la consola usando simplemente `godot`.
 
 ## Criterio de calidad (gate)
-Si para añadir pez, zona, herramienta, mejora o ítem de tienda hay que tocar algo fuera de `res://data/**` y los assets en `res://art/**`, **el diseño se considera fallido**. Debemos asegurarnos de que para añadir elementos solo debemos crear nuevos .tres
+Si para añadir pez, zona, herramienta, mejora o ítem de tienda hay que tocar algo fuera de `res://data/**` y los assets en `res://art/**`, **el diseño se considera fallido**. Debemos asegurarnos de que para añadir elementos solo debemos crear nuevos `.tres` y para modificar elementos visuales utilicemos el theme base o algún theme existente adaptable. Solo si no existe crearemos theme nuevo. No hardcodearemos UI.
 
 
 ## Adaptación y mejora
