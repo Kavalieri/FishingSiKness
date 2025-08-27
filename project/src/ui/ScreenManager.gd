@@ -50,8 +50,8 @@ func _ready():
 	var top_bar = $TopBar
 	if top_bar:
 		top_bar.open_requested.connect(WindowManager.open)
-		top_bar.sync_from_state(Save)
-		top_bar.sync_from_state(Experience)
+		if Save and Experience:
+			top_bar.sync_from_state(Save, Experience)
 
 	# Conectar con FishingView
 	var fishing_view = screen_container.get_node("FishingView")

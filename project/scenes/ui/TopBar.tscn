@@ -9,49 +9,59 @@ custom_minimum_size = Vector2(0, 160)
 theme_override_constants/separation = 6
 
 [node name="Row1" type="HBoxContainer" parent="."]
+layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="%BtnMoney" type="Button" parent="Row1"]
+[node name="BtnMoney" type="Button" parent="Row1"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 2
 text = "$ 0"
 
-[node name="%BtnGems" type="Button" parent="Row1"]
+[node name="BtnGems" type="Button" parent="Row1"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 2
 text = "💎 0"
 
-[node name="%BtnZone" type="Button" parent="Row1"]
+[node name="BtnZone" type="Button" parent="Row1"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Zona: -"
 
-[node name="%BtnOptions" type="Button" parent="Row1"]
+[node name="BtnOptions" type="Button" parent="Row1"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 0
 text = "⚙"
 
 [node name="Row2" type="HBoxContainer" parent="."]
+layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="%BtnLevel" type="Button" parent="Row2"]
+[node name="BtnLevel" type="Button" parent="Row2"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 2
 text = "Lvl 1"
 
-[node name="%XPBlock" type="HBoxContainer" parent="Row2"]
+[node name="XPBlock" type="HBoxContainer" parent="Row2"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
-[node name="%BtnXP" type="Button" parent="%XPBlock"]
+[node name="BtnXP" type="Button" parent="Row2/XPBlock"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 2
 flat = true
 text = "XP"
 
-[node name="%XPBar" type="ProgressBar" parent="%XPBlock"]
+[node name="XPBar" type="ProgressBar" parent="Row2/XPBlock"]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 value = 0.0
 max_value = 100.0
