@@ -149,28 +149,19 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 		desc_label.add_theme_color_override("font_color", Color.GRAY)
 	card_vbox.add_child(desc_label)
 
-	# Estado y botón
-	var bottom_hbox = HBoxContainer.new()
-	card_vbox.add_child(bottom_hbox)
-
-	var status_label = Label.new()
-	status_label.add_theme_font_size_override("font_size", 12)
-	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bottom_hbox.add_child(status_label)
+	# Botón principal ocupa todo el ancho de la tarjeta
+	var unlock_btn = Button.new()
+	unlock_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	unlock_btn.custom_minimum_size = Vector2(0, 40)
 
 	if is_unlocked:
-		status_label.text = "✅ Desbloqueada"
-		status_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
+		unlock_btn.text = "✅ Desbloqueada"
+		unlock_btn.disabled = true
+		unlock_btn.add_theme_color_override("font_color", Color.LIGHT_GREEN)
 	elif can_unlock:
-		status_label.text = "⚡ Disponible"
-		status_label.add_theme_color_override("font_color", Color.GOLD)
-
-		# Botón para desbloquear
-		var unlock_btn = Button.new()
-		unlock_btn.text = "DESBLOQUEAR"
-		unlock_btn.custom_minimum_size = Vector2(120, 30)
+		unlock_btn.text = "✨ %d  |  DESBLOQUEAR" % skill_data.cost
 		unlock_btn.pressed.connect(_on_skill_unlock_pressed.bind(skill_id))
-		bottom_hbox.add_child(unlock_btn)
+		unlock_btn.add_theme_color_override("font_color", Color.GOLD)
 	else:
 		# Verificar prerequisitos
 		var prereq_text = ""
@@ -181,10 +172,13 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 
 		if prereq_text != "":
 			prereq_text = prereq_text.trim_suffix(", ")
-			status_label.text = "🔒 Requiere: " + prereq_text
+			unlock_btn.text = "🔒 Requiere: " + prereq_text
 		else:
-			status_label.text = "🔒 Sin puntos disponibles"
-		status_label.add_theme_color_override("font_color", Color.GRAY)
+			unlock_btn.text = "🔒 Sin puntos disponibles"
+		unlock_btn.disabled = true
+		unlock_btn.add_theme_color_override("font_color", Color.GRAY)
+
+	card_vbox.add_child(unlock_btn)
 
 func _on_skill_unlock_pressed(skill_id: String):
 	if SkillTree.unlock_skill(skill_id):
