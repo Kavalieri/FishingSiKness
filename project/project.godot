@@ -29,6 +29,7 @@ FloatingWindowManager="*res://src/autoload/FloatingWindowManager.gd"
 FishDataManager="*res://src/systems/FishDataManager.gd"
 InventorySystem="*res://src/systems/InventorySystem.gd"
 App="*res://src/autoload/App.gd"
+WindowManager="*res://src/autoload/WindowManager.gd"
 
 [display]
 

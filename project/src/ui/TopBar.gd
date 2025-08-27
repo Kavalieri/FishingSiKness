@@ -1,188 +1,78 @@
-class_name TopBar
-extends HBoxContainer
+extends Container
+signal open_requested(alias:String)
 
-signal gems_button_clicked()
-signal settings_button_clicked()
-signal level_button_clicked()
+@onready var btn_money  : Button      = %BtnMoney
+@onready var btn_gems   : Button      = %BtnGems
+@onready var btn_zone   : Button      = %BtnZone
+@onready var btn_level  : Button      = %BtnLevel
+@onready var xp_bar     : ProgressBar = %XPBar
+@onready var btn_xp     : Button      = %BtnXP
+@onready var btn_options: Button      = %BtnOptions
 
-# Referencias a nodos
-var coins_label: Label
-var gems_label: Label
-var gems_button: Button
-var level_button: Button
-var level_label: Label
-var xp_bar: ProgressBar
-var zone_label: Label
-var settings_button: Button
+func _ready() -> void:
+    # Tooltips (desktop); móvil usa long-press si lo implementas fuera
+    btn_money.hint_tooltip   = tr("Dinero. Toca para ver detalles.")
+    btn_gems.hint_tooltip    = tr("Diamantes. Tienda.")
+    btn_zone.hint_tooltip    = tr("Zona actual.")
+    btn_level.hint_tooltip   = tr("Nivel de jugador.")
+    btn_xp.hint_tooltip      = tr("Progreso hacia el siguiente nivel.")
+    btn_options.hint_tooltip = tr("Opciones")
 
-func _ready():
-	# Obtener referencias a los nodos
-	coins_label = $CoinsLabel
-	gems_label = $GemsContainer/GemsLabel
-	gems_button = $GemsContainer/GemsButton
-	zone_label = $ZoneContainer/ZoneLabel
-	settings_button = $ZoneContainer/SettingsButton
+    # Botones → solicitud de apertura (WindowManager decide ventana real)
+    btn_money.pressed.connect(func(): emit_signal("open_requested", "money"))
+    btn_gems.pressed.connect(func(): emit_signal("open_requested", "diamonds"))
+    btn_zone.pressed.connect(func(): emit_signal("open_requested", "zone"))
+    btn_level.pressed.connect(func(): emit_signal("open_requested", "level"))
+    btn_xp.pressed.connect(func(): emit_signal("open_requested", "xp"))
+    btn_options.pressed.connect(func(): emit_signal("open_requested", "options"))
 
-	# Crear elementos de nivel dinámicamente si no existen
-	setup_level_display()
+    # Connect to Save and Experience autoloads
+    if Save:
+        Save.coins_changed.connect(set_money)
+        Save.gems_changed.connect(set_diamonds)
+        Save.data_loaded.connect(func(_slot): sync_from_state(Save, Experience)) # Update on game load
+        # Zone updates will be handled by ScreenManager calling set_zone directly
+    if Experience:
+        Experience.level_up.connect(_on_experience_level_up)
+    # Initial sync
+    if Save and Experience:
+        sync_from_state(Save, Experience)
 
-	# Conectar señales de botones
-	if gems_button:
-		gems_button.pressed.connect(_on_gems_button_pressed)
-	if settings_button:
-		settings_button.pressed.connect(_on_settings_button_pressed)
-	if level_button:
-		level_button.pressed.connect(_on_level_button_pressed)
+# ---- setters públicos (para wiring externo si no usas self‑wiring) ----
+func set_money(v:int) -> void:
+    btn_money.text = _fmt_money(v)
 
-	# Conectar señales del sistema de guardado para actualizaciones automáticas
-	if Save:
-		Save.data_loaded.connect(_on_save_data_loaded)
-		Save.coins_changed.connect(_on_coins_changed)
-		Save.gems_changed.connect(_on_gems_changed)
+func set_diamonds(v:int) -> void:
+    btn_gems.text = str(v)
 
-	# Configurar tamaños mínimos para accesibilidad
-	if gems_button:
-		gems_button.custom_minimum_size = Vector2(48, 48)
-	if settings_button:
-		settings_button.custom_minimum_size = Vector2(48, 48)
-	if level_button:
-		level_button.custom_minimum_size = Vector2(80, 48)
+func set_zone(name:String) -> void:
+    btn_zone.text = tr("Zona: ") + name
 
-	# Actualizar con datos iniciales
-	update_display()
+func set_level(l:int) -> void:
+    btn_level.text = tr("Lvl ") + str(l)
 
-func setup_level_display():
-	# Buscar si ya existe el contenedor de nivel
-	var level_container = get_node_or_null("LevelContainer")
-	if not level_container:
-		level_container = VBoxContainer.new()
-		level_container.name = "LevelContainer"
-		add_child(level_container)
-		move_child(level_container, 2) # Posición entre gemas y zona
+func set_xp(current:int, required:int) -> void:
+    var p := (required > 0) ? float(current)/float(required) : 0.0
+    xp_bar.value = clampf(p * 100.0, 0.0, 100.0)
+    xp_bar.tooltip_text = "%d / %d (%.0f%%)" % [current, required, xp_bar.value]
 
-	# Crear botón de nivel
-	if not level_button:
-		level_button = Button.new()
-		level_button.flat = true
-		level_container.add_child(level_button)
+func sync_from_state(save_data: Node, experience_data: Node) -> void:
+    set_money(save_data.get_coins())
+    set_diamonds(save_data.get_gems())
+    set_zone(save_data._get_zone_display_name(save_data.game_data.current_zone))
+    set_level(experience_data.current_level)
+    var xp_progress = experience_data.get_xp_progress()
+    set_xp(xp_progress.current_xp, xp_progress.required_xp)
 
-	# Crear barra de XP
-	if not xp_bar:
-		xp_bar = ProgressBar.new()
-		xp_bar.custom_minimum_size = Vector2(100, 8)
-		xp_bar.show_percentage = false
-		level_container.add_child(xp_bar)
+func _on_experience_level_up(new_level: int) -> void:
+    set_level(new_level)
+    var xp_progress = Experience.get_xp_progress()
+    set_xp(xp_progress.current_xp, xp_progress.required_xp)
 
-func update_display():
-	# Obtener datos del sistema de economía
-	if Save and coins_label:
-		coins_label.text = "Monedas: " + str(Save.get_coins())
-	if Save and gems_label:
-		gems_label.text = "💎 " + str(Save.get_gems())
-
-	# Actualizar zona actual desde Save con multiplicador
-	if zone_label and Save:
-		var current_zone_id = Save.game_data.get("current_zone", "orilla")
-		var zone_name = get_zone_name_from_id(current_zone_id)
-		var zone_multiplier = get_zone_multiplier(current_zone_id)
-
-		if zone_multiplier > 1.0:
-			zone_label.text = "Zona: %s (x%.1f)" % [zone_name, zone_multiplier]
-		else:
-			zone_label.text = "Zona: %s" % zone_name
-
-	# Actualizar nivel y experiencia
-	update_level_display()
-
-func get_zone_multiplier(zone_id: String) -> float:
-	if not Content:
-		return 1.0
-
-	var zone_def = Content.get_zone_by_id(zone_id)
-	if zone_def:
-		return zone_def.price_multiplier
-	return 1.0
-
-func get_zone_name_from_id(zone_id: String) -> String:
-	# Mapeo de IDs a nombres de zona (actualizado para coincidir con Content)
-	var zone_names = {
-		"orilla": "Orilla",
-		"lago": "Lago",
-		"rio": "Río",
-		"costa": "Costa",
-		"mar": "Mar",
-		"glaciar": "Glaciar",
-		"industrial": "Industrial",
-		"abismo": "Abismo",
-		"infernal": "Infernal",
-		# Compatibilidad con versiones anteriores
-		"lake": "Lago Tranquilo",
-		"river": "Río Salvaje",
-		"ocean": "Océano Profundo"
-	}
-	return zone_names.get(zone_id, "Desconocida")
-
-func update_level_display():
-	if not Save or not level_button or not xp_bar:
-		return
-
-	var level = Save.game_data.get("level", 1)
-	var experience = Save.game_data.get("experience", 0)
-
-	# Calcular progreso de XP
-	var current_level_xp = Experience.get_xp_for_level(level) if Experience else 0
-	var next_level_xp = Experience.get_xp_for_level(level + 1) if Experience else 100
-	var progress_xp = experience - current_level_xp
-	var required_xp = next_level_xp - current_level_xp
-
-	# Actualizar botón de nivel
-	level_button.text = "📈 Nvl %d" % level
-
-	# Actualizar barra de XP
-	if required_xp > 0:
-		xp_bar.value = float(progress_xp) / float(required_xp) * 100.0
-	else:
-		xp_bar.value = 0.0
-
-func _on_gems_button_pressed():
-	if SFX:
-		SFX.play_event("click")
-	emit_signal("gems_button_clicked")
-	print("TopBar: Gems button pressed")
-
-func _on_level_button_pressed():
-	if SFX:
-		SFX.play_event("click")
-	emit_signal("level_button_clicked")
-	print("TopBar: Level button pressed")
-
-func _on_settings_button_pressed():
-	if SFX:
-		SFX.play_event("click")
-	emit_signal("settings_button_clicked")
-	print("TopBar: Settings button pressed")
-
-func _on_save_data_loaded(slot: int):
-	"""Actualizar TopBar cuando se carga una nueva partida"""
-	print("TopBar: Nueva partida cargada desde slot %d, actualizando display..." % slot)
-	update_display()
-
-func _on_coins_changed(new_amount: int):
-	"""Actualizar solo las monedas cuando cambien"""
-	if coins_label:
-		coins_label.text = "🪙 " + format_currency(new_amount)
-
-func _on_gems_changed(new_amount: int):
-	"""Actualizar solo las gemas cuando cambien"""
-	if gems_label:
-		gems_label.text = "💎 " + str(new_amount)
-
-func format_currency(amount: int) -> String:
-	# Formatear números grandes de manera elegante
-	if amount >= 1000000000:
-		return "%.1fB" % (amount / 1000000000.0)
-	if amount >= 1000000:
-		return "%.1fM" % (amount / 1000000.0)
-	if amount >= 1000:
-		return "%.1fK" % (amount / 1000.0)
-	return str(amount)
+# ---- utilidades ----
+func _fmt_money(n:int) -> String:
+    var f := float(n)
+    if f >= 1_000_000_000.0: return "%.2fB" % (f/1_000_000_000.0)
+    if f >= 1_000_000.0:     return "%.2fM" % (f/1_000_000.0)
+    if f >= 1_000.0:         return "%.2fK" % (f/1_000.0)
+    return str(n)

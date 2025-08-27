@@ -49,12 +49,9 @@ func _ready():
 	# Conectar con TopBar
 	var top_bar = $TopBar
 	if top_bar:
-		if top_bar.has_signal("gems_button_clicked"):
-			top_bar.gems_button_clicked.connect(_on_gems_button_clicked)
-		if top_bar.has_signal("settings_button_clicked"):
-			top_bar.settings_button_clicked.connect(_on_settings_button_clicked)
-		if top_bar.has_signal("level_button_clicked"):
-			top_bar.level_button_clicked.connect(_on_level_button_clicked)
+		top_bar.open_requested.connect(WindowManager.open)
+		top_bar.sync_from_state(Save)
+		top_bar.sync_from_state(Experience)
 
 	# Conectar con FishingView
 	var fishing_view = screen_container.get_node("FishingView")
@@ -148,25 +145,19 @@ func _on_any_window_opened(window: Control):
 func _on_any_window_closed(window: Control):
 	# Si la ventana que se cerró es la tienda, actualizamos la TopBar.
 	if window is StoreView:
-		var top_bar = $TopBar
-		if top_bar and top_bar.has_method("update_display"):
-			top_bar.update_display()
+		pass # TopBar updates automatically via signals
 
 func _on_fish_caught(fish_name: String, value: int):
 	print("ScreenManager: Fish caught - ", fish_name, " worth ", value)
-	# Actualizar TopBar
-	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
+	# TopBar updates automatically via signals
 
 func _on_zone_changed(zone_id: String):
 	"""Manejar cambio de zona - actualizar TopBar y fondos"""
 	print("Zone changed to: ", zone_id)
 
-	# Actualizar TopBar para mostrar nueva zona y multiplicador
 	var top_bar = $TopBar
-	if top_bar and top_bar.has_method("update_display"):
-		top_bar.update_display()
+	if top_bar:
+		top_bar.set_zone(Save._get_zone_display_name(zone_id)) # Use Save's helper for display name
 
 	# Actualizar fondo del FishingView
 	var fishing_view = views.get(Tab.FISHING)
