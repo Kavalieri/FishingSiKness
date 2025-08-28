@@ -2,6 +2,10 @@
 
 <div align="center">
 
+<img src="docs/images/logo.png" alt="FishingSiKness Logo" width="200" />
+
+<br><br>
+
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Kavalieri/FishingSiKness?style=for-the-badge&logo=github)
 ![GitHub Workflow Status](https://img.shields.io/badge/Build-Passing-success?style=for-the-badge&logo=github-actions)
 ![GitHub](https://img.shields.io/github/license/Kavalieri/FishingSiKness?style=for-the-badge)
