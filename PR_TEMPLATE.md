@@ -123,7 +123,7 @@ godot --headless --export-debug "Windows Debug" build/test.exe
 
 # Test de guardado (manual)
 # 1. Crear nueva partida → ✅
-# 2. Cambiar entre slots → ✅  
+# 2. Cambiar entre slots → ✅
 # 3. Auto-save al cerrar → ✅
 ```
 
@@ -195,6 +195,6 @@ Este PR transforma Fishing-SiKness de un prototipo funcional a una base arquitec
 
 ---
 
-**Reviewers sugeridos**: @team-leads, @architects  
-**Labels**: `major-refactor`, `pre-release`, `v0.1.0-alpha`, `breaking-changes`  
+**Reviewers sugeridos**: @team-leads, @architects
+**Labels**: `major-refactor`, `pre-release`, `v0.1.0-alpha`, `breaking-changes`
 **Milestone**: `v0.1.0 - First Stable Pre-Release`
