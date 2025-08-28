@@ -1,6 +1,13 @@
 extends Node
 ## FloatingWindowManager - Gestor centralizado de ventanas flotantes (Refactorizado v4)
 
+enum WindowType {
+	MENU,
+	CARD,
+	DIALOG,
+	OVERLAY
+}
+
 signal window_opened(window: Control)
 signal window_closed(window: Control)
 signal all_windows_closed()

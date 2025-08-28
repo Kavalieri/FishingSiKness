@@ -1,0 +1,93 @@
+[gd_scene load_steps=3 format=3 uid="uid://b5w5g5f5d6e7h"]
+
+[ext_resource type="PackedScene" uid="uid://dflvvy162pbf1" path="res://src/ui/base/BaseWindow.tscn" id="1_parent"]
+[ext_resource type="Script" path="res://src/views/SettingsMenu.gd" id="2_script"]
+
+[node name="SettingsMenu" instance=ExtResource("1_parent")]
+script = ExtResource("2_script")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer" index="0"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SettingsVBox" type="VBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="AudioLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="0"]
+layout_mode = 2
+text = "AUDIO"
+horizontal_alignment = 1
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="1"]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/MasterVolumeContainer" index="0"]
+layout_mode = 2
+text = "Volumen General:"
+
+[node name="MasterSlider" type="HSlider" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/MasterVolumeContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 100.0
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="2"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/MusicVolumeContainer" index="0"]
+layout_mode = 2
+text = "Música:"
+
+[node name="MusicSlider" type="HSlider" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/MusicVolumeContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 70.0
+
+[node name="SfxVolumeContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="3"]
+layout_mode = 2
+
+[node name="SfxLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/SfxVolumeContainer" index="0"]
+layout_mode = 2
+text = "Efectos de Sonido:"
+
+[node name="SfxSlider" type="HSlider" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/SfxVolumeContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="AccessibilityLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="4"]
+layout_mode = 2
+text = "ACCESIBILIDAD"
+horizontal_alignment = 1
+
+[node name="VibrationContainer" type="HBoxContainer" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="5"]
+layout_mode = 2
+
+[node name="VibrationLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/VibrationContainer" index="0"]
+layout_mode = 2
+text = "Vibración:"
+
+[node name="VibrationCheckBox" type="CheckBox" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox/VibrationContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="DataLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="6"]
+layout_mode = 2
+text = "DATOS"
+horizontal_alignment = 1
+
+[node name="ResetButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="7"]
+layout_mode = 2
+text = "Restablecer Configuración"
+
+[node name="DeleteSavesButton" type="Button" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/ScrollContainer/SettingsVBox" index="8"]
+layout_mode = 2
+text = "Eliminar Todos los Guardados"

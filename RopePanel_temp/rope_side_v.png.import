@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mc2t267lpqbk"
-path="res://.godot/imported/rope_corner.png-17ed4241e5d090f876bf557b27bb9a46.ctex"
+uid="uid://d7ql26psmelg"
+path="res://.godot/imported/rope_side_v.png-6ebe1100f48578b6856b8b4c3b3f7a62.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/RopePanel/rope_corner.png"
-dest_files=["res://.godot/imported/rope_corner.png-17ed4241e5d090f876bf557b27bb9a46.ctex"]
+source_file="res://art/ui/RopePanel_temp/rope_side_v.png"
+dest_files=["res://.godot/imported/rope_side_v.png-6ebe1100f48578b6856b8b4c3b3f7a62.ctex"]
 
 [params]
 
