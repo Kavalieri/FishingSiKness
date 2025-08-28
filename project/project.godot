@@ -18,6 +18,7 @@ boot_splash/minimum_display_time=2
 
 [autoload]
 
+GamePaths="*res://src/autoload/GamePaths.gd"
 Content="*res://src/autoload/Content.gd"
 Save="*res://src/autoload/Save.gd"
 SFX="*res://src/autoload/SFX.gd"

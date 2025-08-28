@@ -8,8 +8,14 @@ signal content_loaded
 var catalogs = {}
 
 func _ready():
+	print("[Content] 🚀 Iniciando sistema de contenido...")
 	var content_index = ContentIndex.new()
+	print("[Content] 📋 ContentIndex creado, iniciando carga...")
 	catalogs = content_index.load_all()
+	print("[Content] 📊 Resumen de carga:")
+	for key in catalogs.keys():
+		print("[Content]   - %s: %d recursos" % [key, catalogs[key].size()])
+	print("[Content] ✅ Sistema de contenido listo")
 	emit_signal("content_loaded")
 
 # API de acceso
@@ -49,8 +55,19 @@ func get_fish_by_id(fish_id: String) -> FishDef:
 
 func get_zone_by_id(zone_id: String):
 	"""Obtener definición de una zona específica por ID"""
+	print("[Content] Buscando zona: %s" % zone_id)
 	var zone_list = all_zones()
-	for zone in zone_list:
-		if zone.id == zone_id:
-			return zone
+	print("[Content] Zonas disponibles: %d" % zone_list.size())
+
+	for i in range(zone_list.size()):
+		var zone = zone_list[i]
+		if zone and zone.get("id"):
+			print("[Content] - Zona %d: %s" % [i, zone.id])
+			if zone.id == zone_id:
+				print("[Content] ✅ Zona encontrada: %s" % zone_id)
+				return zone
+		else:
+			print("[Content] - Zona %d: INVÁLIDA" % i)
+
+	print("[Content] ❌ Zona NO encontrada: %s" % zone_id)
 	return null

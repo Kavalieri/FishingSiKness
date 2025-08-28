@@ -7,8 +7,8 @@ signal coins_changed(new_amount: int)
 signal gems_changed(new_amount: int)
 
 # Sistema de guardado y migración
-var save_path := "user://save.json"
-var backup_path := "user://save.bak"
+var save_path: String
+var backup_path: String
 var schema := 2
 var current_save_slot := 1
 
@@ -48,8 +48,22 @@ var game_data := {
 }
 
 func _ready():
-	load_game()
-	_ensure_initial_data()
+	print("[Save] Inicializando sistema de guardado...")
+	
+	# Esperar a que GamePaths esté listo
+	if not GamePaths:
+		await get_tree().process_frame
+	
+	# Configurar rutas usando GamePaths
+	save_path = GamePaths.get_save_file()
+	backup_path = GamePaths.get_save_backup()
+	
+	print("[Save] Rutas configuradas:")
+	print("  - Save: %s" % save_path)
+	print("  - Backup: %s" % backup_path)
+	
+	load_current_save_slot()
+	load_game_data()
 
 	# Guardar automáticamente cuando se cierre el juego
 	get_tree().auto_accept_quit = false
