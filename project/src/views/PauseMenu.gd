@@ -4,29 +4,29 @@ extends BaseWindow
 # Señales que este menú puede emitir.
 signal resume_requested()
 signal settings_requested()
-signal save_and_exit_to_menu_requested()
 signal exit_to_desktop_requested()
 
 # --- NODOS DE LA ESCENA (se asignarán en el editor) ---
 @onready var resume_button: Button = %ResumeButton
 @onready var settings_button: Button = %SettingsButton
-@onready var save_and_exit_button: Button = %SaveAndExitButton
-@onready var exit_to_desktop_button: Button = %ExitToDesktopButton # NUEVO
+@onready var save_and_exit_button: Button = %SaveAndExitButton # Para ocultar
+@onready var exit_to_desktop_button: Button = %ExitToDesktopButton
 @onready var save_manager_button: Button = %SaveManagerButton
 
 func _setup_content() -> void:
 	# Conectar las señales de los botones a las funciones de este script.
 	resume_button.pressed.connect(_on_resume_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
-	save_and_exit_button.pressed.connect(_on_save_and_exit_pressed)
-	exit_to_desktop_button.pressed.connect(_on_exit_to_desktop_pressed) # NUEVO
+	exit_to_desktop_button.pressed.connect(_on_exit_to_desktop_pressed)
 	save_manager_button.pressed.connect(_on_save_manager_pressed)
+
+	# Ocultar el botón "Salir al Menú" ya que no lo queremos
+	save_and_exit_button.visible = false
 
 	# Cambiar el texto de los botones para mayor claridad
 	resume_button.text = "Reanudar"
 	settings_button.text = "Opciones"
-	save_and_exit_button.text = "Guardar y Salir al Menú"
-	exit_to_desktop_button.text = "Salir al Escritorio"
+	exit_to_desktop_button.text = "Guardar y Salir"
 	save_manager_button.text = "Gestor de Partidas"
 
 func _on_save_manager_pressed() -> void:
@@ -95,16 +95,16 @@ func _on_settings_pressed() -> void:
 	settings_requested.emit()
 
 
-func _on_save_and_exit_pressed() -> void:
-	# Primero guardamos el juego, luego emitimos la señal para salir al menú principal.
-	if Save:
-		Save.save_game()
-	save_and_exit_to_menu_requested.emit()
-	close()
-
-
 func _on_exit_to_desktop_pressed() -> void:
-	# NUEVO: Emitir señal para que el gestor principal cierre el juego.
+	# Auto-guardar en el slot actual antes de salir del juego
+	print("💾 Auto-guardando partida en slot %d antes de salir..." % Save.current_save_slot)
+	if Save and Save.has_valid_game_data():
+		Save.save_to_slot(Save.current_save_slot)
+		Save.save_last_used_slot()
+		print("✅ Partida guardada automáticamente en slot %d" % Save.current_save_slot)
+	else:
+		print("⚠️ No hay datos válidos para guardar")
+
 	exit_to_desktop_requested.emit()
 
 # Sobrescribir la función close para emitir la señal de reanudar.

@@ -74,10 +74,10 @@ func _on_experience_level_up(new_level: int) -> void:
 	var xp_progress = Experience.get_xp_progress()
 	set_xp_progress(new_level, xp_progress.current_xp, xp_progress.required_xp)
 
-func _on_experience_changed() -> void:
+func _on_experience_changed(current_xp: int, current_level: int) -> void:
 	"""Callback para cambios de experiencia que no sean level-up"""
 	var xp_progress = Experience.get_xp_progress()
-	set_xp_progress(Experience.current_level, xp_progress.current_xp, xp_progress.required_xp)
+	set_xp_progress(current_level, xp_progress.current_xp, xp_progress.required_xp)
 
 func setup_professional_styles() -> void:
 	"""Configurar estilos visuales profesionales mejorados con fuentes más grandes"""

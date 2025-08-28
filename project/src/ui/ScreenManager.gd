@@ -135,7 +135,7 @@ func _on_any_window_opened(window: Control):
 	# Conectar señales dinámicamente cuando se abre una ventana
 	if window is PauseMenu:
 		window.resume_requested.connect(_on_pause_menu_closed)
-		window.save_and_exit_to_menu_requested.connect(_on_save_and_exit)
+		window.exit_to_desktop_requested.connect(_on_exit_to_desktop)
 		window.settings_requested.connect(show_settings_menu)
 		#window.save_manager_requested.connect(_on_save_manager_requested_from_pause)
 	elif window is SettingsMenu:
@@ -212,3 +212,8 @@ func show_inventory(show: bool, title: String = "Inventario"):
 func hide_inventory():
 	if is_instance_valid(inventory_panel):
 		inventory_panel.visible = false
+
+func _on_exit_to_desktop():
+	"""Manejar salida del juego con auto-guardado"""
+	print("👋 Cerrando el juego...")
+	get_tree().quit()

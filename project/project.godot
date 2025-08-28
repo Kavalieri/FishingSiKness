@@ -10,15 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Fishing SiKness"
+config/name="FishingSiKness"
 run/main_scene="res://scenes/core/MainWithSplash.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="FishingSiKness"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 boot_splash/minimum_display_time=2
 
 [autoload]
 
-GamePaths="*res://src/autoload/GamePaths.gd"
 Content="*res://src/autoload/Content.gd"
 Save="*res://src/autoload/Save.gd"
 SFX="*res://src/autoload/SFX.gd"

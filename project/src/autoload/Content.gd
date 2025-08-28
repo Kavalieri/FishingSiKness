@@ -18,6 +18,12 @@ func _ready():
 	print("[Content] ✅ Sistema de contenido listo")
 	emit_signal("content_loaded")
 
+func _exit_tree():
+	# Limpiar referencias para evitar ObjectDB leaks
+	if catalogs:
+		catalogs.clear()
+	print("[Content] 🧹 Recursos liberados")
+
 # API de acceso
 func all_fish():
 	return catalogs["fish"] if catalogs.has("fish") else []

@@ -81,13 +81,7 @@ func _setup_panel_content(panel: PanelContainer):
 	separator.custom_minimum_size.y = 10
 	main_vbox.add_child(separator)
 
-	# Indicador de slot actual
-	var current_slot_label = Label.new()
-	current_slot_label.text = "📍 Slot Actual: %d" % Save.current_save_slot
-	current_slot_label.add_theme_font_size_override("font_size", 14)
-	current_slot_label.add_theme_color_override("font_color", Color.YELLOW)
-	current_slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	main_vbox.add_child(current_slot_label)
+	# ELIMINADO: Indicador de slot actual (ya se ve visualmente en cada slot)
 
 	# Scroll para slots de guardado
 	var scroll = ScrollContainer.new()
@@ -156,10 +150,22 @@ func create_save_slot(slot: int):
 		info_container.add_child(empty_label)
 	else:
 		var details_label = Label.new()
-		details_label.text = "💰 %d monedas | 💎 %d gemas | 📈 Nivel %d\n🗺️ Zona: %s | 📅 %s" % [
-			slot_info.coins, slot_info.gems, slot_info.level,
+		# Primera línea: monedas, gemas, nivel
+		var line1 = "💰 %d monedas | 💎 %d gemas | 📈 Nivel %d" % [
+			slot_info.coins, slot_info.gems, slot_info.level
+		]
+		# Segunda línea: zona y tiempo
+		var line2 = "🗺️ Zona: %s | 📅 %s" % [
 			slot_info.zone.capitalize(), slot_info.playtime
 		]
+		# Tercera línea: inventario de peces (solo si hay peces)
+		var line3 = ""
+		if slot_info.fish_count > 0:
+			line3 = "🐟 %d peces (valor: %d monedas)" % [
+				slot_info.fish_count, slot_info.fish_value
+			]
+
+		details_label.text = line1 + "\n" + line2 + ("\n" + line3 if line3 != "" else "")
 		details_label.add_theme_font_size_override("font_size", 12)
 		info_container.add_child(details_label)
 
@@ -201,8 +207,8 @@ func _on_new_game_pressed(slot: int):
 	"""Crear nueva partida con confirmación"""
 	var confirm_dialog = ConfirmationDialog.new()
 	confirm_dialog.title = "🆕 Nueva Partida"
-	confirm_dialog.dialog_text = "¿Crear nueva partida en el Slot %d?\n\n" + \
-		"Se iniciará una partida completamente nueva con valores por defecto." % slot
+	confirm_dialog.dialog_text = ("¿Crear nueva partida en el Slot %d?\n\n" + \
+		"Se iniciará una partida completamente nueva con valores por defecto.") % slot
 
 	add_child(confirm_dialog)
 	confirm_dialog.confirmed.connect(_perform_new_game.bind(slot))
@@ -213,6 +219,10 @@ func _perform_new_game(slot: int):
 	Save.reset_to_default()
 	Save.save_to_slot(slot)
 	Save.current_save_slot = slot
+
+	# CORRECCIÓN: Cargar inmediatamente los datos nuevos en memoria
+	Save.load_from_slot(slot)
+
 	emit_signal("save_created", slot)
 	if SFX:
 		SFX.play_event("success")

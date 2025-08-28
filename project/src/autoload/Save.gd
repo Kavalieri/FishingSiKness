@@ -5,12 +5,39 @@ signal data_loaded(slot: int)
 signal data_saved(slot: int)
 signal coins_changed(new_amount: int)
 signal gems_changed(new_amount: int)
+signal game_data_changed() # Nueva señal para actualización completa de UI
+signal inventory_changed() # Nueva señal para actualización de inventario
 
-# Sistema de guardado y migración
-var save_path: String
-var backup_path: String
+# Sistema de guardado y migración - UNIFICADO con slots
 var schema := 2
 var current_save_slot := 1
+var max_save_slots := 5
+
+# Rutas unificadas
+func get_save_path(slot: int) -> String:
+	return "user://savegame/save_slot_%d.json" % slot
+
+func get_current_save_path() -> String:
+	return get_save_path(current_save_slot)
+
+func get_backup_path(slot: int) -> String:
+	return "user://savegame/save_slot_%d.bak" % slot
+
+func _ensure_save_directory():
+	"""Crear directorio de guardado si no existe"""
+	var dir = DirAccess.open("user://")
+	if not dir.dir_exists("savegame"):
+		var result = dir.make_dir("savegame")
+		if result == OK:
+			print("📁 Directorio savegame/ creado exitosamente")
+		else:
+			print("❌ Error creando directorio savegame/: %d" % result)
+	else:
+		print("📁 Directorio savegame/ ya existe")
+
+func has_valid_game_data() -> bool:
+	"""Verifica si hay datos válidos de juego en memoria para guardar"""
+	return game_data != null and game_data.has("schema") and game_data.schema > 0
 
 # Datos del juego en memoria
 var game_data := {
@@ -48,22 +75,16 @@ var game_data := {
 }
 
 func _ready():
-	print("[Save] Inicializando sistema de guardado...")
-	
-	# Esperar a que GamePaths esté listo
-	if not GamePaths:
-		await get_tree().process_frame
-	
-	# Configurar rutas usando GamePaths
-	save_path = GamePaths.get_save_file()
-	backup_path = GamePaths.get_save_backup()
-	
-	print("[Save] Rutas configuradas:")
-	print("  - Save: %s" % save_path)
-	print("  - Backup: %s" % backup_path)
-	
-	load_current_save_slot()
-	load_game_data()
+	# Crear directorio de guardado
+	_ensure_save_directory()
+
+	# Verificar si existe algún save, si no, crear slot 1
+	_ensure_initial_save()
+
+	# Cargar último slot usado
+	load_last_used_slot()
+	load_game()
+	# ELIMINADO: _ensure_initial_data() que creaba peces automáticamente
 
 	# Guardar automáticamente cuando se cierre el juego
 	get_tree().auto_accept_quit = false
@@ -76,6 +97,45 @@ func _ready():
 	auto_save_timer.timeout.connect(_auto_save)
 	add_child(auto_save_timer)
 
+func _ensure_initial_save():
+	"""Crear el slot 1 si no existe ningún save"""
+	var has_any_save = false
+
+	for slot in range(1, max_save_slots + 1):
+		var slot_path = get_save_path(slot)
+		if FileAccess.file_exists(slot_path):
+			has_any_save = true
+			break
+
+	if not has_any_save:
+		print("📝 No se encontraron saves existentes, creando slot 1 inicial...")
+		current_save_slot = 1
+		save_to_slot(1)
+		save_last_used_slot()
+		print("✅ Slot 1 inicial creado exitosamente")
+
+func load_last_used_slot():
+	"""Cargar el último slot usado desde settings"""
+	var settings_file = FileAccess.open("user://savegame/last_slot.cfg", FileAccess.READ)
+	if settings_file:
+		var last_slot = settings_file.get_var()
+		settings_file.close()
+		if typeof(last_slot) == TYPE_INT and last_slot >= 1 and last_slot <= max_save_slots:
+			current_save_slot = last_slot
+			print("🎯 Cargando último slot usado: %d" % current_save_slot)
+		else:
+			print("⚠️ Slot inválido en last_slot.cfg, usando slot 1")
+	else:
+		print("📁 No hay last_slot.cfg, usando slot 1 por defecto")
+
+func save_last_used_slot():
+	"""Guardar el slot actual como último usado"""
+	var settings_file = FileAccess.open("user://savegame/last_slot.cfg", FileAccess.WRITE)
+	if settings_file:
+		settings_file.store_var(current_save_slot)
+		settings_file.close()
+		print("💾 Guardado último slot usado: %d" % current_save_slot)
+
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		print("Auto-saving before quit...")
@@ -87,30 +147,7 @@ func _auto_save():
 	print("Auto-save triggered")
 	save_game()
 
-func _ensure_initial_data():
-	# Asegurar que tenemos algunos peces de prueba si el inventario está vacío
-	if InventorySystem.get_inventory_count() == 0 and Content:
-		print("Save: Generando peces de prueba...")
-		var sardina_def = Content.get_fish_by_id("sardina")
-		if sardina_def:
-			# Crear una instancia básica
-			var fish_data = {
-				"id": sardina_def.id,
-				"name": sardina_def.name,
-				"size": 12.0,
-				"value": sardina_def.base_market_value,
-				"capture_zone_id": "orilla",
-				"zone_multiplier": 1.0,
-				"capture_timestamp": Time.get_datetime_string_from_system(),
-				"weight": 1.2,
-				"rarity": sardina_def.rarity,
-				"rarity_color": "#FFFFFF",
-				"species_category": sardina_def.species_category,
-				"description": sardina_def.description,
-				"timestamp": Time.get_unix_time_from_system()
-			}
-			InventorySystem._inventory.append(fish_data)
-			print("✅ Pez de prueba añadido al inventario")
+# ELIMINADO: _ensure_initial_data() - ya no creamos peces automáticamente
 
 # --- Funciones de Moneda ---
 
@@ -186,7 +223,10 @@ func load_game():
 	print("Game loaded: ", game_data.coins, " coins, ", game_data.gems, " gems")
 
 func save(data: Dictionary):
-	var tmp_path = save_path + ".tmp"
+	var current_save_path = get_current_save_path()
+	var current_backup_path = get_backup_path(current_save_slot)
+	var tmp_path = current_save_path + ".tmp"
+
 	var file = FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(data))
@@ -194,12 +234,13 @@ func save(data: Dictionary):
 		file.close()
 		var dir = DirAccess.open("user://")
 		if dir:
-			dir.remove(save_path)
-			dir.rename(tmp_path, save_path)
-			dir.copy(save_path, backup_path)
+			dir.remove(current_save_path)
+			dir.rename(tmp_path, current_save_path)
+			dir.copy(current_save_path, current_backup_path)
 
 func load_data() -> Dictionary:
-	var file = FileAccess.open(save_path, FileAccess.READ)
+	var current_save_path = get_current_save_path()
+	var file = FileAccess.open(current_save_path, FileAccess.READ)
 	if file:
 		var content = file.get_as_text()
 		file.close()
@@ -242,22 +283,27 @@ func get_save_slot_path(slot: int) -> String:
 
 func save_to_slot(slot: int):
 	current_save_slot = slot
-	save_path = get_save_slot_path(slot)
-	backup_path = "user://save_slot_%d.bak" % slot
+	save_last_used_slot() # Recordar slot actual
 	save_game()
 	# Emitir señal para notificar guardado
 	data_saved.emit(slot)
 
 func load_from_slot(slot: int):
 	current_save_slot = slot
-	save_path = get_save_slot_path(slot)
-	backup_path = "user://save_slot_%d.bak" % slot
+	save_last_used_slot() # Recordar slot actual
 	load_game()
-	# Emitir señal para que otros sistemas se actualicen
+
+	# Emitir múltiples señales para actualización completa de UI
 	data_loaded.emit(slot)
+	game_data_changed.emit()
+	inventory_changed.emit()
+	coins_changed.emit(get_coins())
+	gems_changed.emit(get_gems())
+
+	print("🔄 Datos cargados completamente desde Slot %d" % slot)
 
 func get_save_slot_info(slot: int) -> Dictionary:
-	var slot_path = get_save_slot_path(slot)
+	var slot_path = get_save_path(slot) # Usar función correcta
 	var file = FileAccess.open(slot_path, FileAccess.READ)
 	if not file:
 		return {"exists": false, "empty": true}
@@ -272,6 +318,15 @@ func get_save_slot_info(slot: int) -> Dictionary:
 	var experience = data.get("experience", 0)
 	var estimated_playtime = _calculate_playtime(level, experience)
 
+	# Calcular valor total de peces en inventario
+	var inventory_data = data.get("inventory", [])
+	var total_fish_value = 0
+	var fish_count = 0
+	for fish in inventory_data:
+		if fish.has("value"):
+			total_fish_value += fish.value
+			fish_count += 1
+
 	return {
 		"exists": true,
 		"empty": false,
@@ -281,7 +336,9 @@ func get_save_slot_info(slot: int) -> Dictionary:
 		"experience": experience,
 		"zone": _get_zone_display_name(data.get("current_zone", "orilla")),
 		"playtime": estimated_playtime,
-		"last_played": data.get("last_played", 0)
+		"last_played": data.get("last_played", 0),
+		"fish_count": fish_count,
+		"fish_value": total_fish_value
 	}
 
 func _calculate_playtime(level: int, experience: int) -> String:
@@ -354,5 +411,7 @@ func reset_to_default():
 	if InventorySystem:
 		InventorySystem._inventory.clear()
 
-	# Asegurar datos iniciales
-	_ensure_initial_data()
+	# ELIMINADO: _ensure_initial_data() - ya no creamos peces automáticamente
+
+	# Emitir señal de datos cargados
+	data_loaded.emit(current_save_slot)

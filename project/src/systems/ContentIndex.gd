@@ -121,10 +121,10 @@ func load_all():
 				log_msgs.append("[ERROR] No se pudo cargar %s" % resource_path)
 
 		print("[ContentIndex] ✅ Total cargado en %s: %d recursos" % [key, catalogs[key].size()])
-	
+
 	# Logging de avisos
 	if log_msgs.size() > 0:
-		var log_path = GamePaths.get_content_log() if GamePaths else "user://logs/content.log"
+		var log_path = "user://logs/content.log"
 		var f = FileAccess.open(log_path, FileAccess.WRITE)
 		if f:
 			for msg in log_msgs:

@@ -17,6 +17,20 @@ func _ready():
 	# Conectar señal de visibilidad para refrescar cuando se muestre
 	visibility_changed.connect(_on_visibility_changed)
 
+	# Conectar a señales de Save para actualización automática
+	if Save:
+		Save.game_data_changed.connect(_on_save_data_changed)
+		Save.inventory_changed.connect(refresh_display)
+		Save.coins_changed.connect(_on_coins_changed)
+
+func _on_save_data_changed():
+	"""Actualizar completamente la vista cuando cambien los datos de guardado"""
+	refresh_display()
+
+func _on_coins_changed(new_amount: int):
+	"""Actualizar información de monedas cuando cambien"""
+	refresh_display()
+
 func setup_background():
 	"""Configurar fondo usando BackgroundManager"""
 	if BackgroundManager:

@@ -5,19 +5,21 @@ var log_file: String
 
 func _ready():
 	print("[Logger] Inicializando sistema de logging...")
-	
-	# Esperar a que GamePaths esté listo
-	if not GamePaths:
-		await get_tree().process_frame
-	
-	# Configurar ruta de log
-	log_file = GamePaths.get_game_log()
+
+	# Configurar ruta de log directamente
+	log_file = "user://logs/game.log"
+
+	# Crear directorio de logs si no existe
+	var dir = DirAccess.open("user://")
+	if not dir.dir_exists("logs"):
+		dir.make_dir("logs")
+
 	print("[Logger] Archivo de log configurado: %s" % log_file)
 
 func log_message(msg: String, level: int = Level.INFO):
 	if not log_file:
 		return
-		
+
 	var file = FileAccess.open(log_file, FileAccess.WRITE)
 	if file:
 		var prefix = ["DEBUG", "INFO", "WARN"][level]
