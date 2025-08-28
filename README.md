@@ -1,8 +1,6 @@
-# 🎣 FishingSiKness
-
 <div align="center">
 
-<img src="docs/images/logo.png" alt="FishingSiKness Logo" width="200" />
+<img src="docs/images/logo.png" alt="FishingSiKness Logo" width="400" />
 
 <br><br>
 
