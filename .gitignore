@@ -21,3 +21,21 @@ build/builds/
 *.apk
 *.ipa
 *.aab
+
+# Debug and temporary files
+*.log
+debug_*.gd
+*.tmp
+.tmp
+
+# Security sensitive files
+*.keystore
+*.jks
+*.p12
+*.pem
+android-keystore.properties
+
+# IDE and OS files
+.vscode/settings.json
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/Kavalieri/FishingSiKness/discussions
+    about: Para preguntas generales, ideas y discusiones sobre el proyecto
+  - name: 📖 Documentation
+    url: https://github.com/Kavalieri/FishingSiKness#readme
+    about: Consulta la documentación completa del proyecto
+  - name: 🤝 Contributing Guide
+    url: https://github.com/Kavalieri/FishingSiKness/blob/main/CONTRIBUTING.md
+    about: Guía completa para contribuir al proyecto
+  - name: 📧 Direct Contact
+    url: https://github.com/Kavalieri/FishingSiKness/discussions/categories/general
+    about: Para temas urgentes o privados, inicia una discusión privada
