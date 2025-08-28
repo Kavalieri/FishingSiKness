@@ -11,7 +11,14 @@
 - Tests unitarios/integración en `project/tests/` (usar GdUnit4). Ejecutar con `godot --headless --test project/tests/unit/` y `project/tests/integration/`.
 - No modificar código/escenas para añadir contenido: solo crear nuevos `.tres` y assets.
 - Validación visual y QA en varias resoluciones; accesibilidad y modo zurdo en UI.
-- Logger y panel debug accesibles (F1 en PC, logs en `user://logs/`).
+- Logger y panel debug accesibles (F2 en PC, logs en `user://logs/`).
+
+## Naming Conventions
+- Variables: snake_case
+- Functions: snake_case
+- Constants: UPPER_SNAKE_CASE
+- Signals: snake_case
+- Classes: PascalCase
 
 ## Project-Specific Conventions
 - No usar `class_name` en scripts autoload (conflicto con singletons).
@@ -28,7 +35,6 @@
 - Audio y vibración integrados en eventos clave vía autoload `SFX.gd`.
 
 ## Key Files & Directories
-- `docs/GDD/GDD_0.1.0.md`: reglas, arquitectura y contratos.
 - `src/autoload/`: singletons y servicios globales.
 - `src/systems/`: lógica de juego y economía.
 - `src/ui/`: componentes UI y panel debug.

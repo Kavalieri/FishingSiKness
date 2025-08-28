@@ -4,7 +4,7 @@
     "files.insertFinalNewline": true,
     "files.exclude": {
         "**/.git": true,
-        "**/.github": true,
+        "**/.github": false,
         "**/build/**/builds": true,
         "**/build/**/release-system": true
     },

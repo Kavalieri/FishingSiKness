@@ -88,21 +88,21 @@ Este proyecto representa un **experimento pionero** en el desarrollo de videojue
 ## ✨ Características
 
 ### 🎣 **Gameplay**
-- ✅ **Pesca Automática**: Sistema idle que funciona incluso cuando no juegas
+- ✅ **Pesca Automática**: Sistema idle (por implementar) que funciona incluso cuando no juegas
 - ✅ **Múltiples Zonas**: Océano, lago, río - cada una con especies únicas
 - ✅ **Inventario Inteligente**: Gestión automática con sistema de slots
 - ✅ **Progresión Real**: Upgrades que impactan significativamente el gameplay
 
 ### 🎨 **Interfaz y UX**
-- ✅ **Diseño Responsive**: Se adapta a cualquier resolución automáticamente
-- ✅ **UI Moderna**: Interfaz limpia inspirada en aplicaciones contemporáneas
+- ✅ **Diseño Responsive**: Se adapta a cualquier resolución automáticamente (por implementar)
+- ✅ **UI Moderna**: Interfaz limpia inspirada en aplicaciones contemporáneas (más o menos)
 - ✅ **Navegación Intuitiva**: Tabs inferiores y topbar informativos
-- ✅ **Accesibilidad**: Soporte para modo zurdo y tamaños de texto ajustables
+- ✅ **Accesibilidad**: Soporte para modo zurdo y tamaños de texto ajustables (por implementar)
 
 ### 🔧 **Técnico**
 - ✅ **Guardado Robusto**: Sistema multi-slot con auto-save y validación
 - ✅ **Performance Optimizado**: 60 FPS estables en dispositivos móviles de gama media
-- ✅ **Debugging Integrado**: Panel de desarrollo accesible con F1
+- ✅ **Debugging Integrado**: Panel de desarrollo accesible con F2
 - ✅ **Exportación Limpia**: Sin errores de compilación ni warnings
 
 ### 🎯 **Características Únicas del Experimento IA**
@@ -157,8 +157,8 @@ Invoke-WebRequest -Uri "https://github.com/Kavalieri/FishingSiKness/releases/lat
 ### 🎣 **Conceptos Básicos**
 
 1. **🎯 Inicio**: Automáticamente empiezas pescando en la zona básica
-2. **🐟 Captura**: Los peces aparecen automáticamente - solo observa
-3. **💰 Venta**: Los peces se venden automáticamente por oro
+2. **🐟 Captura**: Eventos QTE con los que se captura a los pescados.
+3. **💰 Venta**: Los peces se venden en el mercado. Su valor se calcula en relación a la especie y tamaño aleatorio.
 4. **⬆️ Mejora**: Usa el oro para comprar upgrades de caña, carnada, etc.
 5. **🗺️ Explora**: Desbloquea nuevas zonas con mejores peces
 
@@ -167,7 +167,7 @@ Invoke-WebRequest -Uri "https://github.com/Kavalieri/FishingSiKness/releases/lat
 | Acción | PC | Android | Descripción |
 |--------|----|---------| ----------- |
 | **Navegación** | Click | Tap | Cambiar entre pestañas y menús |
-| **Debug Panel** | F1 | Gesto 3 dedos | Abrir herramientas de desarrollo |
+| **Debug Panel** | F3 | Gesto 3 dedos | Abrir herramientas de desarrollo |
 | **Menú Principal** | Esc | Botón atrás | Volver o abrir menú |
 | **Guardar** | Ctrl+S | Automático | Guardar progreso manualmente |
 
@@ -177,7 +177,7 @@ Invoke-WebRequest -Uri "https://github.com/Kavalieri/FishingSiKness/releases/lat
 - 🎣 **La caña es clave**: Mejor caña = peces más valiosos
 - 🌊 **Explora zonas nuevas** tan pronto como puedas costearlo
 - 💾 **Usa múltiples slots de guardado** para experimentar estrategias
-- ⏰ **Deja el juego funcionando**: Es un idle game, funciona solo
+- ⏰ **Deja el juego funcionando**: Es un idle game, funciona solo (por implementar)
 - 🎯 **Balancea upgrades**: No te enfoques solo en un tipo de mejora
 
 ---
@@ -357,7 +357,7 @@ git push origin feature/mi-mejora
 - **[🔧 docs/](docs/)** - Documentación técnica y arquitectural
 
 ### 🎮 **Game Design**
-- **[📖 GDD](docs/GDD/GDD_0.1.0.md)** - Game Design Document oficial
+- **[📖 GDD](docs/GDD/)** - Documentos de diseño de juego
 - **[📝 Summary](docs/summary/)** - Resúmenes técnicos por sistema
 - **[✅ Tasklist](docs/tasklist/)** - Tareas y fases de desarrollo
 

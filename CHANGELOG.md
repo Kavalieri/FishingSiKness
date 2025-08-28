@@ -7,7 +7,7 @@
 - **TopBar mejorado**: Interfaz de usuario profesional con información de recursos en tiempo real
 - **Sistema de pantalla de carga**: SplashScreen con transiciones suaves
 - **Gestor de ventanas flotantes**: Sistema base para diálogos y menús emergentes
-- **Sistema de debug avanzado**: Panel de depuración con logs detallados (F1)
+- **Sistema de debug avanzado**: Panel de depuración con logs detallados (F2)
 
 ### 🔧 Mejoras Técnicas
 - **Arquitectura data-driven**: Todo el contenido se define en archivos `.tres` bajo `data/`
@@ -67,7 +67,7 @@ project/
 - **Tasks automatizadas**: Configuración VS Code para builds y tests
 - **Tests unitarios**: Framework GdUnit4 configurado
 - **Logger integrado**: Sistema de logs con archivos en `user://logs/`
-- **Debug panel**: Acceso rápido a información de desarrollo (F1)
+- **Debug panel**: Acceso rápido a información de desarrollo (F2)
 
 ---
 
@@ -75,4 +75,3 @@ project/
 - Esta es una versión pre-release destinada a validación de arquitectura
 - El sistema RopePanel se preserva para uso futuro pero está desactivado
 - Todos los errores de exportación han sido resueltos
-- El proyecto sigue el GDD oficial en `docs/GDD/GDD_0.1.0.md`
