@@ -20,3 +20,4 @@ build/builds/
 *.exe
 *.apk
 *.ipa
+*.aab
