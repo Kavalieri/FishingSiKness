@@ -33,7 +33,15 @@ debug_*.gd
 *.jks
 *.p12
 *.pem
+*.key
+*.cert
 android-keystore.properties
+secrets.txt
+.env
+.env.*
+config.local.*
+*secret*
+*credential*
 
 # IDE and OS files
 .vscode/settings.json
