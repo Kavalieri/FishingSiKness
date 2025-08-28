@@ -37,5 +37,6 @@ android-keystore.properties
 
 # IDE and OS files
 .vscode/settings.json
+*.code-workspace
 .DS_Store
 Thumbs.db
