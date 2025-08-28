@@ -1,0 +1,88 @@
+name: release-please
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: 🚀 Run Release Please
+        id: release
+        uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: simple
+          token: ${{ secrets.GITHUB_TOKEN }}
+          changelog-types: |
+            [{"type":"feat","section":"🎯 Features","hidden":false},
+             {"type":"fix","section":"🐛 Bug Fixes","hidden":false},
+             {"type":"perf","section":"⚡ Performance Improvements","hidden":false},
+             {"type":"refactor","section":"♻️ Code Refactoring","hidden":false},
+             {"type":"docs","section":"📝 Documentation","hidden":false},
+             {"type":"style","section":"🎨 Styling","hidden":false},
+             {"type":"test","section":"🧪 Tests","hidden":false},
+             {"type":"build","section":"🔧 Build System","hidden":false},
+             {"type":"ci","section":"🤖 CI/CD","hidden":false},
+             {"type":"chore","section":"🧹 Chores","hidden":false},
+             {"type":"security","section":"🔒 Security","hidden":false}]
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
+
+  # Job para construir y subir ejecutables cuando hay una nueva release
+  build-and-upload:
+    if: ${{ needs.release.outputs.release_created }}
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [windows, android]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🎮 Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.4.1
+          use-dotnet: false
+
+      - name: 🔧 Setup export templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/4.4.1.stable
+          godot --headless --export-debug "Windows Debug" /tmp/test.exe --quit || true
+
+      - name: 🏗️ Build Windows
+        if: matrix.platform == 'windows'
+        run: |
+          cd project
+          mkdir -p ../build/releases
+          godot --headless --export-release "Windows Desktop - Release" "../build/releases/FishingSiKness-${{ needs.release.outputs.tag_name }}-Windows.exe" --quit
+
+      - name: 🤖 Build Android
+        if: matrix.platform == 'android'
+        run: |
+          cd project
+          mkdir -p ../build/releases
+          # Note: Android build requires keystore setup in secrets
+          echo "Android build requires keystore configuration"
+          # godot --headless --export-release "Android" "../build/releases/FishingSiKness-${{ needs.release.outputs.tag_name }}-Android.apk" --quit
+
+      - name: 📤 Upload Release Asset
+        if: matrix.platform == 'windows'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: build/releases/FishingSiKness-${{ needs.release.outputs.tag_name }}-Windows.exe
+          asset_name: FishingSiKness-${{ needs.release.outputs.tag_name }}-Windows.exe
+          asset_content_type: application/octet-stream
