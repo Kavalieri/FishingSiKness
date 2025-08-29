@@ -23,8 +23,6 @@
 
 </div>
 
----
-
 ## 📖 Tabla de Contenidos
 
 - [🎯 Acerca del Proyecto](#-acerca-del-proyecto)
