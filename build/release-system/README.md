@@ -1,6 +1,6 @@
-# 🚀 Release System - Bar-Sik
+# 🚀 Release System - FishingSiKness
 
-Sistema de builds y distribución multiplataforma para Bar-Sik.
+Sistema de builds y distribución multiplataforma para FishingSiKness.
 
 ## 📦 **Scripts Principales**
 

@@ -1,26 +1,26 @@
-# 🤖 BUILD ANDROID - Bar-Sik (APK + AAB para Google Play Store)
+# 🤖 BUILD ANDROID - FishingSiKness (APK + AAB para Google Play Store)
 param(
-    [string]$Version = "0.3.0",
+    [string]$Version = "0.2.1-alpha",
     [switch]$APKOnly,
     [switch]$AABOnly
 )
 
-Write-Host "📱 Bar-Sik - Build Android v$Version" -ForegroundColor Green
-Write-Host "====================================" -ForegroundColor Cyan
+Write-Host "📱 FishingSiKness - Build Android v$Version" -ForegroundColor Green
+Write-Host "===========================================" -ForegroundColor Cyan
 
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
-$ProjectRoot = "E:\GitHub\bar-sik\project"
-$BuildDir = "E:\GitHub\bar-sik\builds"
-$GodotPath = "E:\2- Descargas\Godot_v4.4.1-stable_win64.exe\Godot_v4.4.1-stable_win64.exe"
-$BuildDir = "E:\GitHub\bar-sik\builds"
-$GodotPath = "E:\2- Descargas\Godot_v4.4.1-stable_win64.exe\Godot_v4.4.1-stable_win64.exe"
+$ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..\project")
+$BuildDir = Resolve-Path (Join-Path $PSScriptRoot "..\..\builds")
+$GodotPath = "godot"
 
 Write-Host "📅 Timestamp: $timestamp" -ForegroundColor Gray
 Write-Host "📁 Proyecto: $ProjectRoot" -ForegroundColor Gray
 
 # Verificaciones
-if (-not (Test-Path $GodotPath)) {
-    Write-Host "❌ Godot no encontrado en: $GodotPath" -ForegroundColor Red
+try {
+    $null = & $GodotPath --version 2>$null
+} catch {
+    Write-Host "❌ Godot no encontrado en PATH. Asegúrate de que 'godot' esté disponible." -ForegroundColor Red
     exit 1
 }
 
@@ -46,7 +46,7 @@ $buildErrors = @()
 # BUILD APK (para testing y distribución directa)
 if (-not $AABOnly) {
     Write-Host "`n📱 COMPILANDO ANDROID APK..." -ForegroundColor Cyan
-    $apkPath = Join-Path $timestampDir "bar-sik.apk"
+    $apkPath = Join-Path $timestampDir "FishingSiKness.apk"
     Write-Host "Output: $apkPath" -ForegroundColor Gray
 
     try {

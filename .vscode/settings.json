@@ -6,7 +6,7 @@
         "**/.git": true,
         "**/.github": false,
         "**/build/**/builds": true,
-        "**/build/**/release-system": true
+        "**/build/**/release-system": false
     },
     "[gdscript]": {
         "editor.defaultFormatter": "geequlim.godot-tools"

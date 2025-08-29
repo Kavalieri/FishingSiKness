@@ -1,15 +1,16 @@
-# 🚀 Proceso de Release - Bar-Sik
+# 🚀 Proceso de Release - FishingSiKness
 
-## 📋 RESUMEN RELEASE v0.3.0-pre
+## 📋 RESUMEN RELEASE v0.2.1-alpha
 
-### ✅ **Release Exitosa Creada:**
-- **URL**: https://github.com/Kavalieri/bar-sik/releases/tag/v0.3.0-pre
-- **Tipo**: Pre-release
-- **Fecha**: 19 Agosto 2025
+### ✅ **Release en Preparación:**
+- **URL**: https://github.com/Kavalieri/FishingSiKness/releases/
+- **Tipo**: Alpha pre-release
+- **Sistema**: Release-please automatizado
 
 ### 📦 **Archivos Incluidos:**
-- **bar-sik.exe**: 93.23 MB (Windows Desktop)
-- **bar-sik.apk**: 24.66 MB (Android, firmado)
+- **FishingSiKness.exe**: ~90MB (Windows Desktop)
+- **FishingSiKness.apk**: ~25MB (Android, firmado)
+- **Web Build**: Deploy automático en Vercel
 
 ---
 
@@ -18,14 +19,18 @@
 ### 1. **Preparación de Builds**
 ```powershell
 # Android APK
-.\build-android.ps1 -APKOnly
+.\build\release-system\scripts\build-android.ps1 -APKOnly
 
 # Web Build
-.\build-web.ps1
+.\build\release-system\scripts\build-web.ps1
+
+# Windows Build
+.\build\release-system\scripts\build-windows.ps1
 
 # Verificar builds generados
-ls builds/android/ -Recurse -Filter "*.apk"
-ls builds/windows/*/bar-sik.exe
+ls build\builds\android\ -Recurse -Filter "*.apk"
+ls build\builds\windows\*\FishingSiKness.exe
+ls build\builds\web\latest\
 ```
 
 ### 2. **Gestión de Ramas**

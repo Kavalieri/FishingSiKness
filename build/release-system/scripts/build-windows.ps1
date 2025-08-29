@@ -1,21 +1,24 @@
-# 🚀 BUILD WINDOWS - Bar-Sik
+# 🚀 BUILD WINDOWS - FishingSiKness
 # Versión optimizada para máxima compatibilidad en otros PCs
 
-Write-Host "🚀 Bar-Sik - Build Windows" -ForegroundColor Green
-Write-Host "===========================" -ForegroundColor Cyan
+Write-Host "🚀 FishingSiKness - Build Windows" -ForegroundColor Green
+Write-Host "===================================" -ForegroundColor Cyan
 Write-Host "💡 Optimizado para compatibilidad máxima" -ForegroundColor Yellow
 
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
-$ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\project")
+$ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..\project")
 $BuildDir = Resolve-Path (Join-Path $PSScriptRoot "..\..\builds")
-$GodotPath = "E:\2- Descargas\Godot_v4.4.1-stable_win64.exe\Godot_v4.4.1-stable_win64.exe"
+$GodotPath = "godot"
 
 Write-Host "📅 Timestamp: $timestamp" -ForegroundColor Gray
 Write-Host "📁 Proyecto: $ProjectRoot" -ForegroundColor Gray
 
-# Verificar que Godot existe
-if (-not (Test-Path $GodotPath)) {
-    Write-Host "❌ Godot no encontrado en: $GodotPath" -ForegroundColor Red
+# Verificar que Godot existe en PATH
+try {
+    $null = & $GodotPath --version 2>$null
+}
+catch {
+    Write-Host "❌ Godot no encontrado en PATH. Asegúrate de que 'godot' esté disponible." -ForegroundColor Red
     exit 1
 }
 
@@ -30,7 +33,7 @@ $windowsDir = Join-Path $BuildDir "windows"
 $timestampDir = Join-Path $windowsDir $timestamp
 New-Item -ItemType Directory -Force -Path $timestampDir | Out-Null
 
-$exePath = Join-Path $timestampDir "bar-sik.exe"
+$exePath = Join-Path $timestampDir "FishingSiKness.exe"
 
 Write-Host "`n🔧 Modificando configuración temporal para máxima compatibilidad..." -ForegroundColor Yellow
 
@@ -44,7 +47,7 @@ $exportConfig = Get-Content $exportPresetsPath -Raw
 
 # Modificar para máxima compatibilidad
 $newConfig = $exportConfig -replace 'debug/export_console_wrapper=0', 'debug/export_console_wrapper=1'
-$newConfig = $newConfig -replace 'export_path="../builds/windows/bar-sik.exe"', 'export_path="../builds/windows/bar-sik.exe"'
+$newConfig = $newConfig -replace 'export_path="../builds/windows/FishingSiKness.exe"', "export_path=`"$exePath`""
 
 # Aplicar configuración temporal
 Set-Content $exportPresetsPath $newConfig -NoNewline
@@ -81,7 +84,8 @@ if (Test-Path $exePath) {
     Write-Host "`n🌐 URLs de descarga para VC++ Redistributable:" -ForegroundColor Cyan
     Write-Host "  https://aka.ms/vs/17/release/vc_redist.x64.exe" -ForegroundColor Blue
 
-} else {
+}
+else {
     Write-Host "`n❌ Error: No se pudo generar el ejecutable" -ForegroundColor Red
     exit 1
 }

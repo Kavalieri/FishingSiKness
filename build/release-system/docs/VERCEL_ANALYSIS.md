@@ -1,15 +1,15 @@
-# 🚀 Estudio Vercel para Bar-Sik
+# 🚀 Estudio Vercel para FishingSiKness
 
 ## 🎯 **OBJETIVO**
-Deploy automático y gratuito del build web de Bar-Sik en Vercel con actualización continua.
+Deploy automático y gratuito del build web de FishingSiKness en Vercel con actualización continua.
 
 ## 📋 **ANÁLISIS DE VERCEL PARA GODOT WEB**
 
-### ✅ **Ventajas para Bar-Sik:**
+### ✅ **Ventajas para FishingSiKness:**
 - **Free Tier**: 100GB ancho de banda/mes + builds ilimitados
 - **Deploy automático**: Conecta con GitHub → auto-deploy en cada push
 - **CDN Global**: Distribución mundial automática
-- **Custom Domain**: Dominio propio gratis (ej: bar-sik.vercel.app)
+- **Custom Domain**: Dominio propio gratis (ej: fishingsikness.vercel.app)
 - **HTTPS**: SSL automático
 - **Build Commands**: Personalizable para Godot exports
 
@@ -17,12 +17,12 @@ Deploy automático y gratuito del build web de Bar-Sik en Vercel con actualizaci
 
 #### **1. Estructura de Archivos:**
 ```
-bar-sik/
+FishingSiKness/
 ├── web-deploy/          # Nueva carpeta para Vercel
 │   ├── vercel.json     # Configuración
 │   ├── package.json    # Build scripts
 │   └── public/         # Build output
-└── builds/web/latest/  # Build de Godot
+└── build/builds/web/latest/  # Build de Godot
     ├── index.html
     ├── index.js
     ├── index.wasm
@@ -32,7 +32,7 @@ bar-sik/
 #### **2. vercel.json:**
 ```json
 {
-  "buildCommand": "powershell -File ../release-system/scripts/build-web.ps1",
+  "buildCommand": "powershell -File ../build/release-system/scripts/build-web.ps1",
   "outputDirectory": "public",
   "framework": null,
   "functions": {},
@@ -63,11 +63,11 @@ bar-sik/
 #### **3. package.json:**
 ```json
 {
-  "name": "bar-sik-web",
-  "version": "0.3.0",
+  "name": "fishingsikness-web",
+  "version": "0.2.1-alpha",
   "scripts": {
-    "build": "cd .. && powershell -File release-system/scripts/build-web.ps1 && cp builds/web/latest/* web-deploy/public/",
-    "dev": "cd .. && powershell -File release-system/scripts/build-web.ps1 -Serve"
+    "build": "cd .. && powershell -File build/release-system/scripts/build-web.ps1 && cp build/builds/web/latest/* web-deploy/public/",
+    "dev": "cd .. && powershell -File build/release-system/scripts/build-web.ps1 -Serve"
   }
 }
 ```
@@ -85,13 +85,13 @@ vercel --prod
 #### **Deploy Automático:**
 1. **Push a main** → Vercel detecta cambios
 2. **Build automático** → Ejecuta build-web.ps1
-3. **Deploy automático** → Actualiza bar-sik.vercel.app
+3. **Deploy automático** → Actualiza fishingsikness.vercel.app
 4. **Notificación** → Deploy listo en <2 minutos
 
-### 🎮 **Beneficios Específicos para Bar-Sik:**
+### 🎮 **Beneficios Específicos para FishingSiKness:**
 
 #### **Distribución Web Automática:**
-- ✅ **URL pública**: `bar-sik.vercel.app` (o custom domain)
+- ✅ **URL pública**: `fishingsikness.vercel.app` (o custom domain)
 - ✅ **Auto-updates**: Cada commit → nueva versión live
 - ✅ **Performance**: CDN + compresión automática
 - ✅ **Analytics**: Métricas de uso gratuitas
@@ -109,9 +109,9 @@ vercel --prod
 ### 💡 **ESTRATEGIA RECOMENDADA:**
 
 #### **Flujo Completo:**
-1. **Desarrollo local** → `.\release-system\scripts\build-web.ps1`
+1. **Desarrollo local** → `.\build\release-system\scripts\build-web.ps1`
 2. **Push a GitHub** → Vercel auto-deploy
-3. **Testing online** → bar-sik.vercel.app
+3. **Testing online** → fishingsikness.vercel.app
 4. **Release** → Builds locales + web live
 
 #### **Casos de Uso:**
@@ -142,9 +142,9 @@ vercel --prod
 ---
 
 ## 💰 **COSTOS:**
-- **Free Tier**: Suficiente para Bar-Sik
+- **Free Tier**: Suficiente para FishingSiKness
 - **Pro ($20/mes)**: Solo si necesitas más ancho de banda
 - **Sin límites de builds**: Ideal para desarrollo activo
 
 ## 🎯 **RESULTADO:**
-**Bar-Sik disponible 24/7 online con updates automáticos** 🌐
+**FishingSiKness disponible 24/7 online con updates automáticos** 🌐
