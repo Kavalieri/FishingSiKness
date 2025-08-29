@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.1.0-alpha...v0.2.0-alpha) (2025-08-29)
+
+
+### Features
+
+* implementar sistema de releases automáticas con release-please ([f33ab39](https://github.com/Kavalieri/FishingSiKness/commit/f33ab39465cdab3159dc35c483452d9ff1da1faa))
+
 ## [v0.1.0-alpha] - Pre-Release - 2025-08-28
 
 ### 🎉 Nueva Funcionalidad
