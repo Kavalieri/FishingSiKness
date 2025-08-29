@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.3-alpha...v0.2.4-alpha) (2025-08-29)
+
+
+### Bug Fixes
+
+* simplificar release-please eliminando build/version.json automatico ([3bf4a5c](https://github.com/Kavalieri/FishingSiKness/commit/3bf4a5c10e3099b55352bd7969d9328e17f2db3b))
+* sincronizar build/version.json con release 0.2.3-alpha ([cab73fa](https://github.com/Kavalieri/FishingSiKness/commit/cab73fa68850a4278c867b743641c813aff5afed))
+
 ## [0.2.3-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.2-alpha...v0.2.3-alpha) (2025-08-29)
 
 
