@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.1.0-alpha...v1.0.0-alpha) (2025-08-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* Cambiamos a workflow de desarrollo continuo en main
+
+### Bug Fixes
+
+* actualizar manifest a 0.1.0 base para versioning correcto ([68fb5bf](https://github.com/Kavalieri/FishingSiKness/commit/68fb5bf1589948a8f5bc9a45cac0680dd4d3c3b5))
+* corregir workflow release-please y configurar pre-releases alpha ([61c44fa](https://github.com/Kavalieri/FishingSiKness/commit/61c44fab9c99cc6e3cc2eef527081b3c8ae57c51))
+* mover manifest file a la raíz para que release-please lo encuentre ([86ff11e](https://github.com/Kavalieri/FishingSiKness/commit/86ff11ec19ec42846b228fdd97d8a4800fa70b5b))
+
+
+### Continuous Integration
+
+* implementar release-please y CI automation ([52586a6](https://github.com/Kavalieri/FishingSiKness/commit/52586a6864471736474df09fcfef4b556becd1a4))
+
 ## [v0.1.0-alpha] - Pre-Release - 2025-08-28
 
 ### 🎉 Nueva Funcionalidad
