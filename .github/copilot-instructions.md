@@ -14,6 +14,13 @@
   - Para cambios importantes: `feat!:` o incluir `BREAKING CHANGE:` en el footer
   - **IMPORTANTE**: NO usar emojis en conventional commits (interfieren con el parser)
   - **Evitar feat: para cambios menores** durante desarrollo alpha intensivo para no inflar versiones
+- **Forzar Versiones Específicas (Release-As)**:
+  - ✅ **CORRECTO**: `git commit --allow-empty -m "fix: descripción" -m "Release-As: 0.2.1-alpha"`
+  - ✅ **CORRECTO**: `git commit --allow-empty -m "feat: descripción" -m "Release-As: 1.0.0-beta"`
+  - ❌ **INCORRECTO**: `chore: descripción` + `Release-As:` (chore no es releasable unit)
+  - ❌ **INCORRECTO**: Release-As en una sola línea del mensaje
+  - **NOTA**: Solo `feat:`, `fix:`, `deps:` son "releasable units" que procesa release-please
+  - **USO**: Para resetear versiones o saltar a versiones específicas durante desarrollo
 - Builds y tests se gestionan vía Godot CLI (`godot` en PATH).
 - Tests unitarios/integración en `project/tests/` (usar GdUnit4). Ejecutar con `godot --headless --test project/tests/unit/` y `project/tests/integration/`.
 - No modificar código/escenas para añadir contenido: solo crear nuevos `.tres` y assets.
@@ -34,6 +41,7 @@
 - Los fondos de zona se referencian en la propiedad `background` de cada `.tres` de zona.
 - Los tests de pipeline/exportación van en `build/tests/`.
 - Documentación y tareas en `docs/` (`tasklist/`, `summary/`, `GDD/`).
+- **Versionado Alpha (0.x.x)**: Durante desarrollo inicial, SemVer permite cambios frecuentes. `feat:` = minor bump es comportamiento estándar. Para desarrollo intensivo usar principalmente `fix:`, `refactor:`, `docs:` y reservar `feat:` para funcionalidades significativas.
 
 ## Integration Points & Patterns
 - Comunicación entre sistemas vía señales (ej: `tab_selected`, `content_loaded`, `ad_reward_requested`).
