@@ -1,0 +1,90 @@
+name: release-please
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: 🛠️ Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🚀 Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .github/release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: 🎮 Update Release with Enhanced Description
+        if: steps.release.outputs.release_created
+        run: |
+          # Crear descripción mejorada con cabecera informativa
+          cat > release_description.md << 'EOF'
+          <div align="center">
+
+          <img src="https://raw.githubusercontent.com/Kavalieri/FishingSiKness/main/project/icon.svg" alt="FishingSiKness Logo" width="300" />
+
+          # 🎣 FishingSiKness ${{ steps.release.outputs.tag_name }}
+
+          **🤖 Juego de pesca experimental desarrollado completamente con IA**
+
+          ![Alpha](https://img.shields.io/badge/Status-Alpha-orange?style=for-the-badge)
+          ![Platform](https://img.shields.io/badge/Platform-Windows%20|%20Android%20|%20Web-lightgrey?style=for-the-badge)
+
+          ---
+
+          </div>
+
+          ## 🎮 **JUGAR AHORA**
+
+          ### 🌐 **Versión Web (Recomendada)**
+          **▶️ [https://fishingsikness.vercel.app/](https://fishingsikness.vercel.app/)**
+          - ✅ **Sin instalación** - Juega inmediatamente en tu navegador
+          - 🚀 **Siempre actualizada** - Deploy automático con cada release
+          - 📱 **Compatible móvil** - Funciona en smartphones y tablets
+
+          ### 📥 **Descargas Nativas**
+          - 🖥️ **Windows**: Ejecutable standalone (descarga abajo)
+          - 📱 **Android**: APK para instalación directa (descarga abajo)
+
+          ---
+
+          ## ⚠️ **ESTADO DE DESARROLLO**
+
+          **Esta es una versión ALPHA experimental** desarrollada mediante agentes de IA. El juego está en desarrollo activo con las siguientes características:
+
+          - 🔬 **Funcionalidades básicas**: Sistema de pesca, inventario y guardado implementados
+          - 🎯 **Arquitectura data-driven**: Todo el contenido definido mediante recursos `.tres`
+          - 🛠️ **Desarrollo continuo**: Updates frecuentes con nuevas mecánicas
+          - 🐛 **Bugs esperados**: Como toda versión alpha, puede tener problemas conocidos
+
+          ---
+
+          ## 🚀 **CHANGELOG**
+
+          EOF
+
+          # Obtener el body actual de la release y anexar
+          CURRENT_BODY=$(gh release view ${{ steps.release.outputs.tag_name }} --json body -q .body)
+
+          # Combinar nueva descripción con changelog existente
+          cat release_description.md > final_description.md
+          echo "$CURRENT_BODY" >> final_description.md
+
+          # Actualizar la release con la nueva descripción
+          gh release edit ${{ steps.release.outputs.tag_name }} --notes-file final_description.md --prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
