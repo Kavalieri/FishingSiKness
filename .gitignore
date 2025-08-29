@@ -48,3 +48,4 @@ config.local.*
 *.code-workspace
 .DS_Store
 Thumbs.db
+.vercel

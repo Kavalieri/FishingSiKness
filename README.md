@@ -19,7 +19,7 @@
 
 *Experimento pionero donde agentes IA crean un videojuego funcional sin intervención humana directa*
 
-[📥 **Descargar**](https://github.com/Kavalieri/FishingSiKness/releases/latest) • [🎮 **Jugar Online**](#-demo-web) • [📖 **Docs**](#-documentación) • [🤝 **Contribuir**](CONTRIBUTING.md) • [📋 **Changelog**](CHANGELOG.md)
+[📥 **Descargar**](https://github.com/Kavalieri/FishingSiKness/releases/latest) • [🎮 **Jugar Online**](https://fishingsikness.vercel.app/) • [📖 **Docs**](#-documentación) • [🤝 **Contribuir**](CONTRIBUTING.md) • [📋 **Changelog**](CHANGELOG.md)
 
 </div>
 
@@ -51,7 +51,7 @@
 
 - **🎣 Juego Idle**: Mecánicas de pesca automática con progresión constante
 - **🧠 100% IA**: Cada línea de código generada por agentes de inteligencia artificial
-- **📱 Multiplataforma**: Disponible para Windows, Android y próximamente Web
+- **📱 Multiplataforma**: Disponible para Windows, Android y Web (Vercel)
 - **🎨 Retro-Moderno**: Estética pixel art con interfaces contemporáneas
 - **🔄 Progresión**: Sistema de upgrades, zonas y logros
 
@@ -60,7 +60,7 @@
 | Versión | Estado | Plataformas | Fecha | Descargas |
 |---------|--------|-------------|-------|-----------|
 | **v0.1.0-alpha** | 🚀 **Disponible** | Windows, Android | Agosto 2025 | [Releases](https://github.com/Kavalieri/FishingSiKness/releases) |
-| **v0.2.0** | 🔄 En desarrollo | + Web | Q4 2025 | *Próximamente* |
+| **v0.2.1** | ✅ Disponible | + Web | Q4 2025 | *[Ver Release](https://github.com/Kavalieri/FishingSiKness/releases/latest)* |
 
 ---
 
@@ -123,7 +123,7 @@ Este proyecto representa un **experimento pionero** en el desarrollo de videojue
 |------------|---------|--------|--------|------------|
 | 🖥️ **Windows** | v0.1.0-alpha | [⬇️ Descargar](https://github.com/Kavalieri/FishingSiKness/releases/latest/download/Fishing.SiKness.V-Alpha-0.1.0-pre-release.exe) | ~161 MB | Windows 10+ (x64) |
 | 📱 **Android** | v0.1.0-alpha | [⬇️ Descargar](https://github.com/Kavalieri/FishingSiKness/releases/latest/download/Fishing.SiKness.V-Alpha-0.1.0-pre-release.apk) | ~96 MB | Android 7.0+ (API 21+) |
-| 🌐 **Web** | *Próximamente* | - | - | Navegador moderno |
+| 🌐 **Web** | ✅ Disponible | [fishingsikness.vercel.app](https://fishingsikness.vercel.app/) | Automático | Navegador moderno |
 
 ### 🚀 **Instalación Rápida**
 
@@ -150,7 +150,17 @@ Invoke-WebRequest -Uri "https://github.com/Kavalieri/FishingSiKness/releases/lat
 ```
 
 ### 🌐 **Demo Web**
-*Próximamente disponible en GitHub Pages*
+
+🎮 **¡Ya disponible!** Juega directamente en tu navegador:
+
+**▶️ [https://fishingsikness.vercel.app/](https://fishingsikness.vercel.app/)**
+
+- ✅ **Sin instalación**: Juega inmediatamente
+- 🚀 **Actualización automática**: Siempre la última versión
+- 📱 **Responsive**: Compatible con móviles y tablets
+- 🌍 **Global**: Desplegado en Vercel Edge Network
+
+> **Nota**: La versión web puede tener ligeras diferencias de rendimiento respecto a las versiones nativas.
 
 ---
 
@@ -241,8 +251,8 @@ godot --headless --test project/tests/
 # Build Android (requiere Android SDK)
 .\build\release-system\scripts\build-android.ps1
 
-# Build Web (próximamente)
-.\build\release-system\scripts\build-web.ps1
+# Build Web + Deploy a Vercel
+.\build\release-system\scripts\build-web.ps1 -Deploy
 
 # Build completo para release
 .\build\release-system\scripts\build-all.ps1

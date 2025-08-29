@@ -6,6 +6,7 @@ Write-Host "===================================" -ForegroundColor Cyan
 Write-Host "💡 Optimizado para compatibilidad máxima" -ForegroundColor Yellow
 
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$RootDir = Get-Location
 $ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..\project")
 $BuildDir = Resolve-Path (Join-Path $PSScriptRoot "..\..\builds")
 $GodotPath = "godot"
@@ -54,8 +55,8 @@ Set-Content $exportPresetsPath $newConfig -NoNewline
 
 Write-Host "`n🔨 Ejecutando build con configuración standalone..." -ForegroundColor Yellow
 
-# Build con preset 0 (Windows Desktop)
-$godotArgs = "--headless --export-release `"Windows Desktop`" `"$exePath`" --path `"$ProjectRoot`""
+# Build con preset 0 (Windows Desktop - Release)
+$godotArgs = "--headless --export-release `"Windows Desktop - Release`" `"$exePath`" --path `"$ProjectRoot`""
 $process = Start-Process -FilePath $GodotPath -ArgumentList $godotArgs -Wait -PassThru -NoNewWindow
 
 # Restaurar configuración original
@@ -69,11 +70,23 @@ if (Test-Path $exePath) {
     Write-Host "📁 Ubicación: $exePath" -ForegroundColor Cyan
     Write-Host "📏 Tamaño: $([math]::Round($exeInfo.Length/1MB, 2)) MB" -ForegroundColor Cyan
 
-    # Copiar a latest
+    # Crear symlink latest
     $latestDir = Join-Path $windowsDir "latest"
-    $latestPath = Join-Path $latestDir "bar-sik.exe"
-    New-Item -ItemType Directory -Force -Path $latestDir | Out-Null
-    Copy-Item $exePath $latestPath -Force
+
+    if (Test-Path $latestDir) {
+        Remove-Item $latestDir -Force -Recurse -ErrorAction SilentlyContinue
+    }
+
+    try {
+        # Intentar crear symlink del directorio completo
+        New-Item -ItemType SymbolicLink -Path $latestDir -Target $timestampDir -ErrorAction Stop | Out-Null
+        Write-Host "   🔗 Symlink 'latest' creado apuntando a $timestampDir" -ForegroundColor Green
+    }
+    catch {
+        # Fallback: copiar directorio
+        Copy-Item $timestampDir $latestDir -Recurse -Force
+        Write-Host "   📁 Directorio 'latest' copiado (symlink falló)" -ForegroundColor Yellow
+    }
 
     Write-Host "`n💡 RECOMENDACIONES PARA COMPATIBILIDAD:" -ForegroundColor Yellow
     Write-Host "  ✅ PCK embedido - No necesita archivos adicionales" -ForegroundColor Green
@@ -91,3 +104,9 @@ else {
 }
 
 Write-Host "`n🎯 Build Windows listo para distribución!" -ForegroundColor Green
+
+# Volver al directorio raíz del proyecto
+Set-Location $RootDir
+
+# Salir con código exitoso
+exit 0

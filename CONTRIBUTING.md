@@ -334,6 +334,13 @@ Los contribuidores son reconocidos en:
 
 ## 📈 Roadmap y Prioridades
 
+### **v0.2.1-alpha - Web Release** (✅ Completado)
+- ✅ **Web Build System**: Build automático para HTML5/WebAssembly
+- ✅ **Vercel Integration**: Deploy automático en [fishingsikness.vercel.app](https://fishingsikness.vercel.app/)
+- ✅ **UTF-8/Emoji Support**: Template HTML personalizado para correcta visualización
+- ✅ **Console Wrapper**: Debug mejorado en builds Windows
+- ✅ **Exit Code Fixes**: Corrección de reportes de éxito/fallo en scripts de build
+
 ### **v0.2.0 - Core Gameplay** (Próximo)
 - Sistema de pesca funcional
 - Mecánicas de progresión básicas

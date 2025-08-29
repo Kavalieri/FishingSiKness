@@ -9,6 +9,7 @@ Write-Host "📱 FishingSiKness - Build Android v$Version" -ForegroundColor Gree
 Write-Host "===========================================" -ForegroundColor Cyan
 
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$RootDir = Get-Location
 $ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..\project")
 $BuildDir = Resolve-Path (Join-Path $PSScriptRoot "..\..\builds")
 $GodotPath = "godot"
@@ -19,7 +20,8 @@ Write-Host "📁 Proyecto: $ProjectRoot" -ForegroundColor Gray
 # Verificaciones
 try {
     $null = & $GodotPath --version 2>$null
-} catch {
+}
+catch {
     Write-Host "❌ Godot no encontrado en PATH. Asegúrate de que 'godot' esté disponible." -ForegroundColor Red
     exit 1
 }
@@ -60,14 +62,16 @@ if (-not $AABOnly) {
             $fileSizeMB = [math]::Round($fileSize / 1MB, 2)
 
             Write-Host "✅ BUILD APK exitoso!" -ForegroundColor Green
-            Write-Host "📦 Archivo: bar-sik.apk ($fileSizeMB MB)" -ForegroundColor White
+            Write-Host "📦 Archivo: FishingSiKness.apk ($fileSizeMB MB)" -ForegroundColor White
             $buildSuccess++
-        } else {
+        }
+        else {
             $errorMsg = "❌ Error en APK build (código: $($process.ExitCode))"
             Write-Host $errorMsg -ForegroundColor Red
             $buildErrors += $errorMsg
         }
-    } catch {
+    }
+    catch {
         $errorMsg = "❌ Error ejecutando APK build: $($_.Exception.Message)"
         Write-Host $errorMsg -ForegroundColor Red
         $buildErrors += $errorMsg
@@ -77,7 +81,7 @@ if (-not $AABOnly) {
 # BUILD AAB (para Google Play Store)
 if (-not $AABOnly) {
     Write-Host "`n🏪 COMPILANDO ANDROID AAB (Google Play Store)..." -ForegroundColor Cyan
-    $aabPath = Join-Path $timestampDir "bar-sik.aab"
+    $aabPath = Join-Path $timestampDir "FishingSiKness.aab"
     Write-Host "Output: $aabPath" -ForegroundColor Gray
 
     try {
@@ -91,15 +95,17 @@ if (-not $AABOnly) {
             $fileSizeMB = [math]::Round($fileSize / 1MB, 2)
 
             Write-Host "✅ BUILD AAB exitoso!" -ForegroundColor Green
-            Write-Host "📦 Archivo: bar-sik.aab ($fileSizeMB MB)" -ForegroundColor White
+            Write-Host "📦 Archivo: FishingSiKness.aab ($fileSizeMB MB)" -ForegroundColor White
             Write-Host "🏪 Listo para Google Play Store" -ForegroundColor Yellow
             $buildSuccess++
-        } else {
+        }
+        else {
             $errorMsg = "❌ Error en AAB build (código: $($process.ExitCode))"
             Write-Host $errorMsg -ForegroundColor Red
             $buildErrors += $errorMsg
         }
-    } catch {
+    }
+    catch {
         $errorMsg = "❌ Error ejecutando AAB build: $($_.Exception.Message)"
         Write-Host $errorMsg -ForegroundColor Red
         $buildErrors += $errorMsg
@@ -125,7 +131,8 @@ if ($buildSuccess -gt 0) {
     try {
         New-Item -ItemType SymbolicLink -Path $latestDir -Target $timestampDir -ErrorAction Stop | Out-Null
         Write-Host "   🔗 Directorio 'latest' actualizado (symlink)" -ForegroundColor Gray
-    } catch {
+    }
+    catch {
         Copy-Item $timestampDir $latestDir -Recurse -Force
         Write-Host "   📁 Directorio 'latest' actualizado (copia)" -ForegroundColor Gray
     }
@@ -143,7 +150,11 @@ if ($buildSuccess -gt 0) {
     }
 
     Write-Host "`n🚀 BUILD ANDROID COMPLETADO!" -ForegroundColor Green
-} else {
+
+    # Volver al directorio raíz del proyecto
+    Set-Location $RootDir
+}
+else {
     Write-Host "❌ No se generaron builds exitosos" -ForegroundColor Red
 
     Write-Host "`n💡 POSIBLES SOLUCIONES:" -ForegroundColor Yellow
@@ -153,3 +164,9 @@ if ($buildSuccess -gt 0) {
 
     exit 1
 }
+
+# Volver al directorio raíz del proyecto
+Set-Location $RootDir
+
+# Salir con código exitoso
+exit 0

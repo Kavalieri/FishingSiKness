@@ -41,6 +41,71 @@
             "presentation": {
                 "reveal": "always"
             }
+        },
+        {
+            "label": "Build: Todas las plataformas",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\build-all.ps1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Build: Todas las plataformas + Deploy Web",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\build-all.ps1",
+            "args": [
+                "-Deploy"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Build: Windows",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\build-windows.ps1",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Build: Android",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\build-android.ps1",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Build: Web",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\build-web.ps1",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Build: Web + Deploy",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\build-web.ps1",
+            "args": [
+                "-Deploy"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
         }
     ]
 }
