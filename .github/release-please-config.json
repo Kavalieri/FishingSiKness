@@ -14,7 +14,13 @@
             "always-link-local": false,
             "include-component-in-tag": false,
             "separate-pull-requests": false,
-            "extra-files": [],
+            "extra-files": [
+                {
+                    "type": "json",
+                    "path": "build/version.json",
+                    "jsonpath": "$.game.version"
+                }
+            ],
             "changelog-header": "# 🎣 FishingSiKness - Experimental Fishing Game\n\n**🌐 JUGAR ONLINE**: [https://fishingsikness.vercel.app/](https://fishingsikness.vercel.app/)\n\n---\n\n> **⚠️ ALPHA VERSION** - Esta es una versión experimental en desarrollo activo\n\n**🎮 Sobre el Juego:**\nFishingSiKness es un simulador de pesca idle desarrollado íntegramente por agentes de IA, usando Godot 4.4 con arquitectura 100% data-driven. Cada pez, zona, upgrade y mecánica se define mediante recursos `.tres` para máxima modularidad.\n\n**🚧 Estado Actual - Alpha Phase:**\n- 🔬 **Core Systems**: Pesca, inventario, guardado y economía básica\n- 🎯 **Plataformas**: Windows ✅, Android ✅, Web ✅ (Vercel)\n- 🛠️ **Pipeline**: Build automático, deploy continuo, releases automáticas\n- 🤖 **AI Development**: 100% desarrollado por agentes de IA sin intervención humana\n\n**🚀 Roadmap Próximo:**\n- 🌊 Sistema de pesca procedural avanzado\n- 🏝️ Múltiples biomas y zonas únicas\n- ⚡ Sistema de upgrades y personalización\n- 🏆 Logros, colecciones y prestigio\n\n---\n\n## 📋 Changelog"
         }
     },
