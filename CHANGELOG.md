@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.0-alpha...v0.3.0-alpha) (2025-08-29)
+
+
+### Features
+
+* añadir cabecera personalizada y forzado de prerelease a releases ([7a6fbae](https://github.com/Kavalieri/FishingSiKness/commit/7a6fbaee9ef6dd7870229f17499c20cebd875ab0))
+
+
+### Bug Fixes
+
+* aplicar estrategia always-bump-patch para desarrollo alpha gradual ([1094379](https://github.com/Kavalieri/FishingSiKness/commit/109437989a9b8b88840c7df1d6616c1cd2b26131))
+
 ## [0.2.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.1.0-alpha...v0.2.0-alpha) (2025-08-29)
 
 
