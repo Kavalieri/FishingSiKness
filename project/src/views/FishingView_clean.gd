@@ -204,7 +204,7 @@ func update_qte_display():
 	# Cambiar color de la aguja según proximidad al objetivo
 	if qte_progress >= qte_target_min and qte_progress <= qte_target_max:
 		qte_needle.color = Color.LIME_GREEN
-		qte_instructions.text = "🎯 ¡PERFECTO! ¡Presiona AHORA!"
+		qte_instructions.text = "TARGET ¡PERFECTO! ¡Presiona AHORA!"
 		qte_instructions.add_theme_color_override("font_color", Color.LIME_GREEN)
 	else:
 		qte_needle.color = Color.RED
@@ -247,7 +247,7 @@ func start_fishing():
 	if qte_container:
 		qte_container.visible = true
 
-	cast_button.text = "🎯 ¡ATRAPAR!"
+	cast_button.text = "TARGET ¡ATRAPAR!"
 
 func try_catch_fish():
 	if not qte_active:
@@ -296,7 +296,7 @@ func show_catch_message(fish_instance: FishInstance, success: bool):
 	var message = Label.new()
 
 	if success and fish_instance:
-		message.text = "🎉 ¡Pescaste un %s!\n💰 +%d monedas\n📏 %.1fcm" % [
+		message.text = "CELEBRATION ¡Pescaste un %s!\nCOINS +%d monedas\nSIZE %.1fcm" % [
 			fish_instance.fish_def.name,
 			fish_instance.value,
 			fish_instance.size

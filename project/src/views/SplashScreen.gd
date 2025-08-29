@@ -68,7 +68,7 @@ func setup_splash_background():
 	"""Configurar fondo splash con BackgroundManager"""
 	if BackgroundManager:
 		BackgroundManager.setup_splash_background(self)
-		print("✅ Fondo splash configurado con BackgroundManager")
+		print("OK Fondo splash configurado con BackgroundManager")
 	else:
 		print("⚠️ BackgroundManager no disponible, usando fallback")
 		setup_fallback_background()
@@ -99,7 +99,7 @@ func setup_fallback_background():
 
 func setup_ui_from_scene():
 	"""Configurar UI usando SOLO nodos del .tscn - versión limpia"""
-	print("🎯 Configurando Splash Screen desde .tscn...")
+	print("TARGET Configurando Splash Screen desde .tscn...")
 
 	# Obtener contenedores
 	var logo_container = $MainContainer/LogoArea/LogoContainer
@@ -122,7 +122,7 @@ func setup_logo(container: Control):
 	"""Logo configurado SOLO desde .tscn - NO tocar desde código"""
 	# Solo obtener referencia, SIN configurar nada
 	logo_texture = container.get_node("LogoTexture")
-	print("✅ Logo referenciado desde .tscn (sin modificaciones)")
+	print("OK Logo referenciado desde .tscn (sin modificaciones)")
 	# TODO: Si necesitas animaciones, hacerlas aquí sin tocar stretch_mode
 
 func create_logo_animation():
@@ -270,7 +270,7 @@ func _rotate_tip():
 
 func start_loading():
 	"""Iniciar secuencia de carga"""
-	print("🔄 Iniciando secuencia de carga...")
+	print("REFRESH Iniciando secuencia de carga...")
 	var timer = Timer.new()
 	timer.wait_time = 0.5
 	timer.timeout.connect(_update_loading)
@@ -290,7 +290,7 @@ func _update_loading():
 		await get_tree().create_timer(0.5).timeout
 		show_continue_prompt()
 		waiting_for_input = true
-		print("✅ Carga completa - esperando input del usuario")
+		print("OK Carga completa - esperando input del usuario")
 
 func show_continue_prompt():
 	"""Mostrar mensaje para continuar - centrado y estéticamente mejorado"""
@@ -356,7 +356,7 @@ func _input(event):
 func continue_to_game():
 	"""Continuar al juego principal"""
 	waiting_for_input = false
-	print("🎯 Usuario presionó para continuar - emitiendo splash_finished")
+	print("TARGET Usuario presionó para continuar - emitiendo splash_finished")
 	splash_finished.emit()
 
 func setup_options_button():
@@ -380,7 +380,7 @@ func setup_options_button():
 	top_options_button.pressed.connect(_on_options_pressed)
 	options_container.add_child(top_options_button)
 
-	print("✅ Botón de opciones configurado en esquina superior derecha")
+	print("OK Botón de opciones configurado en esquina superior derecha")
 
 func _on_options_pressed():
 	"""
@@ -388,5 +388,5 @@ func _on_options_pressed():
 	En lugar de abrir un menú aquí, solo emitimos una señal.
 	Un gestor central se encargará de abrir el menú de pausa correcto.
 	"""
-	print("🔧 Pause requested from splash screen.")
+	print("WRENCH Pause requested from splash screen.")
 	pause_requested.emit()

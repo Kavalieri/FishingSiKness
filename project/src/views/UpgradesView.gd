@@ -67,7 +67,7 @@ func setup_background():
 	"""Configurar fondo principal usando BackgroundManager"""
 	if BackgroundManager:
 		BackgroundManager.setup_main_background(self)
-		print("✅ Fondo principal configurado en UpgradesView")
+		print("OK Fondo principal configurado en UpgradesView")
 	else:
 		print("⚠️ BackgroundManager no disponible en UpgradesView")
 
@@ -205,13 +205,13 @@ func get_bonus_text(upgrade_data: Dictionary, level: int) -> String:
 		"capacidad":
 			return "📦 Bonus actual: +%d espacios" % total_bonus
 		"rareza":
-			return "✨ Bonus actual: +%.1f%% rareza" % total_bonus
+			return "SPARKLE Bonus actual: +%.1f%% rareza" % total_bonus
 		"valor":
-			return "💰 Bonus actual: +%.1f%% valor" % total_bonus
+			return "COINS Bonus actual: +%.1f%% valor" % total_bonus
 		"velocidad":
 			return "⚡ Bonus actual: -%.1fs tiempo" % total_bonus
 		"multiplicador":
-			return "🎯 Bonus actual: +%.2fx multiplicador" % total_bonus
+			return "TARGET Bonus actual: +%.2fx multiplicador" % total_bonus
 		_:
 			return "Bonus actual: +%s" % str(total_bonus)
 

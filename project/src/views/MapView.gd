@@ -17,7 +17,7 @@ func setup_background():
 	"""Configurar fondo principal usando BackgroundManager"""
 	if BackgroundManager:
 		BackgroundManager.setup_main_background(self)
-		print("✅ Fondo principal configurado en MapView")
+		print("OK Fondo principal configurado en MapView")
 	else:
 		print("⚠️ BackgroundManager no disponible en MapView")
 
@@ -36,7 +36,7 @@ func setup_ui():
 	main_vbox.add_child(header)
 
 	var title = Label.new()
-	title.text = "🗺️ MAPA DE ZONAS"
+	title.text = "MAP MAPA DE ZONAS"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 24)
 	header.add_child(title)
@@ -173,7 +173,7 @@ func create_zone_button_from_def(zone_def: ZoneDef):
 
 	# Información de zona
 	var info_label = Label.new()
-	info_label.text = "💰 Multiplicador: x%.1f • 🐟 Peces: %d especies" % [
+	info_label.text = "COINS Multiplicador: x%.1f • FISH Peces: %d especies" % [
 		zone_def.price_multiplier, zone_def.entries.size()
 	]
 	info_label.add_theme_font_size_override("font_size", 14)
@@ -192,7 +192,7 @@ func create_zone_button_from_def(zone_def: ZoneDef):
 	if is_current:
 		status_label.text = "ACTUAL"
 		status_label.add_theme_color_override("font_color", Color.GREEN)
-		action_button.text = "✅ Ya estás aquí"
+		action_button.text = "OK Ya estás aquí"
 		action_button.disabled = true
 		panel.add_theme_color_override("bg_color", Color(0, 0.3, 0, 0.3))
 	elif is_unlocked:
@@ -216,16 +216,16 @@ func get_zone_icon(zone_id: String) -> String:
 	"""Obtener icono representativo para cada zona"""
 	var zone_icons = {
 		"orilla": "🏖️",
-		"lago": "🌊",
+		"lago": "ZONE",
 		"rio": "🏞️",
 		"costa": "🌅",
-		"mar": "🌊",
+		"mar": "ZONE",
 		"glaciar": "🏔️",
 		"industrial": "🏭",
 		"abismo": "🌌",
-		"infernal": "🔥"
+		"infernal": "FIRE"
 	}
-	return zone_icons.get(zone_id, "🗺️")
+	return zone_icons.get(zone_id, "MAP")
 
 func create_zone_legend():
 	"""Crear leyenda de información de todas las zonas"""
@@ -253,7 +253,7 @@ func create_zone_legend():
 	legend_container.add_child(separator)
 
 	var summary_label = Label.new()
-	summary_label.text = "💡 Los multiplicadores afectan el valor final " + \
+	summary_label.text = "IDEA Los multiplicadores afectan el valor final " + \
 		"de todos los peces capturados en cada zona."
 	summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	summary_label.add_theme_font_size_override("font_size", 12)
@@ -284,7 +284,7 @@ func create_zone_info_entry(parent: VBoxContainer, zone_def: ZoneDef):
 			fish_names.append(entry.fish.name)
 
 	var fish_label = Label.new()
-	fish_label.text = "  🐟 %s" % ", ".join(fish_names)
+	fish_label.text = "  FISH %s" % ", ".join(fish_names)
 	fish_label.add_theme_font_size_override("font_size", 12)
 	fish_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	fish_label.add_theme_color_override("font_color", Color.LIGHT_GRAY)

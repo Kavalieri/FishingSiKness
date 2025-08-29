@@ -75,7 +75,7 @@ var skill_definitions = {
 	"economy_basic": {
 		"name": "Comerciante Novato",
 		"description": "Aumenta el valor de venta de peces en un 10%",
-		"icon": "💰",
+		"icon": "COINS",
 		"cost": 1,
 		"type": "sell_bonus",
 		"value": 1.1,
@@ -85,7 +85,7 @@ var skill_definitions = {
 	"economy_advanced": {
 		"name": "Comerciante Experto",
 		"description": "Aumenta el valor de venta de peces en un 25%",
-		"icon": "💰",
+		"icon": "COINS",
 		"cost": 1,
 		"type": "sell_bonus",
 		"value": 1.25,
@@ -95,7 +95,7 @@ var skill_definitions = {
 	"economy_master": {
 		"name": "Magnate Pesquero",
 		"description": "Aumenta el valor de venta de peces en un 50%",
-		"icon": "💰",
+		"icon": "COINS",
 		"cost": 2,
 		"type": "sell_bonus",
 		"value": 1.5,

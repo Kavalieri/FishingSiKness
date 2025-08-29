@@ -33,7 +33,7 @@ func setup_debug_ui():
 
 	# Título
 	var title = Label.new()
-	title.text = "🔧 DEBUG SKILL TREE"
+	title.text = "WRENCH DEBUG SKILL TREE"
 	title.add_theme_font_size_override("font_size", 24)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	main_vbox.add_child(title)
@@ -225,8 +225,8 @@ func update_manager_status(status_label: Label):
 	"""Actualizar estado del FloatingWindowManager"""
 	if FloatingWindowManager:
 		var window_count = FloatingWindowManager.window_stack.size()
-		status_label.text = "✅ FloatingWindowManager OK | Ventanas: %d" % window_count
+		status_label.text = "OK FloatingWindowManager OK | Ventanas: %d" % window_count
 		status_label.modulate = Color.GREEN
 	else:
-		status_label.text = "❌ FloatingWindowManager NO DISPONIBLE"
+		status_label.text = "ERROR FloatingWindowManager NO DISPONIBLE"
 		status_label.modulate = Color.RED

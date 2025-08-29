@@ -90,13 +90,13 @@ func create_fish_info(container: VBoxContainer):
 
 	# Valor
 	var value_label = Label.new()
-	value_label.text = "💰 Valor: %d monedas" % fish_value
+	value_label.text = "COINS Valor: %d monedas" % fish_value
 	value_label.add_theme_font_size_override("font_size", 16)
 	fish_info.add_child(value_label)
 
 	# Rareza
 	var rarity_label = Label.new()
-	rarity_label.text = "⭐ Rareza: %s" % fish_rarity.capitalize()
+	rarity_label.text = "STAR Rareza: %s" % fish_rarity.capitalize()
 	rarity_label.add_theme_font_size_override("font_size", 16)
 	rarity_label.modulate = get_rarity_color(fish_rarity)
 	fish_info.add_child(rarity_label)
@@ -112,7 +112,7 @@ func get_fish_icon(fish_name: String) -> String:
 	var name_lower = fish_name.to_lower()
 
 	var fish_icons = {
-		"sardina": "🐟",
+		"sardina": "FISH",
 		"trucha": "🐠",
 		"salmon": "🍣",
 		"calamar": "🦑",
@@ -126,7 +126,7 @@ func get_fish_icon(fish_name: String) -> String:
 		if fish_type in name_lower:
 			return fish_icons[fish_type]
 
-	return "🐟"
+	return "FISH"
 
 func get_rarity_color(rarity: String) -> Color:
 	"""Obtener color según rareza"""

@@ -38,16 +38,16 @@ func _ready():
 
 	# Verificar que todos los nodos necesarios existan
 	if not fish_flow_container:
-		print("❌ ERROR: FishFlowContainer no encontrado en InventoryPanel")
+		print("ERROR ERROR: FishFlowContainer no encontrado en InventoryPanel")
 		return
 	if not sell_selected_button:
-		print("❌ ERROR: SellSelectedButton no encontrado en InventoryPanel")
+		print("ERROR ERROR: SellSelectedButton no encontrado en InventoryPanel")
 		return
 	if not filter_container:
-		print("❌ ERROR: FilterContainer no encontrado en InventoryPanel")
+		print("ERROR ERROR: FilterContainer no encontrado en InventoryPanel")
 		return
 
-	print("✅ InventoryPanel: Todos los nodos encontrados correctamente")
+	print("OK InventoryPanel: Todos los nodos encontrados correctamente")
 
 	# Popups
 	details_popup = FishDetailsPopupScene.instantiate()
@@ -179,7 +179,7 @@ func _load_fish_cards():
 
 func _create_individual_fish_card(fish_data: Dictionary, fish_index: int):
 	if not fish_flow_container:
-		print("❌ ERROR: fish_flow_container is null in _create_individual_fish_card")
+		print("ERROR ERROR: fish_flow_container is null in _create_individual_fish_card")
 		return
 
 	var card = FishCardScene.instantiate()
@@ -187,7 +187,7 @@ func _create_individual_fish_card(fish_data: Dictionary, fish_index: int):
 	fish_flow_container.add_child(card)
 	var fish_def = FishDataManager.get_fish_def(fish_data.get("id"))
 	if not fish_def:
-		print("❌ ERROR: No se pudo obtener fish_def para ID: ", fish_data.get("id"))
+		print("ERROR ERROR: No se pudo obtener fish_def para ID: ", fish_data.get("id"))
 		return
 	card.setup_individual_card(fish_def, fish_data, fish_index)
 	card.set_meta("fish_index", fish_index)

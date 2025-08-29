@@ -33,7 +33,7 @@ func setup_fishcard_background():
 	var background_panel = $BackgroundPanel
 	if background_panel and BackgroundManager:
 		BackgroundManager.setup_fishcard_background(background_panel)
-		print("✅ Fondo de tarjeta de pez configurado")
+		print("OK Fondo de tarjeta de pez configurado")
 	else:
 		print("⚠️ No se pudo configurar fondo de tarjeta de pez")
 

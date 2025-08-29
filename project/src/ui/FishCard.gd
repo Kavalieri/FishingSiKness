@@ -34,9 +34,9 @@ func setup_individual_card(fish_def: FishDef, capture_data: Dictionary, index: i
 
 func get_fish_details() -> String:
 	var details = ""
-	details += "🐟 %s\n\n" % fish_data.name
-	details += "💰 Precio: %dc\n" % individual_fish_data.get("value", 0)
-	details += "📏 Tamaño: %.1fcm\n" % individual_fish_data.get("size", 0.0)
+	details += "FISH %s\n\n" % fish_data.name
+	details += "COINS Precio: %dc\n" % individual_fish_data.get("value", 0)
+	details += "SIZE Tamaño: %.1fcm\n" % individual_fish_data.get("size", 0.0)
 	details += "⚖️ Peso: %.2fkg\n" % individual_fish_data.get("weight", 0.0)
 	details += "📍 Zona: %s\n" % individual_fish_data.get("capture_zone_id", "Desconocida").capitalize()
 	return details

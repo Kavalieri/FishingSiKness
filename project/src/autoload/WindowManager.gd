@@ -26,12 +26,12 @@ func open(alias: String) -> void:
 
 		# Definir títulos específicos para cada alias
 		var title_mapping = {
-			"money": "💰 Mercado",
-			"diamonds": "💎 Tienda de Gemas",
-			"zone": "🗺️ Mapa de Zonas",
+			"money": "COINS Mercado",
+			"diamonds": "GEMS Tienda de Gemas",
+			"zone": "MAP Mapa de Zonas",
 			"level": "🌟 Progreso y Habilidades",
-			"xp": "⭐ Experiencia y Niveles",
-			"options": "⚙️ Configuración"
+			"xp": "STAR Experiencia y Niveles",
+			"options": "OPTIONS Configuración"
 		}
 
 		# Manejo especial para ciertas ventanas que no son BaseWindow

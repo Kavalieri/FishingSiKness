@@ -6,47 +6,47 @@ extends Node
 # Mapeo de emojis a rutas de imágenes
 const EMOJI_MAP = {
 	# TopBar y UI principal
-	"💰": "res://art/ui/assets/diamond.png", # Temporal, luego cambiar por moneda
-	"💎": "res://art/ui/assets/diamond.png",
-	"🌊": "res://art/ui/assets/world.png", # Temporal para zona
-	"⚙️": "res://art/ui/assets/placeholder.png",
-	"⭐": "res://art/ui/assets/star.png",
+	"COINS": "res://art/ui/assets/diamond.png", # Temporal, luego cambiar por moneda
+	"GEMS": "res://art/ui/assets/diamond.png",
+	"ZONE": "res://art/ui/assets/world.png", # Temporal para zona
+	"OPTIONS": "res://art/ui/assets/placeholder.png",
+	"STAR": "res://art/ui/assets/star.png",
 
 	# Pestañas del menú inferior
-	"🐟": "res://art/ui/tabs/tab_fishing.png",
-	"🛒": "res://art/ui/tabs/tab_market.png",
-	"⬆": "res://art/ui/tabs/tab_upgrades.png",
-	"🗺": "res://art/ui/tabs/tab_zones.png",
-	"⭐": "res://art/ui/tabs/tab_prestige.png", # Conflicto con star general
+	"FISH": "res://art/ui/tabs/tab_fishing.png",
+	"SHOP": "res://art/ui/tabs/tab_market.png",
+	"UP": "res://art/ui/tabs/tab_upgrades.png",
+	"MAP": "res://art/ui/tabs/tab_zones.png",
+	"STAR": "res://art/ui/tabs/tab_prestige.png", # Conflicto con star general
 
 	# Elementos de juego
-	"🎯": "res://art/ui/assets/placeholder.png",
-	"🔥": "res://art/ui/assets/fire.png",
-	"💡": "res://art/ui/assets/placeholder.png",
-	"👤": "res://art/ui/assets/man.png",
-	"❌": "res://art/ui/assets/placeholder.png",
-	"✅": "res://art/ui/assets/placeholder.png",
-	"🎮": "res://art/ui/assets/placeholder.png",
-	"📈": "res://art/ui/assets/update.png",
-	"📅": "res://art/ui/assets/placeholder.png",
-	"📏": "res://art/ui/assets/placeholder.png",
-	"🗺️": "res://art/ui/assets/map-zones.png",
-	"🚨": "res://art/ui/assets/placeholder.png",
-	"🛠": "res://art/ui/assets/placeholder.png",
-	"🔄": "res://art/ui/assets/placeholder.png",
-	"🔧": "res://art/ui/assets/placeholder.png",
+	"TARGET": "res://art/ui/assets/placeholder.png",
+	"FIRE": "res://art/ui/assets/fire.png",
+	"IDEA": "res://art/ui/assets/placeholder.png",
+	"USER": "res://art/ui/assets/man.png",
+	"ERROR": "res://art/ui/assets/placeholder.png",
+	"OK": "res://art/ui/assets/placeholder.png",
+	"GAME": "res://art/ui/assets/placeholder.png",
+	"CHART": "res://art/ui/assets/update.png",
+	"DATE": "res://art/ui/assets/placeholder.png",
+	"SIZE": "res://art/ui/assets/placeholder.png",
+	"MAP": "res://art/ui/assets/map-zones.png",
+	"ALERT": "res://art/ui/assets/placeholder.png",
+	"TOOLS": "res://art/ui/assets/placeholder.png",
+	"REFRESH": "res://art/ui/assets/placeholder.png",
+	"WRENCH": "res://art/ui/assets/placeholder.png",
 
 	# Emojis específicos de splash/tips
-	"✨": "res://art/ui/assets/star.png", # Para el mensaje de continuar
-	"🎉": "res://art/ui/assets/explosion.png",
-	"💡": "res://art/ui/assets/think.png",
-	"👑": "res://art/ui/assets/crown.png",
-	"❤️": "res://art/ui/assets/heart.png",
-	"💋": "res://art/ui/assets/heart2.png",
-	"🏃": "res://art/ui/assets/speed.png",
-	"👕": "res://art/ui/assets/shirt.png",
-	"💬": "res://art/ui/assets/talk.png",
-	"😢": "res://art/ui/assets/tear.png"
+	"SPARKLE": "res://art/ui/assets/star.png", # Para el mensaje de continuar
+	"CELEBRATION": "res://art/ui/assets/explosion.png",
+	"IDEA": "res://art/ui/assets/think.png",
+	"CROWN": "res://art/ui/assets/crown.png",
+	"HEART": "res://art/ui/assets/heart.png",
+	"KISS": "res://art/ui/assets/heart2.png",
+	"RUN": "res://art/ui/assets/speed.png",
+	"SHIRT": "res://art/ui/assets/shirt.png",
+	"TALK": "res://art/ui/assets/talk.png",
+	"CRY": "res://art/ui/assets/tear.png"
 }
 
 # Función para obtener ruta de imagen para emoji

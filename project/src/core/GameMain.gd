@@ -6,7 +6,7 @@ const MAIN_GAME_SCENE = preload("res://scenes/core/Main.tscn")
 var main_game_instance: Control
 
 func _ready():
-	print("🎮 GameMain: Initializing...")
+	print("GAME GameMain: Initializing...")
 	await get_tree().process_frame
 
 	# 1. Instantiate the main game scene but keep it invisible and paused.
@@ -14,7 +14,7 @@ func _ready():
 	main_game_instance.visible = false
 	main_game_instance.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(main_game_instance)
-	print("✅ Main game instance created and paused.")
+	print("OK Main game instance created and paused.")
 
 	# 2. Show the splash screen.
 	show_splash_screen()
@@ -28,15 +28,15 @@ func show_splash_screen():
 	# The main_game_instance is the ScreenManager. We connect the splash's pause request to it.
 	if main_game_instance.has_method("show_pause_menu"):
 		splash_instance.pause_requested.connect(main_game_instance.show_pause_menu)
-		print("✅ Connected splash screen's pause_requested to ScreenManager")
+		print("OK Connected splash screen's pause_requested to ScreenManager")
 	else:
 		print("ERROR: Main game instance does not have show_pause_menu method.")
 
 	add_child(splash_instance)
-	print("✅ Splash Screen loaded.")
+	print("OK Splash Screen loaded.")
 
 func _on_splash_finished():
-	print("🎯 Splash finished - transitioning to main game...")
+	print("TARGET Splash finished - transitioning to main game...")
 
 	# Free the splash screen
 	var splash_screen = null
@@ -52,4 +52,4 @@ func _on_splash_finished():
 	if main_game_instance:
 		main_game_instance.visible = true
 		main_game_instance.process_mode = Node.PROCESS_MODE_INHERIT
-		print("🎮 Main game is now active.")
+		print("GAME Main game is now active.")

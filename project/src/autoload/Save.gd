@@ -31,7 +31,7 @@ func _ensure_save_directory():
 		if result == OK:
 			print("📁 Directorio savegame/ creado exitosamente")
 		else:
-			print("❌ Error creando directorio savegame/: %d" % result)
+			print("ERROR Error creando directorio savegame/: %d" % result)
 	else:
 		print("📁 Directorio savegame/ ya existe")
 
@@ -112,7 +112,7 @@ func _ensure_initial_save():
 		current_save_slot = 1
 		save_to_slot(1)
 		save_last_used_slot()
-		print("✅ Slot 1 inicial creado exitosamente")
+		print("OK Slot 1 inicial creado exitosamente")
 
 func load_last_used_slot():
 	"""Cargar el último slot usado desde settings"""
@@ -122,7 +122,7 @@ func load_last_used_slot():
 		settings_file.close()
 		if typeof(last_slot) == TYPE_INT and last_slot >= 1 and last_slot <= max_save_slots:
 			current_save_slot = last_slot
-			print("🎯 Cargando último slot usado: %d" % current_save_slot)
+			print("TARGET Cargando último slot usado: %d" % current_save_slot)
 		else:
 			print("⚠️ Slot inválido en last_slot.cfg, usando slot 1")
 	else:
@@ -300,7 +300,7 @@ func load_from_slot(slot: int):
 	coins_changed.emit(get_coins())
 	gems_changed.emit(get_gems())
 
-	print("🔄 Datos cargados completamente desde Slot %d" % slot)
+	print("REFRESH Datos cargados completamente desde Slot %d" % slot)
 
 func get_save_slot_info(slot: int) -> Dictionary:
 	var slot_path = get_save_path(slot) # Usar función correcta

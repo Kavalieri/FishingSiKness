@@ -7,12 +7,12 @@ var store_items = [
 	{
 		"id": "gems_pack_small", "name": "Pack Pequeño de Gemas",
 		"description": "25 gemas brillantes", "cost": 99, "currency": "real_money",
-		"reward_type": "gems", "reward_amount": 25, "icon": "💎"
+		"reward_type": "gems", "reward_amount": 25, "icon": "GEMS"
 	},
 	{
 		"id": "gems_pack_medium", "name": "Pack Mediano de Gemas",
 		"description": "60 gemas brillantes + 5 extra", "cost": 199, "currency": "real_money",
-		"reward_type": "gems", "reward_amount": 65, "icon": "💎💎"
+		"reward_type": "gems", "reward_amount": 65, "icon": "GEMSGEMS"
 	},
 	{
 		"id": "coins_for_gems_small", "name": "Monedas Rápidas",
@@ -22,7 +22,7 @@ var store_items = [
 	{
 		"id": "coins_for_gems_large", "name": "Cofre de Monedas",
 		"description": "2000 monedas instantáneas", "cost": 15, "currency": "gems",
-		"reward_type": "coins", "reward_amount": 2000, "icon": "💰"
+		"reward_type": "coins", "reward_amount": 2000, "icon": "COINS"
 	}
 ]
 
@@ -90,7 +90,7 @@ func create_store_item_widget(item_data: Dictionary) -> void:
 
 	var buy_button = Button.new()
 	var cost = item_data.get("cost", 0)
-	var currency_symbol = "$" if item_data.get("currency") == "real_money" else "💎"
+	var currency_symbol = "$" if item_data.get("currency") == "real_money" else "GEMS"
 	buy_button.text = "%s %d" % [currency_symbol, cost]
 	buy_button.custom_minimum_size.x = 120
 	buy_button.pressed.connect(_on_buy_pressed.bind(item_data))

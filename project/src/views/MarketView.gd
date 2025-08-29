@@ -35,7 +35,7 @@ func setup_background():
 	"""Configurar fondo usando BackgroundManager"""
 	if BackgroundManager:
 		BackgroundManager.setup_main_background(self)
-		print("✅ Fondo principal configurado en MarketView")
+		print("OK Fondo principal configurado en MarketView")
 	else:
 		print("⚠️ BackgroundManager no disponible en MarketView")
 
@@ -116,7 +116,7 @@ func _on_visibility_changed():
 		refresh_display()
 
 func refresh_display():
-	print("🔄 MarketView: Refreshing display...")
+	print("REFRESH MarketView: Refreshing display...")
 	if not inventory_grid:
 		return
 
@@ -139,9 +139,9 @@ func refresh_display():
 	var total_value = 0
 	for fish_data in inventory:
 		total_value += fish_data.get("value", 0)
-	total_value_label.text = "Valor total: %d💰" % total_value
+	total_value_label.text = "Valor total: %dCOINS" % total_value
 
-	print("🐟 MarketView: Loading %d fish" % current_count)
+	print("FISH MarketView: Loading %d fish" % current_count)
 
 	# Añadir peces al grid
 	for i in range(current_count):
@@ -203,7 +203,7 @@ func create_fish_button(fish_data: Dictionary, index: int) -> Button:
 
 	# Información del pez
 	var info_label = Label.new()
-	info_label.text = "%s\n%.1fcm\n💰%d" % [name, size, value]
+	info_label.text = "%s\n%.1fcm\nCOINS%d" % [name, size, value]
 	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	info_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -289,9 +289,9 @@ func _on_fish_selected(index: int, button: Button):
 
 	# Actualizar botón de vender selección
 	if selected_fish_indices.size() > 0:
-		sell_selected_btn.text = "🛒 VENDER SELECCIONADOS (%d)" % selected_fish_indices.size()
+		sell_selected_btn.text = "SHOP VENDER SELECCIONADOS (%d)" % selected_fish_indices.size()
 	else:
-		sell_selected_btn.text = "🛒 VENDER SELECCIONADOS"
+		sell_selected_btn.text = "SHOP VENDER SELECCIONADOS"
 
 func _on_sell_selected_pressed():
 	if selected_fish_indices.size() == 0:
@@ -311,9 +311,9 @@ func _on_sell_selected_pressed():
 		print("MarketView: TopBar found: ", top_bar != null)
 		if top_bar and top_bar.has_method("update_display"):
 			top_bar.update_display()
-			print("✅ TopBar actualizada después de la venta")
+			print("OK TopBar actualizada después de la venta")
 		else:
-			print("❌ TopBar no encontrada o no tiene update_display()")
+			print("ERROR TopBar no encontrada o no tiene update_display()")
 
 	if SFX:
 		SFX.play_event("success")
@@ -344,9 +344,9 @@ func _on_sell_all_pressed():
 		print("MarketView: TopBar found: ", top_bar != null)
 		if top_bar and top_bar.has_method("update_display"):
 			top_bar.update_display()
-			print("✅ TopBar actualizada después de la venta")
+			print("OK TopBar actualizada después de la venta")
 		else:
-			print("❌ TopBar no encontrada o no tiene update_display()")
+			print("ERROR TopBar no encontrada o no tiene update_display()")
 
 	if SFX:
 		SFX.play_event("success")
@@ -382,7 +382,7 @@ func show_fish_detail_dialog(fish_data: Dictionary):
 
 	# Crear ventana flotante
 	var dialog = AcceptDialog.new()
-	dialog.title = "🐟 Información Detallada"
+	dialog.title = "FISH Información Detallada"
 	dialog.size = Vector2(400, 350)
 	dialog.popup_window = true
 
@@ -413,12 +413,12 @@ func show_fish_detail_dialog(fish_data: Dictionary):
 
 	# Datos específicos (ahora rarity_name ya tiene el valor correcto)
 	var info_text = """
-📏 Tamaño: %.1f cm
-💰 Valor: %d monedas
+SIZE Tamaño: %.1f cm
+COINS Valor: %d monedas
 🌟 Rareza: %s
 🎣 Peso: %.1f kg
 📍 Zona de captura: %s
-📅 Capturado: %s
+DATE Capturado: %s
 📝 Descripción: %s
 """ % [
 		fish_data.get("size", 0.0),

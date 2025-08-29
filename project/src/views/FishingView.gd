@@ -81,7 +81,7 @@ func _ready():
 		background_node = find_child("Background", true, false)
 
 	if background_node:
-		print("✅ Background node encontrado")
+		print("OK Background node encontrado")
 	else:
 		print("⚠️ Background node no encontrado")
 
@@ -426,7 +426,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	fish_info.add_child(fish_name_label)
 
 	var size_label = Label.new()
-	size_label.text = "📏 Tamaño: %.1fcm • 🎣 Peso: %.1fkg" % [fish_instance.size, fish_instance.weight]
+	size_label.text = "SIZE Tamaño: %.1fcm • 🎣 Peso: %.1fkg" % [fish_instance.size, fish_instance.weight]
 	size_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	size_label.add_theme_font_size_override("font_size", 16)
 	fish_info.add_child(size_label)
@@ -473,7 +473,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 
 	if rarity_xp_bonus > 0:
 		var bonus_label = Label.new()
-		bonus_label.text = "✨ Bonus de rareza: +%d XP" % rarity_xp_bonus
+		bonus_label.text = "SPARKLE Bonus de rareza: +%d XP" % rarity_xp_bonus
 		bonus_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		bonus_label.add_theme_font_size_override("font_size", 14)
 		bonus_label.add_theme_color_override("font_color", Color.LIGHT_BLUE)
@@ -598,7 +598,7 @@ func add_special_history_entry(
 	content_label.add_theme_font_size_override("font_size", 18) # Más grande para rareza especial
 	content_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	content_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	content_label.text = "%s\n💰 %dc • 📏 %.1fcm • %s" % [message, value, size, rarity.to_upper()]
+	content_label.text = "%s\nCOINS %dc • SIZE %.1fcm • %s" % [message, value, size, rarity.to_upper()]
 	content_label.add_theme_color_override("font_color", get_rarity_color_by_name(rarity))
 
 	inner_container.add_child(content_label)
@@ -773,7 +773,7 @@ func catch_successful():
 	# Usar el sistema real de contenido para pescar
 	if not Content or not Save:
 		print("Content or Save system not available")
-		add_history_entry("❌ Sistema no disponible", "", 0, 0.0, false)
+		add_history_entry("ERROR Sistema no disponible", "", 0, 0.0, false)
 		return
 
 	var current_zone_id = Save.game_data.get("current_zone", "orilla")
@@ -782,14 +782,14 @@ func catch_successful():
 
 	if not zone_def:
 		print("Zone not found: ", current_zone_id)
-		add_history_entry("❌ Zona no encontrada: " + current_zone_id, "", 0, 0.0, false)
+		add_history_entry("ERROR Zona no encontrada: " + current_zone_id, "", 0, 0.0, false)
 		return
 
 	# Seleccionar pez aleatorio de la zona
 	var selected_fish = select_random_fish_from_zone(zone_def)
 	if not selected_fish:
 		print("No fish available in zone: ", current_zone_id)
-		add_history_entry("❌ No hay peces en zona: " + current_zone_id, "", 0, 0.0, false)
+		add_history_entry("ERROR No hay peces en zona: " + current_zone_id, "", 0, 0.0, false)
 		return
 
 	print("Selected fish: ", selected_fish.name)
@@ -926,7 +926,7 @@ func update_zone_background():
 
 	if BackgroundManager:
 		BackgroundManager.setup_zone_background(self, current_zone_id)
-		print("✅ Fondo de zona actualizado:", current_zone_id)
+		print("OK Fondo de zona actualizado:", current_zone_id)
 	else:
 		# Fallback manual si BackgroundManager no está disponible
 		setup_fallback_zone_background(current_zone_id)

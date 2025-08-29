@@ -16,7 +16,7 @@ func setup_prestige_ui():
 	# Configurar fondo de menú usando BackgroundManager
 	if BackgroundManager:
 		BackgroundManager.setup_main_background(self)
-		print("✅ Fondo principal configurado en PrestigeView")
+		print("OK Fondo principal configurado en PrestigeView")
 	else:
 		setup_fallback_background()
 
@@ -50,7 +50,7 @@ func create_ui_elements():
 
 	# Título
 	var title_label = Label.new()
-	title_label.text = "⭐ PRESTIGIO"
+	title_label.text = "STAR PRESTIGIO"
 	title_label.add_theme_font_size_override("font_size", 32)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title_label)
@@ -102,8 +102,8 @@ func update_display():
 	var prestige_points = Save.game_data.get("prestige_points", 0)
 	var potential_points = calculate_prestige_points()
 
-	prestige_info_label.text = """⭐ Prestigio Nivel: %d
-🎯 Puntos de Prestigio: %d
+	prestige_info_label.text = """STAR Prestigio Nivel: %d
+TARGET Puntos de Prestigio: %d
 💫 Puntos potenciales: +%d
 
 El Prestigio reinicia tu progreso pero otorga:
@@ -115,7 +115,7 @@ El Prestigio reinicia tu progreso pero otorga:
 	if potential_points > 0:
 		prestige_button.text = "🌟 HACER PRESTIGIO (+%d puntos)" % potential_points
 	else:
-		prestige_button.text = "❌ Sin puntos suficientes"
+		prestige_button.text = "ERROR Sin puntos suficientes"
 
 	update_prestige_benefits()
 
@@ -134,7 +134,7 @@ func update_prestige_benefits():
 
 		var multiplier = get_prestige_multiplier()
 		var benefit_label = Label.new()
-		benefit_label.text = "💰 Multiplicador de monedas: x%.2f" % multiplier
+		benefit_label.text = "COINS Multiplicador de monedas: x%.2f" % multiplier
 		prestige_benefits_container.add_child(benefit_label)
 
 func calculate_prestige_points() -> int:

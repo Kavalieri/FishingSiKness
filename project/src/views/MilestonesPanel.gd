@@ -23,15 +23,15 @@ func _update_header_info():
 	var levels_to_next_point = 5 - (current_level % 5)
 	if levels_to_next_point == 5: levels_to_next_point = 0
 
-	level_label.text = "🎯 Nivel: %d" % current_level
-	points_label.text = "✨ Puntos: %d" % available_points
+	level_label.text = "TARGET Nivel: %d" % current_level
+	points_label.text = "SPARKLE Puntos: %d" % available_points
 	points_label.modulate = Color.GOLD if available_points > 0 else Color.GRAY
 
 	if levels_to_next_point > 0:
 		next_point_label.text = "⏳ %d niveles para próximo punto de skill" % levels_to_next_point
 		next_point_label.modulate = Color.LIGHT_BLUE
 	else:
-		next_point_label.text = "🎉 ¡Punto de skill disponible!"
+		next_point_label.text = "CELEBRATION ¡Punto de skill disponible!"
 		next_point_label.modulate = Color.LIGHT_GREEN
 
 	xp_progress_bar.value = progress_info.percentage * 100
@@ -136,7 +136,7 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 	header_hbox.add_child(name_label)
 
 	var cost_label = Label.new()
-	cost_label.text = "✨ %d" % skill_data.cost # Mostrar coste en puntos de skill
+	cost_label.text = "SPARKLE %d" % skill_data.cost # Mostrar coste en puntos de skill
 	cost_label.add_theme_font_size_override("font_size", 14)
 	if is_unlocked:
 		cost_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
@@ -161,11 +161,11 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 	unlock_btn.custom_minimum_size = Vector2(0, 40)
 
 	if is_unlocked:
-		unlock_btn.text = "✅ Desbloqueada"
+		unlock_btn.text = "OK Desbloqueada"
 		unlock_btn.disabled = true
 		unlock_btn.add_theme_color_override("font_color", Color.LIGHT_GREEN)
 	elif can_unlock:
-		unlock_btn.text = "✨ %d  |  DESBLOQUEAR" % skill_data.cost
+		unlock_btn.text = "SPARKLE %d  |  DESBLOQUEAR" % skill_data.cost
 		unlock_btn.pressed.connect(_on_skill_unlock_pressed.bind(skill_id))
 		unlock_btn.add_theme_color_override("font_color", Color.GOLD)
 	else:

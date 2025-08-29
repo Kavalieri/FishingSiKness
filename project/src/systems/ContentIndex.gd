@@ -55,7 +55,7 @@ func load_all():
 	var log_msgs = []
 
 	for key in paths.keys():
-		print("[ContentIndex] 🎯 Procesando categoría: %s" % key)
+		print("[ContentIndex] TARGET Procesando categoría: %s" % key)
 
 		# Determinar si estamos en desarrollo (directorio accesible) o empaquetado
 		var dir = DirAccess.open(paths[key])
@@ -93,7 +93,7 @@ func load_all():
 				print("[ContentIndex] ⚠️ No hay lista predefinida para: %s" % key)
 
 		# Cargar archivos encontrados
-		print("[ContentIndex] 🔄 Cargando %d archivos de %s..." % [files_to_load.size(), key])
+		print("[ContentIndex] REFRESH Cargando %d archivos de %s..." % [files_to_load.size(), key])
 		for i in range(files_to_load.size()):
 			var file = files_to_load[i]
 			var resource_path = "%s/%s" % [paths[key], file]
@@ -102,7 +102,7 @@ func load_all():
 			var res = ResourceLoader.load(resource_path)
 			if res:
 				catalogs[key].append(res)
-				print("[ContentIndex] ✅ [%d/%d] Cargado: %s" % [i + 1, files_to_load.size(), file])
+				print("[ContentIndex] OK [%d/%d] Cargado: %s" % [i + 1, files_to_load.size(), file])
 
 				# Validación específica para zonas
 				if key == "zones" and res.get("id"):
@@ -117,10 +117,10 @@ func load_all():
 						log_msgs.append("[WARN] ZoneDef incompleto: %s" % file)
 
 			else:
-				print("[ContentIndex] ❌ [%d/%d] Error cargando: %s" % [i + 1, files_to_load.size(), resource_path])
+				print("[ContentIndex] ERROR [%d/%d] Error cargando: %s" % [i + 1, files_to_load.size(), resource_path])
 				log_msgs.append("[ERROR] No se pudo cargar %s" % resource_path)
 
-		print("[ContentIndex] ✅ Total cargado en %s: %d recursos" % [key, catalogs[key].size()])
+		print("[ContentIndex] OK Total cargado en %s: %d recursos" % [key, catalogs[key].size()])
 
 	# Logging de avisos
 	if log_msgs.size() > 0:
@@ -133,15 +133,15 @@ func load_all():
 			print("[ContentIndex] 📝 Log guardado en: %s" % log_path)
 
 	# Debug final
-	print("[ContentIndex] 🎯 Resumen de carga:")
+	print("[ContentIndex] TARGET Resumen de carga:")
 	for key in catalogs.keys():
 		print("  - %s: %d recursos" % [key, catalogs[key].size()])
 		if key == "zones" and catalogs[key].size() > 0:
 			print("    Zonas encontradas:")
 			for zone in catalogs[key]:
 				if zone and zone.get("id"):
-					print("      ✅ %s (%s)" % [zone.id, zone.name if zone.has_method("get") and zone.get("name") else "Sin nombre"])
+					print("      OK %s (%s)" % [zone.id, zone.name if zone.has_method("get") and zone.get("name") else "Sin nombre"])
 				else:
-					print("      ❌ Zona inválida")
+					print("      ERROR Zona inválida")
 
 	return catalogs

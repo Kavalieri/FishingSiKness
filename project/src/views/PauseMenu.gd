@@ -101,7 +101,7 @@ func _on_exit_to_desktop_pressed() -> void:
 	if Save and Save.has_valid_game_data():
 		Save.save_to_slot(Save.current_save_slot)
 		Save.save_last_used_slot()
-		print("✅ Partida guardada automáticamente en slot %d" % Save.current_save_slot)
+		print("OK Partida guardada automáticamente en slot %d" % Save.current_save_slot)
 	else:
 		print("⚠️ No hay datos válidos para guardar")
 

@@ -23,7 +23,7 @@ static func get_version_info() -> Dictionary:
 	# Leer archivo de versión
 	var file = FileAccess.open(version_path, FileAccess.READ)
 	if not file:
-		print("❌ Error al leer version.json")
+		print("ERROR Error al leer version.json")
 		return get_fallback_version_info()
 
 	var json_text = file.get_as_text()
@@ -34,12 +34,12 @@ static func get_version_info() -> Dictionary:
 	var parse_result = json.parse(json_text)
 
 	if parse_result != OK:
-		print("❌ Error al parsear version.json")
+		print("ERROR Error al parsear version.json")
 		return get_fallback_version_info()
 
 	_cached_version_data = json.data
 	_cache_loaded = true
-	print("✅ Información de versión cargada desde build/version.json")
+	print("OK Información de versión cargada desde build/version.json")
 	return _cached_version_data
 
 static func get_fallback_version_info() -> Dictionary:

@@ -226,7 +226,7 @@ func _perform_new_game(slot: int):
 	emit_signal("save_created", slot)
 	if SFX:
 		SFX.play_event("success")
-	show_message("🎉 Nueva partida creada en Slot %d" % slot)
+	show_message("CELEBRATION Nueva partida creada en Slot %d" % slot)
 	refresh_save_slots()
 
 func _on_load_pressed(slot: int):

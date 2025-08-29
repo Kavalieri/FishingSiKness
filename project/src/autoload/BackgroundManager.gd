@@ -41,7 +41,7 @@ func load_texture(path: String) -> Texture2D:
 	var texture = load(path) as Texture2D
 	if texture:
 		texture_cache[path] = texture
-		print("✅ Textura cargada:", path)
+		print("OK Textura cargada:", path)
 	else:
 		print("⚠️ No se pudo cargar textura:", path)
 
@@ -129,7 +129,7 @@ func apply_background_texture(node: Control, texture: Texture2D) -> bool:
 		background_node.patch_margin_top = 0
 		background_node.patch_margin_bottom = 0
 
-	print("✅ Fondo aplicado:", texture.resource_path if texture.resource_path else "texture")
+	print("OK Fondo aplicado:", texture.resource_path if texture.resource_path else "texture")
 	return true
 
 func find_background_node(parent: Control) -> Control:
