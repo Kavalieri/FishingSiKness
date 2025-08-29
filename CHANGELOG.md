@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.1-alpha...v0.3.0-alpha) (2025-08-29)
+
+
+### Features
+
+* añadir adjunto automático de builds a releases ([72f622a](https://github.com/Kavalieri/FishingSiKness/commit/72f622a33a60ccadef81885cc028725b24eab59a))
+
+
+### Bug Fixes
+
+* completar merge con release automática ([87ce743](https://github.com/Kavalieri/FishingSiKness/commit/87ce74336826e7eeed4948def5cb3079aedbbbec))
+* reconstruir workflow release-please corrompido ([d383efd](https://github.com/Kavalieri/FishingSiKness/commit/d383efd34d7a0dadfb0c833c80b6cecace934378))
+* restaurar workflow release-please funcional ([e7bda53](https://github.com/Kavalieri/FishingSiKness/commit/e7bda534c75977504e1d5d275797f3f6607777a4))
+
 ## [0.2.1-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.0-alpha...v0.2.1-alpha) (2025-08-29)
 
 
