@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.2-alpha...v0.3.0-alpha) (2025-08-29)
+
+
+### Features
+
+* extraer cabecera release a template editable y sincronizar README ([f01fd35](https://github.com/Kavalieri/FishingSiKness/commit/f01fd35fa142a99867b5a1a49ab2834c28daadc5))
+
+
+### Bug Fixes
+
+* reemplazar adjunto automático con instrucciones manuales ([9c30c7f](https://github.com/Kavalieri/FishingSiKness/commit/9c30c7f17cdd146402b144d7ffd946f5a3adaf0a))
+
 ## [0.2.2-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.1-alpha...v0.2.2-alpha) (2025-08-29)
 
 
