@@ -5,7 +5,7 @@
         ".": {
             "changelog-path": "CHANGELOG.md",
             "release-type": "simple",
-            "versioning": "always-bump-patch",
+            "versioning": "prerelease",
             "bump-minor-pre-major": false,
             "bump-patch-for-minor-pre-major": true,
             "draft": false,
