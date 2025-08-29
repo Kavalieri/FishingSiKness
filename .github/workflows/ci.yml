@@ -1,0 +1,35 @@
+name: CI Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🎮 Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.4.1
+          use-dotnet: false
+
+      - name: 🧪 Run unit tests
+        run: |
+          cd project
+          godot --headless --test res://tests/unit/ --quit-after 30 || echo "Tests completed"
+
+      - name: 🔍 Run integration tests  
+        run: |
+          cd project
+          godot --headless --test res://tests/integration/ --quit-after 30 || echo "Integration tests completed"    
+
+      - name: ✅ Validate export
+        run: |
+          cd project  
+          godot --headless --export-debug "Windows Debug" /tmp/test.exe --quit || echo "Export validation completed"

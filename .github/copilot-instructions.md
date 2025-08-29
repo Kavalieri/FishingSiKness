@@ -33,6 +33,7 @@
 - El sistema de guardado es atómico y migrable (`Save.gd`).
 - Ads recompensados y monetización implementados como stub en `StoreSystem.gd`.
 - Audio y vibración integrados en eventos clave vía autoload `SFX.gd`.
+- **Commits**: Usar conventional commits SIN emojis para compatibilidad con release-please (ej: `feat: nueva funcionalidad`, NO `🎯 feat: nueva funcionalidad`).
 
 ## Key Files & Directories
 - `src/autoload/`: singletons y servicios globales.
@@ -44,4 +45,4 @@
 - `.vscode/tasks.json`: tareas automáticas para builds/tests.
 
 ---
-Para agentes IA: sigue la arquitectura data-driven, respeta las convenciones y consulta siempre el GDD y la documentación en `docs/` antes de proponer cambios estructurales. Si detectas patrones no documentados, actualiza este archivo y notifica al equipo.
+Para agentes IA: sigue la arquitectura data-driven, respeta las convenciones y consulta siempre el GDD y la documentación en `docs/` antes de proponer cambios estructurales. Si detectas patrones no documentados, actualiza este archivo y notifica al equipo. **IMPORTANTE: Usar conventional commits sin emojis para el sistema de releases automáticas.**
