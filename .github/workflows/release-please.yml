@@ -24,3 +24,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .github/release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      - name: 🏷️ Mark as Pre-release (Alpha Phase)
+        if: steps.release.outputs.release_created
+        run: |
+          gh release edit ${{ steps.release.outputs.tag_name }} --prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

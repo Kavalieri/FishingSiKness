@@ -8,7 +8,9 @@
             "bump-patch-for-minor-pre-major": false,
             "draft": false,
             "prerelease": true,
-            "prerelease-type": "alpha"
+            "prerelease-type": "alpha",
+            "extra-files": [],
+            "changelog-header": "# 🎣 FishingSiKness - Experimental Fishing Game\n\n> **⚠️ ALPHA VERSION** - Esta es una versión experimental en desarrollo activo\n\n**🎮 Sobre el Juego:**\nFishingSiKness es un juego de pesca experimental desarrollado con Godot 4.4, diseñado con arquitectura 100% data-driven. Cada zona, pez, upgrade y mecánica se define mediante recursos `.tres`, permitiendo un desarrollo modular y extensible.\n\n**🚧 Estado Actual:**\n- 🔬 **Fase Alpha**: Funcionalidades básicas implementadas, sistema de guardado estable\n- 🎯 **Enfoque**: Mecánicas core, sistema de zonas, inventario y economía\n- 🛠️ **Desarrollo**: Commits automáticos, releases continuas, testing integrado\n\n**📱 Plataformas Objetivo:**\n- 🖥️ Windows Desktop (disponible)\n- 📱 Android (planificado)\n- 🌐 Web (Vercel deploy)\n\n**🚀 Próximas Funcionalidades:**\n- Sistema de pesca procedural\n- Múltiples zonas con biomas únicos  \n- Upgrades y personalización de equipo\n- Sistema de logros y colecciones\n\n---\n\n## 📋 Changelog"
         }
     },
     "changelog-sections": [
