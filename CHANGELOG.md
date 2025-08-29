@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.1-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.0-alpha...v0.2.1-alpha) (2025-08-29)
+
+
+### Features
+
+* adaptar sistema de build completo para FishingSiKness ([6024402](https://github.com/Kavalieri/FishingSiKness/commit/6024402d8ed6f2ed2c842562e9ea0cd055ba072c))
+* añadir cabecera personalizada y forzado de prerelease a releases ([7a6fbae](https://github.com/Kavalieri/FishingSiKness/commit/7a6fbaee9ef6dd7870229f17499c20cebd875ab0))
+* complete build system overhaul with web deployment ([b1b50dc](https://github.com/Kavalieri/FishingSiKness/commit/b1b50dc39d616a3b11d8150f9c95c73873a8be0b))
+
+
+### Bug Fixes
+
+* aplicar estrategia always-bump-patch para desarrollo alpha gradual ([1094379](https://github.com/Kavalieri/FishingSiKness/commit/109437989a9b8b88840c7df1d6616c1cd2b26131))
+* corregir nombre de configuración versioning para release-please v4 ([82d23e5](https://github.com/Kavalieri/FishingSiKness/commit/82d23e5382a39157cf2b75c7be9581eba7afbbc9))
+* establecer baseline correcta para desarrollo alpha ([cd1d735](https://github.com/Kavalieri/FishingSiKness/commit/cd1d735130ef5423f273449e3ec4dbacc7440fe6))
+
 ## [0.2.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.1.0-alpha...v0.2.0-alpha) (2025-08-29)
 
 
