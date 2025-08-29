@@ -106,7 +106,15 @@ try {
     $arguments = '--path "' + $ProjectRoot + '" --headless --export-release "Web" "' + $webIndexPath + '"'
     Write-Host "Ejecutando: $GodotPath [args]" -ForegroundColor Gray
 
-    $process = Start-Process -FilePath $GodotPath -ArgumentList $arguments.Split(' ', [StringSplitOptions]::RemoveEmptyEntries) -PassThru -Wait -NoNewWindow
+    $process = Start-Process -FilePath $GodotPath -ArgumentList $arguments.Split(' ', [StringSplitOptions]::RemoveEmptyEntries) -PassThru -NoNewWindow
+
+    # Esperar con timeout de 5 minutos
+    $timeout = 300 # 5 minutos en segundos
+    if (-not $process.WaitForExit($timeout * 1000)) {
+        Write-Host "⚠️ Timeout alcanzado, forzando cierre del proceso..." -ForegroundColor Yellow
+        $process.Kill()
+        $process.WaitForExit()
+    }
 
     if ($process.ExitCode -eq 0 -and (Test-Path $webIndexPath)) {
         # Verificar archivos generados

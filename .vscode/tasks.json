@@ -106,6 +106,28 @@
             "presentation": {
                 "reveal": "always"
             }
+        },
+        {
+            "label": "Release: Upload Builds to Latest",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\upload-builds.ps1",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Release: Upload Builds (Dry Run)",
+            "type": "shell",
+            "command": ".\\build\\release-system\\scripts\\upload-builds.ps1",
+            "args": [
+                "-DryRun"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
         }
     ]
 }

@@ -57,7 +57,15 @@ Write-Host "`n🔨 Ejecutando build con configuración standalone..." -Foregroun
 
 # Build con preset 0 (Windows Desktop - Release)
 $godotArgs = "--headless --export-release `"Windows Desktop - Release`" `"$exePath`" --path `"$ProjectRoot`""
-$process = Start-Process -FilePath $GodotPath -ArgumentList $godotArgs -Wait -PassThru -NoNewWindow
+$process = Start-Process -FilePath $GodotPath -ArgumentList $godotArgs -PassThru -NoNewWindow
+
+# Esperar con timeout de 5 minutos
+$timeout = 300 # 5 minutos en segundos
+if (-not $process.WaitForExit($timeout * 1000)) {
+    Write-Host "⚠️ Timeout alcanzado, forzando cierre del proceso..." -ForegroundColor Yellow
+    $process.Kill()
+    $process.WaitForExit()
+}
 
 # Restaurar configuración original
 Copy-Item $backupPath $exportPresetsPath -Force
