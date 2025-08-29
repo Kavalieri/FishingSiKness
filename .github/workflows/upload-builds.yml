@@ -1,0 +1,48 @@
+name: Upload Builds to Latest Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Tag de la release (ej: v0.2.2-alpha)'
+        required: false
+        default: 'latest'
+
+jobs:
+  upload-builds:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛠️ Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Upload Local Builds
+        run: |
+          # Si no se especifica tag, usar la última release
+          if [ "${{ github.event.inputs.release_tag }}" = "latest" ] || [ -z "${{ github.event.inputs.release_tag }}" ]; then
+            RELEASE_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          else
+            RELEASE_TAG="${{ github.event.inputs.release_tag }}"
+          fi
+
+          echo "🎯 Subiendo builds a la release: $RELEASE_TAG"
+
+          # Verificar que la release existe
+          if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            echo "❌ Error: Release $RELEASE_TAG no encontrada"
+            exit 1
+          fi
+
+          echo "✅ Release $RELEASE_TAG encontrada"
+          echo ""
+          echo "📋 Para subir tus builds, ejecuta estos comandos desde tu máquina local:"
+          echo ""
+          echo "# Windows builds:"
+          echo "gh release upload $RELEASE_TAG build/builds/windows/latest/*.exe --clobber"
+          echo ""
+          echo "# Android builds:"
+          echo "gh release upload $RELEASE_TAG build/builds/android/latest/*.apk --clobber"
+          echo "gh release upload $RELEASE_TAG build/builds/android/latest/*.aab --clobber"
+          echo ""
+          echo "🔗 Release URL: https://github.com/${{ github.repository }}/releases/tag/$RELEASE_TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

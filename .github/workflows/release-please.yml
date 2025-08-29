@@ -89,53 +89,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📦 Attach Build Artifacts
+      - name: � Build Upload Instructions
         if: steps.release.outputs.release_created
         run: |
-          echo "🔍 Buscando builds disponibles..."
-
-          # Buscar builds más recientes en directorios latest
-          WINDOWS_BUILD_DIR="build/builds/windows/latest"
-          ANDROID_BUILD_DIR="build/builds/android/latest"
-
-          if [ -d "$WINDOWS_BUILD_DIR" ]; then
-            echo "📁 Directorio Windows encontrado: $WINDOWS_BUILD_DIR"
-            # Buscar ejecutable principal y console wrapper
-            WINDOWS_EXE=$(find $WINDOWS_BUILD_DIR -name "*.exe" -not -name "*.console.exe" | head -1)
-            CONSOLE_EXE=$(find $WINDOWS_BUILD_DIR -name "*.console.exe" | head -1)
-
-            if [ -n "$WINDOWS_EXE" ]; then
-              echo "🖥️ Adjuntando Windows build: $WINDOWS_EXE"
-              gh release upload ${{ steps.release.outputs.tag_name }} "$WINDOWS_EXE" --clobber
-            fi
-
-            if [ -n "$CONSOLE_EXE" ]; then
-              echo "🖥️ Adjuntando Console wrapper: $CONSOLE_EXE"
-              gh release upload ${{ steps.release.outputs.tag_name }} "$CONSOLE_EXE" --clobber
-            fi
-          else
-            echo "⚠️ No se encontró directorio Windows build en: $WINDOWS_BUILD_DIR"
-          fi
-
-          if [ -d "$ANDROID_BUILD_DIR" ]; then
-            echo "📁 Directorio Android encontrado: $ANDROID_BUILD_DIR"
-            # Buscar APK y AAB
-            ANDROID_APK=$(find $ANDROID_BUILD_DIR -name "*.apk" | head -1)
-            ANDROID_AAB=$(find $ANDROID_BUILD_DIR -name "*.aab" | head -1)
-
-            if [ -n "$ANDROID_APK" ]; then
-              echo "📱 Adjuntando Android APK: $ANDROID_APK"
-              gh release upload ${{ steps.release.outputs.tag_name }} "$ANDROID_APK" --clobber
-            fi
-
-            if [ -n "$ANDROID_AAB" ]; then
-              echo "📱 Adjuntando Android AAB: $ANDROID_AAB"
-              gh release upload ${{ steps.release.outputs.tag_name }} "$ANDROID_AAB" --clobber
-            fi
-          else
-            echo "⚠️ No se encontró directorio Android build en: $ANDROID_BUILD_DIR"
-          fi
-
-          echo "✅ Proceso de adjuntar builds completado"
+          echo "🎉 Release ${{ steps.release.outputs.tag_name }} creada exitosamente!"
+          echo ""
+          echo "� Para adjuntar builds a esta release, ejecuta desde tu máquina local:"
+          echo ""
+          echo "# Windows builds:"
+          echo "gh release upload ${{ steps.release.outputs.tag_name }} build/builds/windows/latest/*.exe --clobber"
+          echo ""
+          echo "# Android builds:"
+          echo "gh release upload ${{ steps.release.outputs.tag_name }} build/builds/android/latest/*.apk --clobber"
+          echo "gh release upload ${{ steps.release.outputs.tag_name }} build/builds/android/latest/*.aab --clobber"
+          echo ""
+          echo "🚀 O usa el workflow manual 'Upload Builds to Latest Release' desde GitHub Actions"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
