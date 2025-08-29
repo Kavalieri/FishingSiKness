@@ -22,8 +22,6 @@
 
 </div>
 
----
-
 ## ⚠️ **ESTADO DE DESARROLLO**
 
 **Esta es una versión ALPHA experimental** desarrollada mediante agentes de IA. El juego está en desarrollo activo con las siguientes características:

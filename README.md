@@ -53,13 +53,14 @@
 - **🎨 Retro-Moderno**: Estética pixel art con interfaces contemporáneas
 - **🔄 Progresión**: Sistema de upgrades, zonas y logros
 
-### 🚀 Estado del Proyecto
+### ⚠️ **ESTADO DE DESARROLLO**
 
-| Versión | Estado | Plataformas | Fecha | Descargas |
-|---------|--------|-------------|-------|-----------|
-| **v0.1.0-alpha** | 🚀 **Disponible** | Windows, Android | Agosto 2025 | [Releases](https://github.com/Kavalieri/FishingSiKness/releases) |
-| **v0.2.1** | ✅ Disponible | + Web | Q4 2025 | *[Ver Release](https://github.com/Kavalieri/FishingSiKness/releases/latest)* |
+**Esta es una versión ALPHA experimental** desarrollada mediante agentes de IA. El juego está en desarrollo activo con las siguientes características:
 
+- 🔬 **Funcionalidades básicas**: Sistema de pesca, inventario y guardado implementados
+- 🎯 **Arquitectura data-driven**: Todo el contenido definido mediante recursos `.tres`
+- 🛠️ **Desarrollo continuo**: Updates frecuentes con nuevas mecánicas
+- 🐛 **Bugs esperados**: Como toda versión alpha, puede tener problemas conocidos
 ---
 
 ## 🤖 Desarrollo con IA
