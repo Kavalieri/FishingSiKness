@@ -6,7 +6,14 @@
 - El GDD oficial está en `docs/GDD/GDD_0.1.0.md` y define reglas, flujos y contratos entre sistemas.
 - Fondos visuales por zona se asignan en los recursos `.tres` de cada zona.
 
-## Developer Workflows
+## Developer Workflows & Git Conventions
+- **Automated Releases**: Usamos release-please con conventional commits para releases automáticas.
+- **Commit Guidelines para Alpha**:
+  - Para cambios pequeños/incrementales: `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
+  - Para funcionalidades menores: `feat:` (pero usar con moderación durante alpha)
+  - Para cambios importantes: `feat!:` o incluir `BREAKING CHANGE:` en el footer
+  - **IMPORTANTE**: NO usar emojis en conventional commits (interfieren con el parser)
+  - **Evitar feat: para cambios menores** durante desarrollo alpha intensivo para no inflar versiones
 - Builds y tests se gestionan vía Godot CLI (`godot` en PATH).
 - Tests unitarios/integración en `project/tests/` (usar GdUnit4). Ejecutar con `godot --headless --test project/tests/unit/` y `project/tests/integration/`.
 - No modificar código/escenas para añadir contenido: solo crear nuevos `.tres` y assets.
