@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.4-alpha...v0.2.5-alpha) (2025-08-29)
+
+
+### Bug Fixes
+
+* mejorar build scripts con timeouts y añadir upload automático ([8cd68ed](https://github.com/Kavalieri/FishingSiKness/commit/8cd68eda27fa7c14cba6c703ce628f630b829435))
+
 ## [0.2.4-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.3-alpha...v0.2.4-alpha) (2025-08-29)
 
 
