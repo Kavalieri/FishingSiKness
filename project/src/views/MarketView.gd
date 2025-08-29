@@ -73,7 +73,7 @@ func setup_ui():
 	info_container.add_child(capacity_label)
 
 	total_value_label = Label.new()
-	total_value_label.text = "Valor total: 0💰"
+	total_value_label.text = "Valor total: 0 COINS"
 	total_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	total_value_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	total_value_label.add_theme_color_override("font_color", Color.YELLOW)
@@ -98,14 +98,14 @@ func setup_ui():
 	main_vbox.add_child(button_container)
 
 	sell_selected_btn = Button.new()
-	sell_selected_btn.text = "🛒 VENDER SELECCIONADOS"
+	sell_selected_btn.text = "VENDER SELECCIONADOS"
 	sell_selected_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sell_selected_btn.custom_minimum_size.y = 50
 	sell_selected_btn.pressed.connect(_on_sell_selected_pressed)
 	button_container.add_child(sell_selected_btn)
 
 	sell_all_btn = Button.new()
-	sell_all_btn.text = "💰 VENDER TODO"
+	sell_all_btn.text = "VENDER TODO"
 	sell_all_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sell_all_btn.custom_minimum_size.y = 50
 	sell_all_btn.pressed.connect(_on_sell_all_pressed)

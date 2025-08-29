@@ -25,7 +25,7 @@ func setup_content():
 func setup_store_content():
 	"""Configurar el contenido específico de la tienda"""
 	if not content_container:
-		print("❌ content_container no encontrado en StoreWindow")
+		print("ERROR content_container no encontrado en StoreWindow")
 		return
 
 	# Crear título
@@ -111,7 +111,8 @@ func create_store_item(item_data: Dictionary):
 
 	# Precio
 	var price_label = Label.new()
-	var currency_symbol = "💰" if item_data.currency == "coins" else "💎"
+	# Usar iconos simples sin emojis
+	var currency_symbol = "COIN" if item_data.currency == "coins" else "GEM"
 	price_label.text = "%s %d" % [currency_symbol, item_data.price]
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(price_label)
@@ -126,7 +127,7 @@ func create_store_item(item_data: Dictionary):
 
 func _on_item_purchased(item_data: Dictionary):
 	"""Procesar compra de ítem"""
-	print("🛒 Intentando comprar: %s por %d %s" % [item_data.name, item_data.price, item_data.currency])
+	print("SHOP Intentando comprar: %s por %d %s" % [item_data.name, item_data.price, item_data.currency])
 
 	# Validar si el jugador tiene suficiente moneda
 	var current_currency = 0
@@ -136,7 +137,7 @@ func _on_item_purchased(item_data: Dictionary):
 		current_currency = Save.get_gems()
 
 	if current_currency < item_data.price:
-		print("❌ Fondos insuficientes")
+		print("ERROR Fondos insuficientes")
 		SFX.play_error()
 		return
 
@@ -157,12 +158,12 @@ func _on_item_purchased(item_data: Dictionary):
 
 	update_currency_display()
 	SFX.play_purchase()
-	print("✅ Compra exitosa: %s" % item_data.name)
+	print("SUCCESS Compra exitosa: %s" % item_data.name)
 
 func update_currency_display():
 	"""Actualizar la visualización de moneda"""
 	if currency_label:
-		currency_label.text = "💰 %d | 💎 %d" % [Save.get_coins(), Save.get_gems()]
+		currency_label.text = "COINS %d | GEMS %d" % [Save.get_coins(), Save.get_gems()]
 
 func get_window_type() -> FloatingWindowManager.WindowType:
 	"""Especificar que esta es una ventana de menú"""

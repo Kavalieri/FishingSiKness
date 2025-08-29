@@ -35,18 +35,28 @@ var loading_steps := [
 ]
 var current_step := 0
 
-# Tips de experto
+# Tips de experto sin emojis (ahora texto limpio)
 var expert_tips = [
-	"💡 Tip de Experto\nLos peces más raros se encuentran en aguas profundas",
-	"⚡ Consejo Pro\nMejora tu equipo para acceder a nuevas zonas",
-	"🎯 Experto\nDomina el QTE para capturas perfectas",
-	"💰 Pro-tip\nLos multiplicadores de zona maximizan tus ganancias",
-	"🌟 Maestro\nLas rarezas legendarias pueden valer hasta 10x más",
-	"🎣 Experto\nCada zona tiene especies únicas que descubrir",
-	"💎 Consejo\nLas gemas desbloquean mejoras especiales",
-	"🚀 Pro\nLas zonas avanzadas tienen mejores recompensas",
-	"🔥 Maestro\nLa zona Infernal es para pescadores expertos",
-	"⭐ Tip\nTu experiencia crece con cada captura exitosa"
+	"Tip de Experto
+Los peces más raros se encuentran en aguas profundas",
+	"Consejo Pro
+Mejora tu equipo para acceder a nuevas zonas",
+	"Experto
+Domina el QTE para capturas perfectas",
+	"Pro-tip
+Los multiplicadores de zona maximizan tus ganancias",
+	"Maestro
+Las rarezas legendarias pueden valer hasta 10x más",
+	"Experto
+Cada zona tiene especies únicas que descubrir",
+	"Consejo
+Las gemas desbloquean mejoras especiales",
+	"Pro
+Las zonas avanzadas tienen mejores recompensas",
+	"Maestro
+La zona Infernal es para pescadores expertos",
+	"Tip
+Tu experiencia crece con cada captura exitosa"
 ]
 
 func _ready():
@@ -285,7 +295,7 @@ func _update_loading():
 func show_continue_prompt():
 	"""Mostrar mensaje para continuar - centrado y estéticamente mejorado"""
 	continue_label = Label.new()
-	continue_label.text = "✨ Presiona cualquier tecla para continuar ✨"
+	continue_label.text = "Presiona cualquier tecla para continuar"
 	continue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	continue_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	continue_label.add_theme_font_size_override("font_size", 22)
@@ -363,7 +373,7 @@ func setup_options_button():
 	add_child(options_container)
 
 	var top_options_button = Button.new()
-	top_options_button.text = "⚙️"
+	top_options_button.text = "Opciones"
 	top_options_button.custom_minimum_size = Vector2(40, 40)
 	top_options_button.anchor_right = 1.0
 	top_options_button.anchor_bottom = 1.0

@@ -32,6 +32,7 @@ FishDataManager="*res://src/systems/FishDataManager.gd"
 InventorySystem="*res://src/systems/InventorySystem.gd"
 App="*res://src/autoload/App.gd"
 WindowManager="*res://src/autoload/WindowManager.gd"
+EmojiReplacer="*res://src/autoload/EmojiReplacer.gd"
 
 [display]
 

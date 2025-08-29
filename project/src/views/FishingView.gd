@@ -71,9 +71,9 @@ func _ready():
 
 	if cast_button:
 		cast_button.pressed.connect(_on_cast_button_pressed)
-		print("✅ Cast button conectado")
+		print("SUCCESS Cast button conectado")
 	else:
-		print("❌ ERROR: No se pudo encontrar CastButton")
+		print("ERROR: No se pudo encontrar CastButton")
 
 	# Obtener referencia al fondo
 	background_node = get_node_or_null("Background")
@@ -252,7 +252,7 @@ func add_history_entry(message: String, fish_name: String, value: int, size: flo
 
 	if success and fish_name != "":
 		var rarity_color = get_rarity_color_from_fish_name(fish_name)
-		content_label.text = "%s\n💰 %dc • 📏 %.1fcm" % [message, value, size]
+		content_label.text = "%s\n%dc • %.1fcm" % [message, value, size]
 		content_label.add_theme_color_override("font_color", rarity_color)
 	elif not success:
 		content_label.text = message
@@ -419,7 +419,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 		fish_info.add_child(fish_sprite)
 
 	var fish_name_label = Label.new()
-	fish_name_label.text = "🐟 %s" % fish_instance.fish_def.name
+	fish_name_label.text = "%s" % fish_instance.fish_def.name
 	fish_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fish_name_label.add_theme_font_size_override("font_size", 20)
 	fish_name_label.add_theme_color_override("font_color", Color.WHITE)
@@ -436,7 +436,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	main_vbox.add_child(price_info)
 
 	var base_price_label = Label.new()
-	base_price_label.text = "💰 Precio base: %d monedas" % fish_instance.fish_def.base_market_value
+	base_price_label.text = "Precio base: %d monedas" % fish_instance.fish_def.base_market_value
 	base_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	base_price_label.add_theme_font_size_override("font_size", 14)
 	price_info.add_child(base_price_label)
@@ -449,7 +449,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	price_info.add_child(multipliers_label)
 
 	var final_price_label = Label.new()
-	final_price_label.text = "💎 PRECIO FINAL: %d MONEDAS" % fish_instance.final_price
+	final_price_label.text = "PRECIO FINAL: %d MONEDAS" % fish_instance.final_price
 	final_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	final_price_label.add_theme_font_size_override("font_size", 18)
 	final_price_label.add_theme_color_override("font_color", Color.GOLD)
@@ -703,7 +703,7 @@ func update_qte_display():
 	# Cambiar color de la aguja según proximidad al objetivo
 	if qte_progress >= qte_target_min and qte_progress <= qte_target_max:
 		qte_needle.color = Color.LIME_GREEN
-		qte_instructions.text = "🎯 ¡PERFECTO! ¡Presiona AHORA!"
+		qte_instructions.text = "¡PERFECTO! ¡Presiona AHORA!"
 		qte_instructions.add_theme_color_override("font_color", Color.LIME_GREEN)
 	else:
 		qte_needle.color = Color.RED
@@ -746,7 +746,7 @@ func start_fishing():
 	if qte_component:
 		qte_component.visible = true
 
-	cast_button.text = "🎯 ¡ATRAPAR!"
+	cast_button.text = "¡ATRAPAR!"
 
 func try_catch_fish():
 	if not qte_active:

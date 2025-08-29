@@ -17,26 +17,47 @@ func _ready():
 		$PrestigeBtn
 	]
 
+	# Configurar iconos PNG para los botones
+	_setup_tab_icons()
+
 	# Conectar las señales de los botones
-	print("🔄 BottomTabs: Inicializando conexiones de botones...")
+	print("INIT BottomTabs: Inicializando conexiones de botones...")
 	for i in tab_buttons.size():
 		if tab_buttons[i]:
 			tab_buttons[i].pressed.connect(_on_tab_pressed.bind(i))
 			tab_buttons[i].custom_minimum_size = Vector2(60, 48) # Ajustado para 5 tabs
-			print("✅ Connected button ", i, ": ", tab_buttons[i].name)
+			print("Connected button ", i, ": ", tab_buttons[i].name)
 		else:
-			print("❌ Button ", i, " is null!")
+			print("ERROR Button ", i, " is null!")
 
 	# Accesibilidad: swap para modo zurdo
 	if left_handed:
 		tab_buttons.reverse()
+
+func _setup_tab_icons() -> void:
+	"""Configurar iconos PNG para los botones de pestañas"""
+	var tab_icons = [
+		"res://art/ui/tabs/tab_fishing.png", # Pesca
+		"res://art/ui/tabs/tab_market.png", # Mercado
+		"res://art/ui/tabs/tab_upgrades.png", # Mejoras
+		"res://art/ui/tabs/tab_zones.png", # Mapa/Zonas
+		"res://art/ui/tabs/tab_prestige.png" # Prestigio
+	]
+
+	for i in range(min(tab_buttons.size(), tab_icons.size())):
+		if tab_buttons[i]:
+			var icon = load(tab_icons[i])
+			if icon:
+				tab_buttons[i].icon = icon
+			else:
+				push_warning("No se pudo cargar icono para tab " + str(i) + ": " + tab_icons[i])
 
 func set_badge(_tab: int, _show_badge: bool):
 	# TODO: Implementar badges cuando sea necesario
 	pass
 
 func _on_tab_pressed(tab_idx: int):
-	print("🔥 BottomTabs: Button pressed ", tab_idx, " - SIGNAL SHOULD FIRE")
+	print("FIRE BottomTabs: Button pressed ", tab_idx, " - SIGNAL SHOULD FIRE")
 	current_tab = tab_idx
 
 	# Reproducir sonido
@@ -44,5 +65,5 @@ func _on_tab_pressed(tab_idx: int):
 		SFX.play_event("click")
 
 	# Emitir señal
-	print("🎯 BottomTabs: Emitting tab_selected signal with ", tab_idx)
+	print("EMIT BottomTabs: Emitting tab_selected signal with ", tab_idx)
 	emit_signal("tab_selected", tab_idx)

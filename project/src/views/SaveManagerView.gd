@@ -71,7 +71,7 @@ func _setup_panel_content(panel: PanelContainer):
 
 	# Botón cerrar - mismo estilo que UnifiedMenu
 	var close_btn = Button.new()
-	close_btn.text = "❌"
+	close_btn.text = "X"
 	close_btn.custom_minimum_size = Vector2(48, 48)
 	close_btn.pressed.connect(_on_back_pressed)
 	title_hbox.add_child(close_btn)
@@ -134,9 +134,9 @@ func create_save_slot(slot: int):
 	content.add_child(info_container)
 
 	var slot_title = Label.new()
-	var slot_title_text = "🎮 Slot %d" % slot
+	var slot_title_text = "Slot %d" % slot
 	if slot == Save.current_save_slot:
-		slot_title_text += " ⭐ (Actual)"
+		slot_title_text += " (Actual)"
 	slot_title.text = slot_title_text
 	slot_title.add_theme_font_size_override("font_size", 18)
 	if slot == Save.current_save_slot:
@@ -151,17 +151,17 @@ func create_save_slot(slot: int):
 	else:
 		var details_label = Label.new()
 		# Primera línea: monedas, gemas, nivel
-		var line1 = "💰 %d monedas | 💎 %d gemas | 📈 Nivel %d" % [
+		var line1 = "%d monedas | %d gemas | Nivel %d" % [
 			slot_info.coins, slot_info.gems, slot_info.level
 		]
 		# Segunda línea: zona y tiempo
-		var line2 = "🗺️ Zona: %s | 📅 %s" % [
+		var line2 = "Zona: %s | %s" % [
 			slot_info.zone.capitalize(), slot_info.playtime
 		]
 		# Tercera línea: inventario de peces (solo si hay peces)
 		var line3 = ""
 		if slot_info.fish_count > 0:
-			line3 = "🐟 %d peces (valor: %d monedas)" % [
+			line3 = "%d peces (valor: %d monedas)" % [
 				slot_info.fish_count, slot_info.fish_value
 			]
 

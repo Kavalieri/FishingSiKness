@@ -24,7 +24,7 @@ static func show_capture_in_corner(fish, result: Dictionary, duration: float = 3
 		# Auto-cerrar después del tiempo especificado
 		capture_card.setup_auto_close(duration)
 	else:
-		print("❌ FloatingWindowManager no disponible para mostrar CaptureCard")
+		print("ERROR FloatingWindowManager no disponible para mostrar CaptureCard")
 
 func _ready():
 	super._ready()
@@ -36,7 +36,7 @@ func setup_content():
 func setup_capture_content():
 	"""Configurar el contenido de la tarjeta de captura"""
 	if not content_container:
-		print("❌ content_container no encontrado en CaptureCard")
+		print("ERROR content_container no encontrado en CaptureCard")
 		return
 
 	# Crear estructura de contenido
@@ -91,7 +91,7 @@ func setup_capture_content():
 	# Monedas ganadas
 	if capture_result.has("coins") and capture_result.coins > 0:
 		coins_label = Label.new()
-		coins_label.text = "💰 +%d Monedas" % capture_result.coins
+		coins_label.text = "COINS +%d" % capture_result.coins
 		coins_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(coins_label)
 
