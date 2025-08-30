@@ -22,12 +22,12 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "🎯 Nivel: 1"
+text = "Nivel: 1"
 
 [node name="PointsLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox/LevelHBox" index="1"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "✨ Puntos: 0"
+text = "Puntos: 0"
 
 [node name="NextPointLabel" type="Label" parent="WindowPanel/MarginContainer/VBoxContainer/ContentContainer/MainVBox/CurrentSkillInfoVBox" index="1"]
 unique_name_in_owner = true

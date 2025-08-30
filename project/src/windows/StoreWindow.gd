@@ -154,7 +154,7 @@ func _on_item_purchased(item_data: Dictionary):
 		"coins_1000":
 			Save.set_coins(Save.get_coins() + 1000)
 		_:
-			print("🎁 Ítem %s agregado al inventario" % item_data.id)
+			print("GIFT Ítem %s agregado al inventario" % item_data.id)
 
 	update_currency_display()
 	SFX.play_purchase()

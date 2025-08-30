@@ -17,7 +17,7 @@ var store_items = [
 	{
 		"id": "coins_for_gems_small", "name": "Monedas Rápidas",
 		"description": "500 monedas instantáneas", "cost": 5, "currency": "gems",
-		"reward_type": "coins", "reward_amount": 500, "icon": "🪙"
+		"reward_type": "coins", "reward_amount": 500, "icon": "COINS"
 	},
 	{
 		"id": "coins_for_gems_large", "name": "Cofre de Monedas",
@@ -43,7 +43,7 @@ func update_currency_display() -> void:
 	# Esta función ahora es más segura porque los nodos están garantizados por la escena.
 	var coins = Save.get_coins() if Save else 0
 	coins_label.text = "COINS: %d" % coins
-	
+
 	var gems = Save.get_gems() if Save else 0
 	gems_label.text = "GEMS: %d" % gems
 

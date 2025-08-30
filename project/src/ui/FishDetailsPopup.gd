@@ -35,7 +35,7 @@ func setup_fishcard_background():
 		BackgroundManager.setup_fishcard_background(background_panel)
 		print("OK Fondo de tarjeta de pez configurado")
 	else:
-		print("⚠️ No se pudo configurar fondo de tarjeta de pez")
+		print("WARNING No se pudo configurar fondo de tarjeta de pez")
 
 func show_fish_details(fish_def: FishDef, capture_data: Dictionary):
 	"""Mostrar los detalles completos del pescado en el popup"""

@@ -22,9 +22,7 @@ func open(alias: String) -> void:
 
 	if WINDOW_SCENE_PATHS.has(alias):
 		var scene_path = WINDOW_SCENE_PATHS[alias]
-		print("WindowManager: Opening window for alias: %s (Path: %s)" % [alias, scene_path])
-
-		# Definir títulos específicos para cada alias
+		print("WindowManager: Opening window for alias: %s (Path: %s)" % [alias, scene_path]) # Definir títulos específicos para cada alias
 		var title_mapping = {
 			"money": "COINS Mercado",
 			"diamonds": "GEMS Tienda de Gemas",

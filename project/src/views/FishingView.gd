@@ -49,20 +49,23 @@ var rarity_chances = {
 }
 
 var rarity_colors = {
-	"común": Color.WHITE,
-	"rara": Color.BLUE,
-	"épica": Color.PURPLE,
-	"legendaria": Color.ORANGE
+	"común": "COMUN",
+	"rara": "RARA",
+	"épica": "EPICA",
+	"legendaria": "LEGENDARIA"
 }
 
 var rarity_emojis = {
-	"común": "⚪",
-	"rara": "🔵",
-	"épica": "🟣",
-	"legendaria": "🟡"
+	"común": "COMUN",
+	"rara": "RARA",
+	"épica": "EPICA",
+	"legendaria": "LEGENDARIA"
 }
 
 func _ready():
+	# Limpiar cualquier overlay existente al inicio
+	_cleanup_existing_overlays()
+
 	# Obtener referencias a los nodos existentes
 	cast_button = get_node_or_null("CastButton")
 	if not cast_button:
@@ -83,7 +86,7 @@ func _ready():
 	if background_node:
 		print("OK Background node encontrado")
 	else:
-		print("⚠️ Background node no encontrado")
+		print("WARNING Background node no encontrado")
 
 	# Inicializar sistema QTE
 	setup_qte_component()
@@ -120,7 +123,7 @@ func setup_qte_component():
 
 	# Título del QTE
 	qte_instructions = Label.new()
-	qte_instructions.text = "🎣 ¡PESCANDO! ¡Presiona cuando la aguja esté en la zona verde!"
+	qte_instructions.text = "FISHING ¡PESCANDO! ¡Presiona cuando la aguja esté en la zona verde!"
 	qte_instructions.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	qte_instructions.add_theme_font_size_override("font_size", 18)
 	qte_instructions.add_theme_color_override("font_color", Color.WHITE)
@@ -163,7 +166,7 @@ func setup_qte_component():
 
 	# Timer bar
 	var timer_label = Label.new()
-	timer_label.text = "⏱️ Tiempo restante:"
+	timer_label.text = "TIMER Tiempo restante:"
 	timer_label.add_theme_font_size_override("font_size", 14)
 	qte_content.add_child(timer_label)
 
@@ -217,7 +220,7 @@ func setup_fishing_history():
 	history_scroll.add_child(history_list)
 
 	# Añadir mensaje inicial
-	add_history_entry("🎣 ¡Comienza a pescar!", "", 0, 0.0, false)
+	add_history_entry("FISHING ¡Comienza a pescar!", "", 0, 0.0, false)
 
 func add_history_entry(message: String, fish_name: String, value: int, size: float, success: bool):
 	"""Añadir una entrada al historial de pescas"""
@@ -354,19 +357,33 @@ func get_rarity_emoji(rarity: String) -> String:
 	"""Obtener emoji según rareza"""
 	return rarity_emojis.get(rarity, "⚪")
 
+func _cleanup_existing_overlays():
+	"""Limpiar cualquier overlay existente para evitar acumulación"""
+	for child in get_children():
+		if child.name == "CatchPopupOverlay":
+			print("Eliminando overlay existente: ", child.name)
+			child.queue_free()
+
 func create_catch_popup(popup_data: Dictionary) -> Control:
 	"""Crear popup de captura con detalles y opciones"""
+	# LIMPIAR todos los overlays existentes primero
+	_cleanup_existing_overlays()
+
 	var fish_instance = popup_data.fish_instance
 	var rarity = popup_data.rarity
 	var rarity_multiplier = popup_data.rarity_multiplier
 
 	var overlay = Control.new()
+	overlay.name = "CatchPopupOverlay" # Nombrar para identificarlo
 	overlay.anchor_right = 1.0
 	overlay.anchor_bottom = 1.0
 	overlay.z_index = 300
 
 	# Fondo semi-transparente con efecto especial para rareza legendaria
 	var background = ColorRect.new()
+	# Hacer el fondo clickeable para cerrar el popup
+	background.mouse_filter = Control.MOUSE_FILTER_STOP
+
 	if rarity == "legendaria":
 		background.color = Color(0.8, 0.6, 0.0, 0.9) # Dorado intenso
 	elif rarity == "épica":
@@ -378,6 +395,14 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 
 	background.anchor_right = 1.0
 	background.anchor_bottom = 1.0
+
+	# Conectar clic en fondo para cerrar popup
+	background.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			print("Cerrando popup por clic en fondo")
+			overlay.queue_free()
+	)
+
 	overlay.add_child(background)
 
 	# Panel del popup (más grande para mostrar detalles)
@@ -426,7 +451,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	fish_info.add_child(fish_name_label)
 
 	var size_label = Label.new()
-	size_label.text = "SIZE Tamaño: %.1fcm • 🎣 Peso: %.1fkg" % [fish_instance.size, fish_instance.weight]
+	size_label.text = "SIZE Tamaño: %.1fcm • FISHING Peso: %.1fkg" % [fish_instance.size, fish_instance.weight]
 	size_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	size_label.add_theme_font_size_override("font_size", 16)
 	fish_info.add_child(size_label)
@@ -465,7 +490,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	var total_xp = base_xp + rarity_xp_bonus
 
 	var xp_label = Label.new()
-	xp_label.text = "🌟 EXPERIENCIA GANADA: %d XP" % total_xp
+	xp_label.text = "SPARKLE EXPERIENCIA GANADA: %d XP" % total_xp
 	xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	xp_label.add_theme_font_size_override("font_size", 16)
 	xp_label.add_theme_color_override("font_color", Color.LIGHT_GREEN)
@@ -485,7 +510,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	main_vbox.add_child(button_container)
 
 	var store_btn = Button.new()
-	store_btn.text = "🧊 ALMACENAR"
+	store_btn.text = "STORAGE ALMACENAR"
 	store_btn.custom_minimum_size = Vector2(150, 50)
 	store_btn.add_theme_font_size_override("font_size", 16)
 	store_btn.add_theme_color_override("font_color", Color.WHITE)
@@ -501,7 +526,7 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	button_container.add_child(separator)
 
 	var discard_btn = Button.new()
-	discard_btn.text = "🗑️ DESCARTAR"
+	discard_btn.text = "DELETE DESCARTAR"
 	discard_btn.custom_minimum_size = Vector2(150, 50)
 	discard_btn.add_theme_font_size_override("font_size", 16)
 	discard_btn.add_theme_color_override("font_color", Color.WHITE)
@@ -707,7 +732,7 @@ func update_qte_display():
 		qte_instructions.add_theme_color_override("font_color", Color.LIME_GREEN)
 	else:
 		qte_needle.color = Color.RED
-		qte_instructions.text = "🎣 ¡Espera a que esté en la zona verde!"
+		qte_instructions.text = "FISHING ¡Espera a que esté en la zona verde!"
 		qte_instructions.add_theme_color_override("font_color", Color.WHITE)
 
 func _on_cast_button_pressed():
@@ -762,7 +787,7 @@ func try_catch_fish():
 	if qte_component:
 		qte_component.visible = false
 
-	cast_button.text = "🎣 LANZAR"
+	cast_button.text = "FISHING LANZAR"
 
 	if success:
 		catch_successful()
@@ -899,7 +924,7 @@ func calculate_xp_reward(fish_instance: FishInstance) -> int:
 
 func qte_failed():
 	# Añadir fallo al historial
-	add_history_entry("💔 ¡El pez se escapó!", "", 0, 0.0, false)
+	add_history_entry("HEART ¡El pez se escapó!", "", 0, 0.0, false)
 
 	if SFX:
 		SFX.play_event("error")
@@ -907,7 +932,7 @@ func qte_failed():
 
 func show_inventory_full_message():
 	# Añadir al historial en lugar de mensaje temporal
-	add_history_entry("🧊 ¡Inventario lleno! Ve al Mercado para vender peces", "", 0, 0.0, false)
+	add_history_entry("STORAGE ¡Inventario lleno! Ve al Mercado para vender peces", "", 0, 0.0, false)
 
 	if SFX:
 		SFX.play_event("error")

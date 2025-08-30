@@ -203,13 +203,13 @@ func get_bonus_text(upgrade_data: Dictionary, level: int) -> String:
 
 	match bonus_type:
 		"capacidad":
-			return "📦 Bonus actual: +%d espacios" % total_bonus
+			return "BOX Bonus actual: +%d espacios" % total_bonus
 		"rareza":
 			return "SPARKLE Bonus actual: +%.1f%% rareza" % total_bonus
 		"valor":
 			return "COINS Bonus actual: +%.1f%% valor" % total_bonus
 		"velocidad":
-			return "⚡ Bonus actual: -%.1fs tiempo" % total_bonus
+			return "ENERGY Bonus actual: -%.1fs tiempo" % total_bonus
 		"multiplicador":
 			return "TARGET Bonus actual: +%.2fx multiplicador" % total_bonus
 		_:

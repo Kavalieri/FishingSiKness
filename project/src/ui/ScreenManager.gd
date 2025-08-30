@@ -129,7 +129,7 @@ func show_settings_menu():
 	FloatingWindowManager.open_window("res://scenes/views/SettingsMenu.tscn", {"title": "Opciones"})
 
 func show_milestones_panel():
-	FloatingWindowManager.open_window("res://scenes/views/MilestonesPanel.tscn", {"title": "🌟 ÁRBOL DE HABILIDADES"})
+	FloatingWindowManager.open_window("res://scenes/views/MilestonesPanel.tscn", {"title": "SPARKLE ÁRBOL DE HABILIDADES"})
 
 func _on_any_window_opened(window: Control):
 	# Conectar señales dinámicamente cuando se abre una ventana

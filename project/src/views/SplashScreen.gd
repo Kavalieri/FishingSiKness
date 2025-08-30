@@ -70,7 +70,7 @@ func setup_splash_background():
 		BackgroundManager.setup_splash_background(self)
 		print("OK Fondo splash configurado con BackgroundManager")
 	else:
-		print("⚠️ BackgroundManager no disponible, usando fallback")
+		print("WARNING BackgroundManager no disponible, usando fallback")
 		setup_fallback_background()
 
 func setup_fallback_background():
@@ -362,20 +362,40 @@ func continue_to_game():
 func setup_options_button():
 	"""Botón de opciones en esquina superior derecha"""
 	var options_container = Control.new()
+	options_container.name = "OptionsContainer"
+	# Posicionar en esquina superior derecha
 	options_container.anchor_left = 1.0
 	options_container.anchor_right = 1.0
 	options_container.anchor_top = 0.0
 	options_container.anchor_bottom = 0.0
-	options_container.offset_left = -100.0
-	options_container.offset_right = -10.0
-	options_container.offset_top = 10.0
-	options_container.offset_bottom = 50.0
+	options_container.offset_left = -90.0 # Ancho del botón + margen
+	options_container.offset_right = -10.0 # Margen derecho
+	options_container.offset_top = 10.0 # Margen superior
+	options_container.offset_bottom = 50.0 # Alto del botón + margen
 	add_child(options_container)
 
 	var top_options_button = Button.new()
-	top_options_button.text = "Opciones"
-	top_options_button.custom_minimum_size = Vector2(40, 40)
+	top_options_button.name = "OptionsButton"
+
+	# Configurar icono de pausa con tamaño controlado
+	var icon_size = 35 # Aumentado a 35x35 píxeles
+	var options_texture = load("res://art/ui/assets/pause-options.png")
+	if options_texture:
+		var options_image = options_texture.get_image()
+		options_image.resize(icon_size, icon_size)
+		var options_icon = ImageTexture.new()
+		options_icon.set_image(options_image)
+		top_options_button.icon = options_icon
+		top_options_button.expand_icon = false
+		top_options_button.text = "" # Sin texto, solo icono
+	else:
+		top_options_button.text = "SETTINGS" # Fallback si no se puede cargar el icono
+
+	top_options_button.custom_minimum_size = Vector2(80, 40)
+	# El botón llena completamente su container
+	top_options_button.anchor_left = 0.0
 	top_options_button.anchor_right = 1.0
+	top_options_button.anchor_top = 0.0
 	top_options_button.anchor_bottom = 1.0
 	top_options_button.pressed.connect(_on_options_pressed)
 	options_container.add_child(top_options_button)

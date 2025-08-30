@@ -28,7 +28,7 @@ func _update_header_info():
 	points_label.modulate = Color.GOLD if available_points > 0 else Color.GRAY
 
 	if levels_to_next_point > 0:
-		next_point_label.text = "⏳ %d niveles para próximo punto de skill" % levels_to_next_point
+		next_point_label.text = "WAITING %d niveles para próximo punto de skill" % levels_to_next_point
 		next_point_label.modulate = Color.LIGHT_BLUE
 	else:
 		next_point_label.text = "CELEBRATION ¡Punto de skill disponible!"
@@ -66,7 +66,7 @@ func _populate_milestones_grid():
 	for tier in sorted_tiers:
 		# Título del tier
 		var tier_title = Label.new()
-		tier_title.text = "🏆 Tier %d" % tier
+		tier_title.text = "TIER %d" % tier
 		tier_title.add_theme_font_size_override("font_size", 20)
 		tier_title.add_theme_color_override("font_color", get_tier_color(tier))
 		tier_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -104,13 +104,28 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 	var is_unlocked = SkillTree.is_skill_unlocked(skill_id)
 	var can_unlock = SkillTree.can_unlock_skill(skill_id)
 
-	# Fondo de la carta según estado
+	# Fondo de la carta según estado con estilos dinámicos
+	var style = StyleBoxFlat.new()
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+
 	if is_unlocked:
-		card.add_theme_stylebox_override("panel", preload("res://art/ui/panel_skill_unlocked.tres"))
+		style.bg_color = Color(0.2, 0.7, 0.2, 0.8) # Verde desbloqueado
+		style.border_color = Color(0.3, 0.9, 0.3)
 	elif can_unlock:
-		card.add_theme_stylebox_override("panel", preload("res://art/ui/panel_skill_available.tres"))
+		style.bg_color = Color(0.7, 0.7, 0.2, 0.8) # Amarillo disponible
+		style.border_color = Color(0.9, 0.9, 0.3)
 	else:
-		card.add_theme_stylebox_override("panel", preload("res://art/ui/panel_skill_locked.tres"))
+		style.bg_color = Color(0.3, 0.3, 0.3, 0.8) # Gris bloqueado
+		style.border_color = Color(0.5, 0.5, 0.5)
+
+	card.add_theme_stylebox_override("panel", style)
 
 	var card_vbox = VBoxContainer.new()
 	card_vbox.add_theme_constant_override("separation", 5)
@@ -178,9 +193,9 @@ func create_skill_card(parent: Control, skill_id: String, skill_data: Dictionary
 
 		if prereq_text != "":
 			prereq_text = prereq_text.trim_suffix(", ")
-			unlock_btn.text = "🔒 Requiere: " + prereq_text
+			unlock_btn.text = "LOCKED Requiere: " + prereq_text
 		else:
-			unlock_btn.text = "🔒 Sin puntos disponibles"
+			unlock_btn.text = "LOCKED Sin puntos disponibles"
 		unlock_btn.disabled = true
 		unlock_btn.add_theme_color_override("font_color", Color.GRAY)
 

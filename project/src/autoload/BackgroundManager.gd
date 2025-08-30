@@ -122,12 +122,16 @@ func apply_background_texture(node: Control, texture: Texture2D) -> bool:
 		background_node.texture = texture
 		background_node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		background_node.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		# CRÍTICO: Asegurar que no intercepte eventos de mouse
+		background_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	elif background_node is NinePatchRect:
 		background_node.texture = texture
 		background_node.patch_margin_left = 0
 		background_node.patch_margin_right = 0
 		background_node.patch_margin_top = 0
 		background_node.patch_margin_bottom = 0
+		# CRÍTICO: Asegurar que no intercepte eventos de mouse
+		background_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	print("OK Fondo aplicado:", texture.resource_path if texture.resource_path else "texture")
 	return true
@@ -149,6 +153,9 @@ func create_background_node(parent: Control) -> TextureRect:
 	background.anchor_bottom = 1.0
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	background.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+
+	# CRÍTICO: El fondo no debe interceptar eventos de mouse
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	# Insertar al principio para que esté detrás
 	parent.add_child(background)

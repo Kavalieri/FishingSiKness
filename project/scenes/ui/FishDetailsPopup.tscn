@@ -73,7 +73,7 @@ layout_mode = 2
 [node name="PriceIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/PriceContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "💰"
+text = "$"
 
 [node name="PriceLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/PriceContainer"]
 layout_mode = 2
@@ -87,7 +87,7 @@ layout_mode = 2
 [node name="SizeIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/SizeContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "📏"
+text = "SIZE"
 
 [node name="SizeLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/SizeContainer"]
 layout_mode = 2
@@ -129,7 +129,7 @@ layout_mode = 2
 [node name="BonusIcon" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/BonusContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "✨"
+text = "BONUS"
 
 [node name="BonusLabel" type="Label" parent="BackgroundPanel/MainContainer/StatsContainer/BonusContainer"]
 layout_mode = 2

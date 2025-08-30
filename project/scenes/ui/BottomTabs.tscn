@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4pcr83t1dfvl"]
+
+[ext_resource type="Script" path="res://src/ui/BottomTabs.gd" id="1_tabs"]
+
+[node name="BottomTabs" type="HBoxContainer"]
+script = ExtResource("1_tabs")
+custom_minimum_size = Vector2(0, 48)
+alignment = 1
+
+[node name="FishingBtn" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pescar"
+custom_minimum_size = Vector2(64, 48)
+expand_icon = true
+icon_alignment = 1
+
+[node name="MarketBtn" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mercado"
+custom_minimum_size = Vector2(64, 48)
+expand_icon = true
+icon_alignment = 1
+
+[node name="UpgradesBtn" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mejoras"
+custom_minimum_size = Vector2(64, 48)
+expand_icon = true
+icon_alignment = 1
+
+[node name="MapBtn" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mapa"
+custom_minimum_size = Vector2(64, 48)
+expand_icon = true
+icon_alignment = 1
+
+[node name="PrestigeBtn" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Prestigio"
+custom_minimum_size = Vector2(64, 48)
+expand_icon = true
+icon_alignment = 1

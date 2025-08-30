@@ -19,7 +19,7 @@ func setup_background():
 		BackgroundManager.setup_main_background(self)
 		print("OK Fondo principal configurado en MapView")
 	else:
-		print("⚠️ BackgroundManager no disponible en MapView")
+		print("WARNING BackgroundManager no disponible en MapView")
 
 func setup_ui():
 	var main_vbox = VBoxContainer.new()
@@ -64,7 +64,7 @@ func setup_ui():
 	main_container.add_child(zones_panel)
 
 	var zones_title = Label.new()
-	zones_title.text = "🌍 ZONAS DISPONIBLES"
+	zones_title.text = "MAP ZONAS DISPONIBLES"
 	zones_title.add_theme_font_size_override("font_size", 18)
 	zones_title.add_theme_color_override("font_color", Color.CYAN)
 	zones_panel.add_child(zones_title)
@@ -95,7 +95,7 @@ func setup_ui():
 
 	# Título del panel de información
 	var info_title = Label.new()
-	info_title.text = "📊 LEYENDA DE ZONAS"
+	info_title.text = "CHART LEYENDA DE ZONAS"
 	info_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	info_title.add_theme_font_size_override("font_size", 18)
 	info_title.add_theme_color_override("font_color", Color.GOLD)
@@ -198,13 +198,13 @@ func create_zone_button_from_def(zone_def: ZoneDef):
 	elif is_unlocked:
 		status_label.text = "DISPONIBLE"
 		status_label.add_theme_color_override("font_color", Color.CYAN)
-		action_button.text = "🚀 VIAJAR"
+		action_button.text = "ROCKET VIAJAR"
 		action_button.pressed.connect(_on_zone_selected.bind(zone_def.id))
 	else:
 		status_label.text = "BLOQUEADA"
 		status_label.add_theme_color_override("font_color", Color.RED)
 		var unlock_cost = get_zone_unlock_cost(zone_def.id)
-		action_button.text = "🔓 DESBLOQUEAR (%s)" % format_currency(unlock_cost)
+		action_button.text = "UNLOCKED DESBLOQUEAR (%s)" % format_currency(unlock_cost)
 
 		if Save.get_coins() >= unlock_cost:
 			action_button.pressed.connect(_on_zone_unlock.bind(zone_def.id, unlock_cost))
@@ -215,14 +215,14 @@ func create_zone_button_from_def(zone_def: ZoneDef):
 func get_zone_icon(zone_id: String) -> String:
 	"""Obtener icono representativo para cada zona"""
 	var zone_icons = {
-		"orilla": "🏖️",
+		"orilla": "BEACH",
 		"lago": "ZONE",
-		"rio": "🏞️",
-		"costa": "🌅",
+		"rio": "FOREST",
+		"costa": "SUNSET",
 		"mar": "ZONE",
-		"glaciar": "🏔️",
-		"industrial": "🏭",
-		"abismo": "🌌",
+		"glaciar": "MOUNTAIN",
+		"industrial": "INDUSTRIAL",
+		"abismo": "SPACE",
 		"infernal": "FIRE"
 	}
 	return zone_icons.get(zone_id, "MAP")

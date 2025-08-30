@@ -46,9 +46,18 @@ func _setup_tab_icons() -> void:
 
 	for i in range(min(tab_buttons.size(), tab_icons.size())):
 		if tab_buttons[i]:
-			var icon = load(tab_icons[i])
-			if icon:
-				tab_buttons[i].icon = icon
+			var texture = load(tab_icons[i])
+			if texture:
+				# Crear ImageTexture redimensionada si es necesario
+				if texture is Texture2D:
+					tab_buttons[i].icon = texture
+					# Configurar el botón para mostrar solo el icono
+					tab_buttons[i].text = ""
+					tab_buttons[i].expand_icon = true
+					# Forzar un tamaño de icono adecuado
+					tab_buttons[i].custom_minimum_size = Vector2(64, 48)
+				else:
+					push_warning("El recurso no es una Texture2D: " + str(texture))
 			else:
 				push_warning("No se pudo cargar icono para tab " + str(i) + ": " + tab_icons[i])
 

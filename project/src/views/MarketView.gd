@@ -37,7 +37,7 @@ func setup_background():
 		BackgroundManager.setup_main_background(self)
 		print("OK Fondo principal configurado en MarketView")
 	else:
-		print("⚠️ BackgroundManager no disponible en MarketView")
+		print("WARNING BackgroundManager no disponible en MarketView")
 
 func setup_ui():
 	# Crear la interfaz principal
@@ -52,7 +52,7 @@ func setup_ui():
 
 	# Título del mercado
 	var title = Label.new()
-	title.text = "🏪 MERCADO DE PECES"
+	title.text = "MERCADO DE PECES"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 24)
 	title.add_theme_color_override("font_color", Color.GOLD)
@@ -194,7 +194,7 @@ func create_fish_button(fish_data: Dictionary, index: int) -> Button:
 
 	# Botón de información detallada (esquina superior derecha)
 	var info_button = Button.new()
-	info_button.text = "ℹ️"
+	info_button.text = "INFO"
 	info_button.custom_minimum_size = Vector2(20, 20)
 	info_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	info_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -289,9 +289,9 @@ func _on_fish_selected(index: int, button: Button):
 
 	# Actualizar botón de vender selección
 	if selected_fish_indices.size() > 0:
-		sell_selected_btn.text = "SHOP VENDER SELECCIONADOS (%d)" % selected_fish_indices.size()
+		sell_selected_btn.text = "VENDER SELECCIONADOS (%d)" % selected_fish_indices.size()
 	else:
-		sell_selected_btn.text = "SHOP VENDER SELECCIONADOS"
+		sell_selected_btn.text = "VENDER SELECCIONADOS"
 
 func _on_sell_selected_pressed():
 	if selected_fish_indices.size() == 0:
@@ -415,11 +415,11 @@ func show_fish_detail_dialog(fish_data: Dictionary):
 	var info_text = """
 SIZE Tamaño: %.1f cm
 COINS Valor: %d monedas
-🌟 Rareza: %s
-🎣 Peso: %.1f kg
-📍 Zona de captura: %s
+SPARKLE Rareza: %s
+FISHING Peso: %.1f kg
+PIN Zona de captura: %s
 DATE Capturado: %s
-📝 Descripción: %s
+NOTE Descripción: %s
 """ % [
 		fish_data.get("size", 0.0),
 		fish_data.get("value", 0),

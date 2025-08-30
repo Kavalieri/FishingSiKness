@@ -32,7 +32,6 @@ FishDataManager="*res://src/systems/FishDataManager.gd"
 InventorySystem="*res://src/systems/InventorySystem.gd"
 App="*res://src/autoload/App.gd"
 WindowManager="*res://src/autoload/WindowManager.gd"
-EmojiReplacer="*res://src/autoload/EmojiReplacer.gd"
 
 [display]
 
@@ -42,8 +41,6 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/stretch/scale_mode="viewport"
 window/handheld/orientation=1
-window/size/width=1080
-window/size/height=1920
 
 [internationalization]
 

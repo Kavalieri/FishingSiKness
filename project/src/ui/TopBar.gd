@@ -15,21 +15,19 @@ func _ready() -> void:
 	# Añadir iconos PNG a los botones
 	_setup_button_icons()
 
-	# Tooltips mejorados sin emojis
-	btn_money.tooltip_text = tr("Dinero disponible - Click para ir al Mercado")
-	btn_gems.tooltip_text = tr("Gemas premium - Click para la Tienda")
-	btn_zone.tooltip_text = tr("Zona de pesca actual - Click para cambiar zona")
-	btn_options.tooltip_text = tr("Configuración del juego")
-	xp_progress_button.tooltip_text = tr("Progreso de experiencia - Click para habilidades")
+	# Tooltips temporalmente deshabilitados para evitar elementos invisibles
+	# btn_money.tooltip_text = tr("Dinero disponible - Click para ir al Mercado")
+	# btn_gems.tooltip_text = tr("Gemas premium - Click para la Tienda")
+	# btn_zone.tooltip_text = tr("Zona de pesca actual - Click para cambiar zona")
+	# btn_options.tooltip_text = tr("Configuración del juego")
+	# xp_progress_button.tooltip_text = tr("Progreso de experiencia - Click para habilidades")
 
 	# Botones → solicitud de apertura (WindowManager decide ventana real)
 	btn_money.pressed.connect(func(): emit_signal("open_requested", "money"))
 	btn_gems.pressed.connect(func(): emit_signal("open_requested", "diamonds"))
 	btn_zone.pressed.connect(func(): emit_signal("open_requested", "zone"))
 	btn_options.pressed.connect(func(): emit_signal("open_requested", "options"))
-	xp_progress_button.pressed.connect(func(): emit_signal("open_requested", "xp"))
-
-	# Conectar con autoloads para datos en tiempo real
+	xp_progress_button.pressed.connect(func(): emit_signal("open_requested", "xp")) # Conectar con autoloads para datos en tiempo real
 	if Save:
 		Save.coins_changed.connect(set_money)
 		Save.gems_changed.connect(set_diamonds)
@@ -47,31 +45,62 @@ func _ready() -> void:
 		sync_from_state(Save, Experience)
 
 func _setup_button_icons() -> void:
-	"""Configurar iconos PNG para los botones de la TopBar"""
+	"""Configurar iconos PNG para los botones de la TopBar con tamaño controlado"""
+	var icon_size = 35 # Tamaño fijo en píxeles - aumentado a 35x35
+
 	# Icono para dinero (temporal usando diamond, luego cambiar por moneda específica)
-	var money_icon = load("res://art/ui/assets/diamond.png")
-	if money_icon:
+	var money_texture = load("res://art/ui/assets/diamond.png")
+	if money_texture:
+		var money_image = money_texture.get_image()
+		money_image.resize(icon_size, icon_size)
+		var money_icon = ImageTexture.new()
+		money_icon.set_image(money_image)
 		btn_money.icon = money_icon
+		btn_money.expand_icon = false
 
 	# Icono para gemas
-	var gems_icon = load("res://art/ui/assets/diamond.png")
-	if gems_icon:
+	var gems_texture = load("res://art/ui/assets/diamond.png")
+	if gems_texture:
+		var gems_image = gems_texture.get_image()
+		gems_image.resize(icon_size, icon_size)
+		var gems_icon = ImageTexture.new()
+		gems_icon.set_image(gems_image)
 		btn_gems.icon = gems_icon
+		btn_gems.expand_icon = false
 
 	# Icono para zona (mundo/mapa)
-	var zone_icon = load("res://art/ui/assets/world.png")
-	if zone_icon:
+	var zone_texture = load("res://art/ui/assets/world.png")
+	if zone_texture:
+		var zone_image = zone_texture.get_image()
+		zone_image.resize(icon_size, icon_size)
+		var zone_icon = ImageTexture.new()
+		zone_icon.set_image(zone_image)
 		btn_zone.icon = zone_icon
+		btn_zone.expand_icon = false
 
-	# Icono para opciones (placeholder por ahora)
-	var options_icon = load("res://art/ui/assets/placeholder.png")
-	if options_icon:
+	# Botón de opciones con icono de pausa
+	var options_texture = load("res://art/ui/assets/pause-options.png")
+	if options_texture:
+		var options_image = options_texture.get_image()
+		options_image.resize(icon_size, icon_size)
+		var options_icon = ImageTexture.new()
+		options_icon.set_image(options_image)
 		btn_options.icon = options_icon
+		btn_options.expand_icon = false
+		btn_options.text = "" # Sin texto, solo icono
+	else:
+		btn_options.text = "OPTIONS"
+		btn_options.icon = null
 
 	# Icono para XP (estrella)
-	var xp_icon = load("res://art/ui/assets/star.png")
-	if xp_icon:
+	var xp_texture = load("res://art/ui/assets/star.png")
+	if xp_texture:
+		var xp_image = xp_texture.get_image()
+		xp_image.resize(icon_size, icon_size)
+		var xp_icon = ImageTexture.new()
+		xp_icon.set_image(xp_image)
 		xp_progress_button.icon = xp_icon
+		xp_progress_button.expand_icon = false
 
 # ---- setters públicos (para wiring externo si no usas self‑wiring) ----
 func set_money(v: int) -> void:
@@ -87,9 +116,9 @@ func set_xp_progress(level: int, current: int, required: int) -> void:
 	var text = "Nivel %d - %d / %d XP" % [level, current, required]
 	xp_progress_button.text = text
 
-	# Actualizar tooltip con más información
+	# Actualizar tooltip con más información (deshabilitado temporalmente)
 	var percentage = (float(current) / float(required)) * 100.0 if required > 0 else 0.0
-	xp_progress_button.tooltip_text = tr("Nivel %d\nProgreso: %d / %d XP (%.1f%%)\nClick para ver habilidades y progreso") % [level, current, required, percentage]
+	# xp_progress_button.tooltip_text = tr("Nivel %d\nProgreso: %d / %d XP (%.1f%%)\nClick para ver habilidades y progreso") % [level, current, required, percentage]
 
 func sync_from_state(save_data: Node, experience_data: Node) -> void:
 	set_money(save_data.get_coins())

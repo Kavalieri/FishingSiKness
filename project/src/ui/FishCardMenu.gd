@@ -34,7 +34,7 @@ func setup_menu():
 	vbox.add_child(header)
 
 	var title = Label.new()
-	title.text = "🎣 CAPTURA REALIZADA"
+	title.text = "FISHING CAPTURA REALIZADA"
 	title.add_theme_font_size_override("font_size", 20)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
@@ -54,7 +54,7 @@ func setup_menu():
 
 	# Botón continuar
 	var continue_button = Button.new()
-	continue_button.text = "🎣 CONTINUAR PESCANDO"
+	continue_button.text = "FISHING CONTINUAR PESCANDO"
 	continue_button.custom_minimum_size = Vector2(200, 40)
 	continue_button.pressed.connect(_on_continue_pressed)
 	vbox.add_child(continue_button)
@@ -103,7 +103,7 @@ func create_fish_info(container: VBoxContainer):
 
 	# Zona
 	var zone_label = Label.new()
-	zone_label.text = "🌍 Zona: %s" % fish_zone
+	zone_label.text = "Zona: %s" % fish_zone
 	zone_label.add_theme_font_size_override("font_size", 16)
 	fish_info.add_child(zone_label)
 

@@ -94,7 +94,7 @@ func setup_qte_ui():
 
 	# Timer bar
 	var timer_label = Label.new()
-	timer_label.text = "⏱️ Tiempo restante:"
+	timer_label.text = "TIEMPO RESTANTE:"
 	timer_label.add_theme_font_size_override("font_size", 14)
 	qte_content.add_child(timer_label)
 
@@ -107,7 +107,7 @@ func setup_qte_ui():
 
 func setup_inventory_button():
 	inventory_button = Button.new()
-	inventory_button.text = "🗑️ Gestionar Inventario"
+	inventory_button.text = "GESTIONAR INVENTARIO"
 	inventory_button.custom_minimum_size = Vector2(200, 50)
 	inventory_button.pressed.connect(_on_inventory_button_pressed)
 
@@ -303,7 +303,7 @@ func show_catch_message(fish_instance: FishInstance, success: bool):
 		]
 		message.add_theme_color_override("font_color", Color.LIME_GREEN)
 	else:
-		message.text = "💔 ¡El pez se escapó!\n⏱️ ¡Sé más rápido la próxima vez!"
+		message.text = "¡El pez se escapó!\n¡Sé más rápido la próxima vez!"
 		message.add_theme_color_override("font_color", Color.ORANGE)
 
 	message.add_theme_font_size_override("font_size", 16)
@@ -317,7 +317,7 @@ func show_catch_message(fish_instance: FishInstance, success: bool):
 
 func show_inventory_full_message():
 	var message = Label.new()
-	message.text = "🧊 ¡Inventario lleno!\n🗑️ Usa 'Gestionar Inventario' para liberar espacio"
+	message.text = "¡Inventario lleno!\nUsa 'Gestionar Inventario' para liberar espacio"
 	message.add_theme_font_size_override("font_size", 18)
 	message.add_theme_color_override("font_color", Color.ORANGE)
 	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

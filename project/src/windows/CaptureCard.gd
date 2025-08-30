@@ -84,7 +84,7 @@ func setup_capture_content():
 	# XP ganada
 	if capture_result.has("xp") and capture_result.xp > 0:
 		xp_label = Label.new()
-		xp_label.text = "🌟 +%d XP" % capture_result.xp
+		xp_label.text = "+%d XP" % capture_result.xp
 		xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(xp_label)
 
@@ -99,7 +99,7 @@ func setup_capture_content():
 	for key in capture_result.keys():
 		if key not in ["xp", "coins"] and capture_result[key] is int and capture_result[key] > 0:
 			var reward_label = Label.new()
-			reward_label.text = "SPARKLE +%d %s" % [capture_result[key], key.capitalize()]
+			reward_label.text = "+%d %s" % [capture_result[key], key.capitalize()]
 			reward_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			vbox.add_child(reward_label)
 

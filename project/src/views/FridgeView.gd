@@ -15,7 +15,7 @@ func refresh_display():
 
 	var info_label = get_node_or_null("MainVBox/InfoLabel")
 	if info_label:
-		info_label.text = "📦 %d/%d peces almacenados" % [inventory.size(), max_inventory]
+		info_label.text = "BOX %d/%d peces almacenados" % [inventory.size(), max_inventory]
 
 func setup_background():
 	"""Ya no necesario - BaseFloatingMenu maneja el fondo automáticamente"""
@@ -39,7 +39,7 @@ func setup_ui():
 
 	# Icono grande
 	var icon_label = Label.new()
-	icon_label.text = "🧊"
+	icon_label.text = "STORAGE"
 	icon_label.add_theme_font_size_override("font_size", 80)
 	icon_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	main_vbox.add_child(icon_label)
@@ -66,7 +66,7 @@ func setup_ui():
 
 	# Botón para abrir inventario
 	var open_inventory_btn = Button.new()
-	open_inventory_btn.text = "🧊 ABRIR NEVERA"
+	open_inventory_btn.text = "STORAGE ABRIR NEVERA"
 	open_inventory_btn.custom_minimum_size = Vector2(250, 80)
 	open_inventory_btn.add_theme_font_size_override("font_size", 20)
 	open_inventory_btn.pressed.connect(_on_open_inventory_pressed)
@@ -78,7 +78,7 @@ func setup_ui():
 
 	var info_label = Label.new()
 	info_label.name = "InfoLabel"
-	info_label.text = "📦 %d/%d peces almacenados" % [inventory.size(), max_inventory]
+	info_label.text = "BOX %d/%d peces almacenados" % [inventory.size(), max_inventory]
 	info_label.add_theme_font_size_override("font_size", 14)
 	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	info_label.modulate = Color(0.7, 0.7, 0.7)
@@ -86,7 +86,7 @@ func setup_ui():
 
 func _on_open_inventory_pressed():
 	if App.screen_manager and App.screen_manager.has_method("show_inventory"):
-		App.screen_manager.show_inventory(true, "🧊 NEVERA - GESTIÓN")
+		App.screen_manager.show_inventory(true, "STORAGE NEVERA - GESTIÓN")
 		if SFX:
 			SFX.play_event("click")
 	else:

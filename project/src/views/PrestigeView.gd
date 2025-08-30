@@ -50,7 +50,7 @@ func create_ui_elements():
 
 	# Título
 	var title_label = Label.new()
-	title_label.text = "STAR PRESTIGIO"
+	title_label.text = "PRESTIGIO"
 	title_label.add_theme_font_size_override("font_size", 32)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title_label)
@@ -78,7 +78,7 @@ func create_ui_elements():
 	vbox.add_child(button_container)
 
 	prestige_button = Button.new()
-	prestige_button.text = "🌟 HACER PRESTIGIO"
+	prestige_button.text = "SPARKLE HACER PRESTIGIO"
 	prestige_button.custom_minimum_size = Vector2(400, 80)
 	prestige_button.add_theme_font_size_override("font_size", 18)
 	prestige_button.pressed.connect(_on_prestige_button_pressed)
@@ -86,16 +86,16 @@ func create_ui_elements():
 
 func update_display():
 	if not prestige_info_label or not is_instance_valid(prestige_info_label):
-		print("⚠️ PrestigeView: UI no inicializada aún")
+		print("WARNING PrestigeView: UI no inicializada aún")
 		return
 
 	if not Save.game_data.prestige_unlocked:
 		var current_level = Save.game_data.level
-		prestige_info_label.text = "🔒 Prestigio desbloqueado en el nivel 75\n" + \
+		prestige_info_label.text = "LOCKED Prestigio desbloqueado en el nivel 75\n" + \
 			"Actual: Nivel %d" % current_level
 		if prestige_button and is_instance_valid(prestige_button):
 			prestige_button.disabled = true
-			prestige_button.text = "🔒 PRESTIGIO BLOQUEADO"
+			prestige_button.text = "LOCKED PRESTIGIO BLOQUEADO"
 		return
 
 	var prestige_level = Save.game_data.get("prestige_level", 0)
@@ -104,7 +104,7 @@ func update_display():
 
 	prestige_info_label.text = """STAR Prestigio Nivel: %d
 TARGET Puntos de Prestigio: %d
-💫 Puntos potenciales: +%d
+SPARKLES Puntos potenciales: +%d
 
 El Prestigio reinicia tu progreso pero otorga:
 • Multiplicador permanente de monedas
@@ -113,7 +113,7 @@ El Prestigio reinicia tu progreso pero otorga:
 
 	prestige_button.disabled = potential_points == 0
 	if potential_points > 0:
-		prestige_button.text = "🌟 HACER PRESTIGIO (+%d puntos)" % potential_points
+		prestige_button.text = "SPARKLE HACER PRESTIGIO (+%d puntos)" % potential_points
 	else:
 		prestige_button.text = "ERROR Sin puntos suficientes"
 
@@ -128,7 +128,7 @@ func update_prestige_benefits():
 
 	if prestige_level > 0:
 		var benefits_title = Label.new()
-		benefits_title.text = "🎁 Beneficios Activos:"
+		benefits_title.text = "GIFT Beneficios Activos:"
 		benefits_title.add_theme_font_size_override("font_size", 16)
 		prestige_benefits_container.add_child(benefits_title)
 
@@ -159,7 +159,7 @@ func _on_prestige_button_pressed():
 
 func show_prestige_confirmation(points: int):
 	var confirm_dialog = AcceptDialog.new()
-	confirm_dialog.title = "⚠️ Confirmación de Prestigio"
+	confirm_dialog.title = "WARNING Confirmación de Prestigio"
 	confirm_dialog.dialog_text = """¿Estás seguro de que quieres hacer Prestigio?
 
 ESTO REINICIARÁ:

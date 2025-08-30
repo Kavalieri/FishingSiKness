@@ -37,8 +37,8 @@ func get_fish_details() -> String:
 	details += "FISH %s\n\n" % fish_data.name
 	details += "COINS Precio: %dc\n" % individual_fish_data.get("value", 0)
 	details += "SIZE Tamaño: %.1fcm\n" % individual_fish_data.get("size", 0.0)
-	details += "⚖️ Peso: %.2fkg\n" % individual_fish_data.get("weight", 0.0)
-	details += "📍 Zona: %s\n" % individual_fish_data.get("capture_zone_id", "Desconocida").capitalize()
+	details += "WEIGHT Peso: %.2fkg\n" % individual_fish_data.get("weight", 0.0)
+	details += "PIN Zona: %s\n" % individual_fish_data.get("capture_zone_id", "Desconocida").capitalize()
 	return details
 
 func _update_individual_display():
@@ -61,7 +61,7 @@ func _update_selection_visual():
 func set_selected(selected: bool):
 	# Prevenir bucles de señales
 	if is_selected == selected: return
-	
+
 	is_selected = selected
 	select_checkbox.button_pressed = selected
 	_update_selection_visual()

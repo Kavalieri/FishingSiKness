@@ -63,7 +63,7 @@ func _setup_panel_content(panel: PanelContainer):
 	main_vbox.add_child(title_hbox)
 
 	var title_label = Label.new()
-	title_label.text = "💾 GESTOR DE PARTIDAS"
+	title_label.text = "SAVE GESTOR DE PARTIDAS"
 	title_label.add_theme_font_size_override("font_size", 28) # Mismo tamaño que UnifiedMenu
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -176,7 +176,7 @@ func create_save_slot(slot: int):
 
 	if slot_info.empty:
 		var new_game_btn = Button.new()
-		new_game_btn.text = "🆕 Nueva Partida"
+		new_game_btn.text = "NEW Nueva Partida"
 		new_game_btn.custom_minimum_size = Vector2(100, 40)
 		new_game_btn.add_theme_color_override("font_color", Color.LIGHT_GREEN)
 		new_game_btn.pressed.connect(_on_new_game_pressed.bind(slot))
@@ -190,14 +190,14 @@ func create_save_slot(slot: int):
 		buttons_container.add_child(load_btn)
 
 		var save_btn = Button.new()
-		save_btn.text = "💾 Sobrescribir"
+		save_btn.text = "SAVE Sobrescribir"
 		save_btn.custom_minimum_size = Vector2(100, 35)
 		save_btn.add_theme_color_override("font_color", Color.ORANGE)
 		save_btn.pressed.connect(_on_save_pressed.bind(slot))
 		buttons_container.add_child(save_btn)
 
 		var delete_btn = Button.new()
-		delete_btn.text = "🗑️ Eliminar"
+		delete_btn.text = "DELETE Eliminar"
 		delete_btn.custom_minimum_size = Vector2(100, 35)
 		delete_btn.add_theme_color_override("font_color", Color.RED)
 		delete_btn.pressed.connect(_on_delete_pressed.bind(slot))
@@ -206,7 +206,7 @@ func create_save_slot(slot: int):
 func _on_new_game_pressed(slot: int):
 	"""Crear nueva partida con confirmación"""
 	var confirm_dialog = ConfirmationDialog.new()
-	confirm_dialog.title = "🆕 Nueva Partida"
+	confirm_dialog.title = "NEW Nueva Partida"
 	confirm_dialog.dialog_text = ("¿Crear nueva partida en el Slot %d?\n\n" + \
 		"Se iniciará una partida completamente nueva con valores por defecto.") % slot
 
@@ -242,7 +242,7 @@ func _on_load_pressed(slot: int):
 func _on_save_pressed(slot: int):
 	"""Sobrescribir partida existente con confirmación"""
 	var confirm_dialog = ConfirmationDialog.new()
-	confirm_dialog.title = "💾 Sobrescribir Partida"
+	confirm_dialog.title = "SAVE Sobrescribir Partida"
 	confirm_dialog.dialog_text = "¿Sobrescribir la partida del Slot %d?\n\n" + \
 		"Se perderá el progreso guardado anteriormente en este slot." % slot
 
@@ -255,18 +255,18 @@ func _perform_save(slot: int):
 	Save.save_to_slot(slot)
 	if SFX:
 		SFX.play_event("success")
-	show_message("💾 Partida sobrescrita en Slot %d" % slot)
+	show_message("SAVE Partida sobrescrita en Slot %d" % slot)
 	refresh_save_slots()
 
 func _on_delete_pressed(slot: int):
 	"""Confirmar eliminación de partida"""
 	var slot_info = Save.get_save_slot_info(slot)
 	var confirm_dialog = ConfirmationDialog.new()
-	confirm_dialog.title = "🗑️ Eliminar Partida"
+	confirm_dialog.title = "DELETE Eliminar Partida"
 	confirm_dialog.dialog_text = "¿ELIMINAR la partida del Slot %d?\n\n" + \
-		"📊 Progreso: %d monedas, %d gemas, Nivel %d\n" + \
-		"🕒 Tiempo de juego: %s\n\n" + \
-		"⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER ⚠️" % [
+		"STATS Progreso: %d monedas, %d gemas, Nivel %d\n" + \
+		"TIME Tiempo de juego: %s\n\n" + \
+		"WARNING ESTA ACCIÓN NO SE PUEDE DESHACER WARNING" % [
 			slot, slot_info.coins, slot_info.gems, slot_info.level, slot_info.playtime
 		]
 
@@ -279,7 +279,7 @@ func _perform_delete(slot: int):
 	Save.delete_save_slot(slot)
 	if SFX:
 		SFX.play_event("error") # Sonido distintivo para eliminación
-	show_message("🗑️ Partida del Slot %d eliminada permanentemente" % slot)
+	show_message("DELETE Partida del Slot %d eliminada permanentemente" % slot)
 	refresh_save_slots()
 
 func _on_back_pressed():
