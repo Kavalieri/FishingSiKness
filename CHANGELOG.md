@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.5-alpha...v0.3.0-alpha) (2025-08-30)
+
+
+### Features
+
+* Completar TopBar con distribución en tercios y botón social ([f50ea98](https://github.com/Kavalieri/FishingSiKness/commit/f50ea9874f4d634081cbbeb2dbf7c89fa7c54114))
+
+
+### Bug Fixes
+
+* completar limpieza automática de emojis en todo el proyecto ([d0a1318](https://github.com/Kavalieri/FishingSiKness/commit/d0a131899f46551fdf6a2ffd421ac780d9a67bb6))
+* migración sistemática de emojis a imágenes PNG ([9a9cd66](https://github.com/Kavalieri/FishingSiKness/commit/9a9cd666d649f35f06e1a4fbabf809296cde3b6f))
+* Reparar TopBar.gd corrompido y mantener iconos 35x35 ([a4548d5](https://github.com/Kavalieri/FishingSiKness/commit/a4548d58684475a29d99957baad5c8bf7ac1ebca))
+
 ## [0.2.5-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.4-alpha...v0.2.5-alpha) (2025-08-29)
 
 
