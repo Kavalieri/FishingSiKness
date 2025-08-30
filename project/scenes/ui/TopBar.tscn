@@ -5,9 +5,12 @@
 [node name="TopBar" type="VBoxContainer"]
 script = ExtResource("1_xwyhj")
 custom_minimum_size = Vector2(0, 100)
+size_flags_vertical = 4
 
 [node name="Row1" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 45)
 
 [node name="MoneyGemsBlock" type="HBoxContainer" parent="Row1"]
 layout_mode = 2
@@ -16,35 +19,50 @@ size_flags_horizontal = 3
 [node name="BtnMoney" type="Button" parent="Row1/MoneyGemsBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "$ 0"
 
 [node name="BtnGems" type="Button" parent="Row1/MoneyGemsBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "0"
 
 [node name="ZoneBlock" type="HBoxContainer" parent="Row1"]
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 1
 
 [node name="BtnZone" type="Button" parent="Row1/ZoneBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "ZONA"
 
-[node name="OptionsBlock" type="HBoxContainer" parent="Row1"]
+[node name="SocialOptionsBlock" type="HBoxContainer" parent="Row1"]
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 1
 
-[node name="BtnOptions" type="Button" parent="Row1/OptionsBlock"]
+[node name="BtnSocial" type="Button" parent="Row1/SocialOptionsBlock"]
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "SOCIAL"
+
+[node name="BtnOptions" type="Button" parent="Row1/SocialOptionsBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "OPTIONS"
 
 [node name="Row2" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 45)
 
 [node name="XPProgressButton" type="Button" parent="Row2"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "NIVEL 1 - 0 / 100 XP"

@@ -5,7 +5,8 @@ signal open_requested(alias: String)
 @onready var btn_money: Button = $Row1/MoneyGemsBlock/BtnMoney
 @onready var btn_gems: Button = $Row1/MoneyGemsBlock/BtnGems
 @onready var btn_zone: Button = $Row1/ZoneBlock/BtnZone
-@onready var btn_options: Button = $Row1/OptionsBlock/BtnOptions
+@onready var btn_social: Button = $Row1/SocialOptionsBlock/BtnSocial
+@onready var btn_options: Button = $Row1/SocialOptionsBlock/BtnOptions
 @onready var xp_progress_button: Button = $Row2/XPProgressButton
 
 func _ready() -> void:
@@ -15,18 +16,20 @@ func _ready() -> void:
 	# Añadir iconos PNG a los botones
 	_setup_button_icons()
 
-	# Tooltips temporalmente deshabilitados para evitar elementos invisibles
-	# btn_money.tooltip_text = tr("Dinero disponible - Click para ir al Mercado")
-	# btn_gems.tooltip_text = tr("Gemas premium - Click para la Tienda")
-	# btn_zone.tooltip_text = tr("Zona de pesca actual - Click para cambiar zona")
-	# btn_options.tooltip_text = tr("Configuración del juego")
-	# xp_progress_button.tooltip_text = tr("Progreso de experiencia - Click para habilidades")
+	# Habilitar tooltips útiles y necesarios
+	btn_money.tooltip_text = tr("Dinero disponible - Click para ir al Mercado")
+	btn_gems.tooltip_text = tr("Gemas premium - Click para la Tienda")
+	btn_zone.tooltip_text = tr("Zona de pesca actual - Click para cambiar zona")
+	btn_options.tooltip_text = tr("Configuración del juego")
+	btn_social.tooltip_text = tr("Redes sociales - Síguenos y comparte")
+	xp_progress_button.tooltip_text = tr("Progreso de experiencia - Click para habilidades")
 
 	# Botones → solicitud de apertura (WindowManager decide ventana real)
 	btn_money.pressed.connect(func(): emit_signal("open_requested", "money"))
 	btn_gems.pressed.connect(func(): emit_signal("open_requested", "diamonds"))
 	btn_zone.pressed.connect(func(): emit_signal("open_requested", "zone"))
 	btn_options.pressed.connect(func(): emit_signal("open_requested", "options"))
+	btn_social.pressed.connect(func(): emit_signal("open_requested", "social"))
 	xp_progress_button.pressed.connect(func(): emit_signal("open_requested", "xp")) # Conectar con autoloads para datos en tiempo real
 	if Save:
 		Save.coins_changed.connect(set_money)
@@ -91,6 +94,20 @@ func _setup_button_icons() -> void:
 	else:
 		btn_options.text = "OPTIONS"
 		btn_options.icon = null
+
+	# Botón social con icono social
+	var social_texture = load("res://art/ui/assets/social.png")
+	if social_texture:
+		var social_image = social_texture.get_image()
+		social_image.resize(icon_size, icon_size)
+		var social_icon = ImageTexture.new()
+		social_icon.set_image(social_image)
+		btn_social.icon = social_icon
+		btn_social.expand_icon = false
+		btn_social.text = "" # Sin texto, solo icono
+	else:
+		btn_social.text = "SOCIAL"
+		btn_social.icon = null
 
 	# Icono para XP (estrella)
 	var xp_texture = load("res://art/ui/assets/star.png")
