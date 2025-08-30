@@ -1,0 +1,117 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0sdm1kgtvdwf"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_dwlcx"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_qh3sx"]
+
+[node name="UpgradesPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_dwlcx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mejoras"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "✕"
+
+[node name="CategoryTabs" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RodButton" type="Button" parent="VBoxContainer/CategoryTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+text = "Caña"
+
+[node name="HookButton" type="Button" parent="VBoxContainer/CategoryTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Anzuelo"
+
+[node name="LineButton" type="Button" parent="VBoxContainer/CategoryTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Sedal"
+
+[node name="BoatButton" type="Button" parent="VBoxContainer/CategoryTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Barco"
+
+[node name="PlayerStats" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("2_qh3sx")
+
+[node name="StatsContainer" type="HBoxContainer" parent="VBoxContainer/PlayerStats"]
+layout_mode = 2
+
+[node name="ResourcesInfo" type="VBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MoneyContainer" type="HBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo"]
+layout_mode = 2
+
+[node name="MoneyIcon" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/MoneyContainer"]
+layout_mode = 2
+text = "💰"
+
+[node name="MoneyLabel" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/MoneyContainer"]
+layout_mode = 2
+text = "1,000"
+
+[node name="GemsContainer" type="HBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo"]
+layout_mode = 2
+
+[node name="GemsIcon" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/GemsContainer"]
+layout_mode = 2
+text = "💎"
+
+[node name="GemsLabel" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/GemsContainer"]
+layout_mode = 2
+text = "50"
+
+[node name="CurrentStats" type="VBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PowerLabel" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/CurrentStats"]
+layout_mode = 2
+text = "Poder de Pesca: 125"
+
+[node name="LuckLabel" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/CurrentStats"]
+layout_mode = 2
+text = "Suerte: 85%"
+
+[node name="UpgradesScroll" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="UpgradesGrid" type="VBoxContainer" parent="VBoxContainer/UpgradesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

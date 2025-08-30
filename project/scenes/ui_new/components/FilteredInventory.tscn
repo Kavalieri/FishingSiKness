@@ -1,0 +1,157 @@
+[gd_scene load_steps=3 format=3 uid="uid://dqyxmvk1wj4hy"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_s7hwp"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_2y8dk"]
+
+[node name="FilteredInventory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_s7hwp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Inventario"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "✕"
+
+[node name="FiltersContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchContainer" type="HBoxContainer" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchIcon" type="Label" parent="VBoxContainer/FiltersContainer/SearchContainer"]
+layout_mode = 2
+text = "🔍"
+
+[node name="SearchLine" type="LineEdit" parent="VBoxContainer/FiltersContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar..."
+
+[node name="FilterButtons" type="HBoxContainer" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="AllButton" type="Button" parent="VBoxContainer/FiltersContainer/FilterButtons"]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "Todo"
+
+[node name="FishButton" type="Button" parent="VBoxContainer/FiltersContainer/FilterButtons"]
+layout_mode = 2
+toggle_mode = true
+text = "Peces"
+
+[node name="EquipmentButton" type="Button" parent="VBoxContainer/FiltersContainer/FilterButtons"]
+layout_mode = 2
+toggle_mode = true
+text = "Equipo"
+
+[node name="ItemsButton" type="Button" parent="VBoxContainer/FiltersContainer/FilterButtons"]
+layout_mode = 2
+toggle_mode = true
+text = "Objetos"
+
+[node name="SortContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SortLabel" type="Label" parent="VBoxContainer/SortContainer"]
+layout_mode = 2
+text = "Ordenar:"
+
+[node name="SortOption" type="OptionButton" parent="VBoxContainer/SortContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+
+[node name="@GlobalScope@2147483647" type="PopupMenu" parent="VBoxContainer/SortContainer/SortOption"]
+item_0/text = "Nombre"
+item_1/text = "Rareza"
+item_2/text = "Valor"
+item_3/text = "Cantidad"
+
+[node name="Spacer" type="Control" parent="VBoxContainer/SortContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemCount" type="Label" parent="VBoxContainer/SortContainer"]
+layout_mode = 2
+text = "0/100 objetos"
+
+[node name="InventoryScroll" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InventoryGrid" type="GridContainer" parent="VBoxContainer/InventoryScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+
+[node name="Footer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectedInfo" type="PanelContainer" parent="VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("2_2y8dk")
+
+[node name="SelectedContainer" type="HBoxContainer" parent="VBoxContainer/Footer/SelectedInfo"]
+layout_mode = 2
+
+[node name="SelectedIcon" type="TextureRect" parent="VBoxContainer/Footer/SelectedInfo/SelectedContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+expand_mode = 3
+
+[node name="SelectedDetails" type="VBoxContainer" parent="VBoxContainer/Footer/SelectedInfo/SelectedContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectedName" type="Label" parent="VBoxContainer/Footer/SelectedInfo/SelectedContainer/SelectedDetails"]
+layout_mode = 2
+text = "Ningún objeto seleccionado"
+
+[node name="SelectedDescription" type="Label" parent="VBoxContainer/Footer/SelectedInfo/SelectedContainer/SelectedDetails"]
+layout_mode = 2
+text = "Selecciona un objeto para ver detalles"
+autowrap_mode = 3
+
+[node name="ActionButtons" type="VBoxContainer" parent="VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="UseButton" type="Button" parent="VBoxContainer/Footer/ActionButtons"]
+layout_mode = 2
+disabled = true
+text = "Usar"
+
+[node name="SellButton" type="Button" parent="VBoxContainer/Footer/ActionButtons"]
+layout_mode = 2
+disabled = true
+text = "Vender"

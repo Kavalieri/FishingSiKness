@@ -1,0 +1,98 @@
+[gd_scene load_steps=4 format=3 uid="uid://bjr8c3x7xgvna"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_0l8vn"]
+[ext_resource type="Texture2D" path="res://art/env/splash.png" id="2_splash_bg"]
+[ext_resource type="Texture2D" path="res://art/logo/fishingsikness-logo.png" id="3_logo"]
+
+[node name="SplashScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_0l8vn")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("2_splash_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.3)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Logo" type="TextureRect" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("3_logo")
+expand_mode = 3
+
+[node name="GameTitle" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Fishing SiKness"
+horizontal_alignment = 1
+
+[node name="LoadingContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LoadingBar" type="ProgressBar" parent="CenterContainer/VBoxContainer/LoadingContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+
+[node name="LoadingLabel" type="Label" parent="CenterContainer/VBoxContainer/LoadingContainer"]
+layout_mode = 2
+text = "Cargando..."
+horizontal_alignment = 1
+
+[node name="TipContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TipLabel" type="Label" parent="CenterContainer/VBoxContainer/TipContainer"]
+layout_mode = 2
+text = "Consejo:"
+horizontal_alignment = 1
+
+[node name="TipText" type="Label" parent="CenterContainer/VBoxContainer/TipContainer"]
+layout_mode = 2
+text = "Los peces más raros aparecen en zonas más profundas"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="VersionLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -30.0
+text = "v0.1.0"
+horizontal_alignment = 2
+
+[node name="TapToContinue" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+offset_right = 400.0
+text = "Toca para continuar"
+horizontal_alignment = 1

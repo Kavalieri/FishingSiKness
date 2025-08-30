@@ -1,0 +1,164 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5c8tq9pqayuk"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_m7xbv"]
+
+[node name="OptionsWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_m7xbv")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="OptionsPanel" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/OptionsPanel"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Opciones"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="CenterContainer/OptionsPanel/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "✕"
+
+[node name="Content" type="ScrollContainer" parent="CenterContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="OptionsVBox" type="VBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AudioGroup" type="VBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox"]
+layout_mode = 2
+
+[node name="AudioLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup"]
+layout_mode = 2
+text = "Audio"
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup"]
+layout_mode = 2
+
+[node name="MasterVolumeLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/MasterVolumeContainer"]
+layout_mode = 2
+text = "Volumen General:"
+size_flags_horizontal = 3
+
+[node name="MasterVolumeSlider" type="HSlider" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/MasterVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="MasterVolumeValue" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/MasterVolumeContainer"]
+layout_mode = 2
+text = "80%"
+
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup"]
+layout_mode = 2
+
+[node name="SFXVolumeLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/SFXVolumeContainer"]
+layout_mode = 2
+text = "Efectos de Sonido:"
+size_flags_horizontal = 3
+
+[node name="SFXVolumeSlider" type="HSlider" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="SFXVolumeValue" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/SFXVolumeContainer"]
+layout_mode = 2
+text = "80%"
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup"]
+layout_mode = 2
+
+[node name="MusicVolumeLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/MusicVolumeContainer"]
+layout_mode = 2
+text = "Música:"
+size_flags_horizontal = 3
+
+[node name="MusicVolumeSlider" type="HSlider" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="MusicVolumeValue" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/AudioGroup/MusicVolumeContainer"]
+layout_mode = 2
+text = "80%"
+
+[node name="GameplayGroup" type="VBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox"]
+layout_mode = 2
+
+[node name="GameplayLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup"]
+layout_mode = 2
+text = "Gameplay"
+
+[node name="VibrationContainer" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup"]
+layout_mode = 2
+
+[node name="VibrationLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup/VibrationContainer"]
+layout_mode = 2
+text = "Vibración:"
+size_flags_horizontal = 3
+
+[node name="VibrationCheckBox" type="CheckBox" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup/VibrationContainer"]
+layout_mode = 2
+button_pressed = true
+
+[node name="AutoSaveContainer" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup"]
+layout_mode = 2
+
+[node name="AutoSaveLabel" type="Label" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup/AutoSaveContainer"]
+layout_mode = 2
+text = "Guardado Automático:"
+size_flags_horizontal = 3
+
+[node name="AutoSaveCheckBox" type="CheckBox" parent="CenterContainer/OptionsPanel/VBoxContainer/Content/OptionsVBox/GameplayGroup/AutoSaveContainer"]
+layout_mode = 2
+button_pressed = true
+
+[node name="Footer" type="HBoxContainer" parent="CenterContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ResetButton" type="Button" parent="CenterContainer/OptionsPanel/VBoxContainer/Footer"]
+layout_mode = 2
+text = "Resetear"
+
+[node name="Spacer" type="Control" parent="CenterContainer/OptionsPanel/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaveButton" type="Button" parent="CenterContainer/OptionsPanel/VBoxContainer/Footer"]
+layout_mode = 2
+text = "Guardar"

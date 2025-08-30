@@ -1,0 +1,60 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5x8f9g2h3k4l"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_theme"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_qte_style"]
+
+[node name="QTEContainer" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+theme = ExtResource("1_theme")
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+ratio = 1.0
+stretch_mode = 3
+
+[node name="QTEPanel" type="PanelContainer" parent="AspectRatioContainer"]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("2_qte_style")
+
+[node name="MarginContainer" type="MarginContainer" parent="AspectRatioContainer/QTEPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer/QTEPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="QTEIcon" type="TextureRect" parent="AspectRatioContainer/QTEPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="QTEText" type="Label" parent="AspectRatioContainer/QTEPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "¡Presiona!"
+horizontal_alignment = 1
+
+[node name="QTEProgress" type="ProgressBar" parent="AspectRatioContainer/QTEPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+max_value = 1.0
+step = 0.01
+show_percentage = false

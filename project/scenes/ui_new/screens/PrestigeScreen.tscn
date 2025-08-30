@@ -1,0 +1,134 @@
+[gd_scene load_steps=3 format=3 uid="uid://dxnyqwwv6pnoc"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_7vdsq"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_fdt8a"]
+
+[node name="PrestigeScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_7vdsq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+text = "🌟 PRESTIGIO 🌟"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+text = "Reinicia tu progreso para obtener bonificaciones permanentes"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CurrentStatus" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("2_fdt8a")
+
+[node name="StatusContainer" type="HBoxContainer" parent="VBoxContainer/CurrentStatus"]
+layout_mode = 2
+
+[node name="PrestigeLevel" type="VBoxContainer" parent="VBoxContainer/CurrentStatus/StatusContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PrestigeLevelLabel" type="Label" parent="VBoxContainer/CurrentStatus/StatusContainer/PrestigeLevel"]
+layout_mode = 2
+text = "Nivel de Prestigio"
+horizontal_alignment = 1
+
+[node name="PrestigeLevelValue" type="Label" parent="VBoxContainer/CurrentStatus/StatusContainer/PrestigeLevel"]
+layout_mode = 2
+text = "⭐ 0"
+horizontal_alignment = 1
+
+[node name="PrestigePoints" type="VBoxContainer" parent="VBoxContainer/CurrentStatus/StatusContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PrestigePointsLabel" type="Label" parent="VBoxContainer/CurrentStatus/StatusContainer/PrestigePoints"]
+layout_mode = 2
+text = "Puntos de Prestigio"
+horizontal_alignment = 1
+
+[node name="PrestigePointsValue" type="Label" parent="VBoxContainer/CurrentStatus/StatusContainer/PrestigePoints"]
+layout_mode = 2
+text = "✨ 0"
+horizontal_alignment = 1
+
+[node name="NextReset" type="VBoxContainer" parent="VBoxContainer/CurrentStatus/StatusContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NextResetLabel" type="Label" parent="VBoxContainer/CurrentStatus/StatusContainer/NextReset"]
+layout_mode = 2
+text = "Próximo Reset"
+horizontal_alignment = 1
+
+[node name="NextResetValue" type="Label" parent="VBoxContainer/CurrentStatus/StatusContainer/NextReset"]
+layout_mode = 2
+text = "+5 ✨"
+horizontal_alignment = 1
+
+[node name="BonusesSection" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BonusesTitle" type="Label" parent="VBoxContainer/BonusesSection"]
+layout_mode = 2
+text = "Bonificaciones Disponibles"
+horizontal_alignment = 1
+
+[node name="BonusesScroll" type="ScrollContainer" parent="VBoxContainer/BonusesSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BonusesGrid" type="VBoxContainer" parent="VBoxContainer/BonusesSection/BonusesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PrestigeActions" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WarningContainer" type="VBoxContainer" parent="VBoxContainer/PrestigeActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WarningText" type="Label" parent="VBoxContainer/PrestigeActions/WarningContainer"]
+layout_mode = 2
+text = "⚠️ ADVERTENCIA ⚠️"
+horizontal_alignment = 1
+
+[node name="WarningDetails" type="Label" parent="VBoxContainer/PrestigeActions/WarningContainer"]
+layout_mode = 2
+text = "El prestigio reiniciará tu dinero, equipo y progreso de zonas, pero mantienes las mejoras de prestigio"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="VBoxContainer/PrestigeActions"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="PrestigeButton" type="Button" parent="VBoxContainer/PrestigeActions/ButtonsContainer"]
+layout_mode = 2
+disabled = true
+text = "🌟 PRESTIGIAR 🌟"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/PrestigeActions/ButtonsContainer"]
+layout_mode = 2
+text = "Cancelar"

@@ -1,0 +1,90 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5bnch8t8hqjo"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_7sn54"]
+
+[node name="FishingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_7sn54")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="FishingArea" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="FishContainer" type="Control" parent="VBoxContainer/FishingArea"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+
+[node name="FishIcon" type="TextureRect" parent="VBoxContainer/FishingArea/FishContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CastButton" type="Button" parent="VBoxContainer/FishingArea"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -75.0
+offset_top = -60.0
+offset_right = 75.0
+offset_bottom = -10.0
+text = "Lanzar Caña"
+
+[node name="BottomPanel" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftActions" type="VBoxContainer" parent="VBoxContainer/BottomPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AutoCastButton" type="Button" parent="VBoxContainer/BottomPanel/LeftActions"]
+layout_mode = 2
+text = "Auto Pesca: OFF"
+
+[node name="StatsButton" type="Button" parent="VBoxContainer/BottomPanel/LeftActions"]
+layout_mode = 2
+text = "Estadísticas"
+
+[node name="RightActions" type="VBoxContainer" parent="VBoxContainer/BottomPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BoostersButton" type="Button" parent="VBoxContainer/BottomPanel/RightActions"]
+layout_mode = 2
+text = "Potenciadores"
+
+[node name="InventoryButton" type="Button" parent="VBoxContainer/BottomPanel/RightActions"]
+layout_mode = 2
+text = "Inventario"

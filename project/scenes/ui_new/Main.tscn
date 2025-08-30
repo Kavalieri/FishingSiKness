@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3 uid="uid://bw8y3x9z1a2b3"]
+
+[ext_resource type="Script" path="res://src/ui_new/Main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://scenes/ui_new/TopBar.tscn" id="2_topbar"]
+[ext_resource type="PackedScene" uid="uid://k3l4m5n6o7p8q" path="res://scenes/ui_new/CentralHost.tscn" id="3_centralhost"]
+[ext_resource type="PackedScene" uid="uid://d7e8f9g0h1i2j" path="res://scenes/ui_new/BottomBar.tscn" id="4_bottombar"]
+[ext_resource type="Texture2D" path="res://art/env/beach.png" id="5_background"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_main")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("5_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" parent="VBoxContainer" instance=ExtResource("2_topbar")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 11.0
+custom_minimum_size = Vector2(0, 64)
+
+[node name="CentralHost" parent="VBoxContainer" instance=ExtResource("3_centralhost")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 77.0
+
+[node name="BottomBar" parent="VBoxContainer" instance=ExtResource("4_bottombar")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 12.0
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)

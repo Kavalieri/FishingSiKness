@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxFlat" load_steps=1 format=3 uid="uid://card_style"]
+
+[resource]
+bg_color = Color(0.9, 0.9, 0.9, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)

@@ -1,0 +1,120 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1d2e3f4g5h6i"]
+
+[ext_resource type="Script" path="res://src/ui_new/TopBar.gd" id="1_topbar"]
+
+[node name="TopBar" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_topbar")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopRow" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LeftThird" type="Control" parent="VBoxContainer/TopRow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow/HBoxContainer/LeftThird"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MoneyCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "$ 0"
+
+[node name="GemsCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "0"
+
+[node name="CenterThird" type="Button" parent="VBoxContainer/TopRow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "ZONA"
+
+[node name="RightThird" type="Control" parent="VBoxContainer/TopRow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow/HBoxContainer/RightThird"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="SocialCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/RightThird/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "SOCIAL"
+
+[node name="PauseCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/RightThird/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "PAUSA"
+
+[node name="BottomRow" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/BottomRow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="XPProgress" type="ProgressBar" parent="VBoxContainer/BottomRow/MarginContainer"]
+layout_mode = 2
+max_value = 100.0
+value = 45.0
+
+[node name="LevelLabel" type="Label" parent="VBoxContainer/BottomRow/MarginContainer/XPProgress"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 8.0
+offset_top = -11.5
+offset_right = 48.0
+offset_bottom = 11.5
+text = "LVL 1"
+
+[node name="ValueLabel" type="Label" parent="VBoxContainer/BottomRow/MarginContainer/XPProgress"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -11.5
+offset_right = -8.0
+offset_bottom = 11.5
+text = "45 / 100"
+horizontal_alignment = 2

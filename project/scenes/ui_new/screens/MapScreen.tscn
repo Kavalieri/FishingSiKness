@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3 uid="uid://1sdbw5y4w3sb"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_m8n5v"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_d8tlm"]
+
+[node name="MapScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_m8n5v")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MapContainer" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ZonesScroll" type="ScrollContainer" parent="VBoxContainer/MapContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ZonesGrid" type="GridContainer" parent="VBoxContainer/MapContainer/ZonesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="CurrentZoneInfo" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("2_d8tlm")
+
+[node name="ZoneInfoContainer" type="HBoxContainer" parent="VBoxContainer/CurrentZoneInfo"]
+layout_mode = 2
+
+[node name="ZoneIcon" type="TextureRect" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+expand_mode = 3
+
+[node name="ZoneDetails" type="VBoxContainer" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ZoneName" type="Label" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneDetails"]
+layout_mode = 2
+text = "Zona Actual: Lagos Tranquilos"
+
+[node name="ZoneDescription" type="Label" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneDetails"]
+layout_mode = 2
+text = "Un lugar perfecto para principiantes"
+autowrap_mode = 3
+
+[node name="ZoneStats" type="HBoxContainer" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneDetails"]
+layout_mode = 2
+
+[node name="DifficultyLabel" type="Label" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneDetails/ZoneStats"]
+layout_mode = 2
+text = "Dificultad: ⭐"
+
+[node name="Spacer" type="Control" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneDetails/ZoneStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FishCountLabel" type="Label" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneDetails/ZoneStats"]
+layout_mode = 2
+text = "5 especies"
+
+[node name="ActionButtons" type="VBoxContainer" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="FishingButton" type="Button" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ActionButtons"]
+layout_mode = 2
+text = "Ir a Pescar"
+
+[node name="PreviewButton" type="Button" parent="VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ActionButtons"]
+layout_mode = 2
+text = "Vista Previa"

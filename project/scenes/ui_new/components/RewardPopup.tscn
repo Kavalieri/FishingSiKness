@@ -1,0 +1,79 @@
+[gd_scene load_steps=2 format=3 uid="uid://cd1fq4m6o8c4w"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_j5nlq"]
+
+[node name="RewardPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_j5nlq")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="RewardPanel" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/RewardPanel"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/RewardPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="CenterContainer/RewardPanel/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "¡Recompensa!"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="CenterContainer/RewardPanel/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "✕"
+
+[node name="Content" type="VBoxContainer" parent="CenterContainer/RewardPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RewardIcon" type="TextureRect" parent="CenterContainer/RewardPanel/VBoxContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+expand_mode = 3
+
+[node name="RewardText" type="Label" parent="CenterContainer/RewardPanel/VBoxContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "¡Has recibido una recompensa!"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="RewardAmount" type="Label" parent="CenterContainer/RewardPanel/VBoxContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "x1"
+horizontal_alignment = 1
+
+[node name="Footer" type="HBoxContainer" parent="CenterContainer/RewardPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CollectButton" type="Button" parent="CenterContainer/RewardPanel/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Recoger"

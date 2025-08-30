@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://popup_window_component"]
+
+[ext_resource type="StyleBox" uid="uid://card_style" path="res://themes/card.tres" id="1_window_style"]
+[ext_resource type="Script" path="res://src/ui_new/components/PopupWindow.gd" id="2_popup_script"]
+
+[node name="PopupWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("2_popup_script")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="WindowPanel" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 300)
+theme_override_styles/panel = ExtResource("1_window_style")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/WindowPanel"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/WindowPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/WindowPanel/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Título"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/WindowPanel/VBoxContainer/Header"]
+layout_mode = 2
+text = "✕"
+
+[node name="Content" type="Control" parent="CenterContainer/WindowPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Footer" type="HBoxContainer" parent="CenterContainer/WindowPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="AcceptButton" type="Button" parent="CenterContainer/WindowPanel/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Aceptar"
+
+[node name="CancelButton" type="Button" parent="CenterContainer/WindowPanel/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancelar"

@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://card_component"]
+
+[ext_resource type="StyleBox" uid="uid://card_style" path="res://themes/card.tres" id="1_card_style"]
+[ext_resource type="Script" path="res://src/ui_new/components/Card.gd" id="2_card_script"]
+
+[node name="Card" type="PanelContainer"]
+custom_minimum_size = Vector2(120, 150)
+theme_override_styles/panel = ExtResource("1_card_style")
+script = ExtResource("2_card_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Título"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Descripción"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ActionButton" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Acción"

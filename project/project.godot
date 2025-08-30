@@ -15,6 +15,7 @@ run/main_scene="res://scenes/core/MainWithSplash.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="FishingSiKness"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/image="uid://jgare7iuoc1w"
 config/icon="res://icon.svg"
 boot_splash/minimum_display_time=2
 
@@ -38,9 +39,10 @@ WindowManager="*res://src/autoload/WindowManager.gd"
 window/size/viewport_width=720
 window/size/viewport_height=1280
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep"
 window/stretch/scale_mode="viewport"
 window/handheld/orientation=1
+window/handheld/use_safe_area=true
 
 [internationalization]
 
