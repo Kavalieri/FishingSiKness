@@ -77,3 +77,41 @@ func get_zone_by_id(zone_id: String):
 
 	print("[Content] ERROR Zona NO encontrada: %s" % zone_id)
 	return null
+
+# Métodos adicionales para compatibilidad con UI
+func get_zone_data(zone_id: String):
+	"""Alias para get_zone_by_id para compatibilidad"""
+	return get_zone_by_id(zone_id)
+
+func get_default_zone():
+	"""Obtener zona por defecto (la primera disponible)"""
+	var zones = all_zones()
+	if zones.size() > 0:
+		return zones[0]
+	return null
+
+func get_all_zones():
+	"""Alias para all_zones() para compatibilidad"""
+	return all_zones()
+
+func get_all_upgrades():
+	"""Obtener todas las mejoras disponibles"""
+	return upgrade_defs()
+
+func get_upgrade_data(upgrade_id: String):
+	"""Obtener datos de una mejora específica"""
+	var upgrades = upgrade_defs()
+	for upgrade in upgrades:
+		if upgrade.get("id") == upgrade_id:
+			return upgrade
+	return null
+
+func get_prestige_bonuses():
+	"""Obtener bonos de prestigio disponibles"""
+	# TODO: Implementar sistema de bonos de prestigio
+	return []
+
+func get_next_prestige_requirement(current_level: int):
+	"""Obtener puntos necesarios para el siguiente nivel de prestigio"""
+	# TODO: Implementar cálculo de requisitos de prestigio
+	return (current_level + 1) * 1000

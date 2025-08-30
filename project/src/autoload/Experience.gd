@@ -118,3 +118,10 @@ func load_experience():
 func save_experience():
 	"""Guardar experiencia en el sistema de guardado"""
 	Save.set_experience(current_xp, current_level)
+
+func get_experience_for_level(level: int) -> int:
+	"""Calcular experiencia requerida para un nivel específico"""
+	if level <= 1:
+		return 0
+	# Progresión exponencial: level^1.5 * 100
+	return int(pow(level - 1, 1.5) * 100)

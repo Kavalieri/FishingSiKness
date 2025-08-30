@@ -1,12 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://d7e8f9g0h1i2j"]
+[gd_scene load_steps=7 format=3 uid="uid://d7e8f9g0h1i2j"]
 
 [ext_resource type="Script" path="res://src/ui_new/BottomBar.gd" id="1_bottombar"]
+[ext_resource type="Texture2D" path="res://art/ui/tabs/tab_fishing.png" id="2_fishing"]
+[ext_resource type="Texture2D" path="res://art/ui/tabs/tab_zones.png" id="3_zones"]
+[ext_resource type="Texture2D" path="res://art/ui/tabs/tab_market.png" id="4_market"]
+[ext_resource type="Texture2D" path="res://art/ui/tabs/tab_upgrades.png" id="5_upgrades"]
+[ext_resource type="Texture2D" path="res://art/ui/tabs/tab_prestige.png" id="6_prestige"]
 
 [node name="BottomBar" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_bottombar")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
@@ -14,54 +21,77 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/separation = 10
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
 
 [node name="FishingBtn" type="AspectRatioContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 ratio = 1.0
+custom_minimum_size = Vector2(48, 48)
 
 [node name="TextureButton" type="TextureButton" parent="HBoxContainer/FishingBtn"]
 layout_mode = 2
 expand_mode = 1
+texture_normal = ExtResource("2_fishing")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="MapBtn" type="AspectRatioContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 ratio = 1.0
+custom_minimum_size = Vector2(48, 48)
 
 [node name="TextureButton" type="TextureButton" parent="HBoxContainer/MapBtn"]
 layout_mode = 2
 expand_mode = 1
+texture_normal = ExtResource("3_zones")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="MarketBtn" type="AspectRatioContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 ratio = 1.0
+custom_minimum_size = Vector2(48, 48)
 
 [node name="TextureButton" type="TextureButton" parent="HBoxContainer/MarketBtn"]
 layout_mode = 2
 expand_mode = 1
+texture_normal = ExtResource("4_market")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="UpgradesBtn" type="AspectRatioContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 ratio = 1.0
+custom_minimum_size = Vector2(48, 48)
 
 [node name="TextureButton" type="TextureButton" parent="HBoxContainer/UpgradesBtn"]
 layout_mode = 2
 expand_mode = 1
+texture_normal = ExtResource("5_upgrades")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="PrestigeBtn" type="AspectRatioContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 ratio = 1.0
+custom_minimum_size = Vector2(48, 48)
 
 [node name="TextureButton" type="TextureButton" parent="HBoxContainer/PrestigeBtn"]
 layout_mode = 2
 expand_mode = 1
+texture_normal = ExtResource("6_prestige")
+ignore_texture_size = true
+stretch_mode = 5

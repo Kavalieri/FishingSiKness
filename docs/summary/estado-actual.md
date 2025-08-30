@@ -38,8 +38,13 @@
 
 ### Migración de Lógica de Vistas
 - [x] **Guía de migración**: Documentada en migracion-logica.md
-- [ ] **FishingView**: Migrar de ui/ a ui_new/ (PRÓXIMO)
-- [ ] **MapView**: Migrar navegación entre zonas
+- [x] **FishingView → FishingScreen**: ✅ COMPLETADO
+  - [x] Integrado QTEContainer para eventos de pesca
+  - [x] Conectado señales qte_success, qte_failed, qte_timeout
+  - [x] Migrado sistema básico de rareza de peces
+  - [x] Compatible con fondo único global
+  - [x] Lógica de pesca funcional con QTE
+- [ ] **MapView**: Migrar navegación entre zonas (PRÓXIMO)
 - [ ] **MarketView**: Migrar sistema compra/venta
 - [ ] **UpgradesView**: Migrar mejoras de equipo
 - [ ] **PrestigeView**: Migrar sistema prestigio
@@ -97,8 +102,8 @@
 ### Criterios de Éxito Sprint
 
 - [x] **Arquitectura base**: Sistema UI completamente funcional
-- [ ] **Vista principal**: FishingView migrada y funcional
-- [ ] **QTE integrado**: Eventos de pesca usando QTEContainer
+- [x] **Vista principal**: FishingScreen migrada y funcional ✅
+- [x] **QTE integrado**: Eventos de pesca usando QTEContainer ✅
 - [ ] **Backgrounds**: Sistema zona-dependiente funcional
 - [ ] **Performance**: 60fps estables en mobile
 - [ ] **No regresiones**: Toda funcionalidad existente preservada
@@ -133,13 +138,11 @@ project/src/ui_new/                    ← Nueva arquitectura
 ├── components/
 │   └── QTEContainer.gd              ✅ QTE completo
 └── views/                           ⏸️ Pendiente migración
-    ├── FishingView.gd               ❌ TODO
-    ├── MapView.gd                   ❌ TODO
+    ├── FishingScreen.gd               ✅ MIGRADO + QTE
+    ├── MapView.gd                   ❌ TODO (PRÓXIMO)
     ├── MarketView.gd                ❌ TODO
     ├── UpgradesView.gd              ❌ TODO
-    └── PrestigeView.gd              ❌ TODO
-
-project/scenes/ui_new/                 ← Escenas actualizadas
+    └── PrestigeView.gd              ❌ TODOproject/scenes/ui_new/                 ← Escenas actualizadas
 ├── Main.tscn                        ✅ Fondo único global
 ├── SplashScreen.tscn                ✅ Assets específicos
 ├── TopBar.tscn                      ✅ Config estática
@@ -185,6 +188,6 @@ res://art/ui/logos/   ← Logos (fishingsikness-logo.png)
 
 ---
 
-**Estado**: ✅ Base arquitectura completa → ⏸️ Migrando lógica de vistas → ❌ Pendiente testing final
+**Estado**: ✅ Base arquitectura completa → ✅ FishingScreen migrada → ⏸️ Continuando con MapView
 
-**Próxima acción**: Migrar FishingView como vista crítica principal del juego.
+**Próxima acción**: Migrar MapView para navegación entre zonas con background dinámico.

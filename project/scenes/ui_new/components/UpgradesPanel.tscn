@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c0sdm1kgtvdwf"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_dwlcx"]
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_dwlcx"]
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_qh3sx"]
 
 [node name="UpgradesPanel" type="Control"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cd1fq4m6o8c4w"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_j5nlq"]
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_j5nlq"]
 
 [node name="RewardPopup" type="Control"]
 layout_mode = 3

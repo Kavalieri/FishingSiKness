@@ -20,9 +20,11 @@ signal button_pressed(button_type: String)
 @onready var value_label: Label = $VBoxContainer/BottomRow/MarginContainer/XPProgress/ValueLabel
 
 func _ready() -> void:
+	print("[TopBar] _ready() called")
 	_connect_buttons()
 	_sync_from_autoloads()
 	_set_dynamic_tooltips()
+	print("[TopBar] Initialization completed")
 
 func _set_dynamic_tooltips() -> void:
 	"""Configurar tooltips dinámicos con i18n"""
@@ -52,8 +54,8 @@ func _sync_from_autoloads() -> void:
 	if Save:
 		Save.coins_changed.connect(set_money)
 		Save.gems_changed.connect(set_gems)
-		set_money(Save.coins)
-		set_gems(Save.gems)
+		set_money(Save.get_coins())
+		set_gems(Save.get_gems())
 
 	if Experience:
 		Experience.level_up.connect(_on_level_up)
@@ -78,8 +80,8 @@ func _update_xp_display() -> void:
 	if not Experience:
 		return
 
-	var level = Experience.level
-	var current_xp = Experience.experience
+	var level = Experience.current_level
+	var current_xp = Experience.current_xp
 	var required_xp = Experience.get_experience_for_level(level + 1)
 	var level_start_xp = Experience.get_experience_for_level(level)
 

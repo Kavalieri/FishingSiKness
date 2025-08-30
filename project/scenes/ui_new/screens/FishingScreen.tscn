@@ -1,13 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5bnch8t8hqjo"]
+[gd_scene load_steps=3 format=3 uid="uid://b5bnch8t8hqjo"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_7sn54"]
+[ext_resource type="PackedScene" uid="uid://qte123" path="res://scenes/ui_new/components/QTEContainer.tscn" id="2_qte"]
+[ext_resource type="Script" path="res://src/ui_new/screens/FishingScreen.gd" id="3_script"]
 
 [node name="FishingScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource("1_7sn54")
+script = ExtResource("3_script")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -88,3 +89,5 @@ text = "Potenciadores"
 [node name="InventoryButton" type="Button" parent="VBoxContainer/BottomPanel/RightActions"]
 layout_mode = 2
 text = "Inventario"
+
+[node name="QTEContainer" parent="." instance=ExtResource("2_qte")]

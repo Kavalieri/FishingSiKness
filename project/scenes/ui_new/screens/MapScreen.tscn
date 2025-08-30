@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://1sdbw5y4w3sb"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_m8n5v"]
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_m8n5v"]
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_d8tlm"]
 
 [node name="MapScreen" type="Control"]

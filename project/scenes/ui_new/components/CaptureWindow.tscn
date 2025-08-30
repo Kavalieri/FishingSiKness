@@ -1,0 +1,92 @@
+[gd_scene load_steps=4 format=3 uid="uid://capture_window"]
+
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_theme"]
+[ext_resource type="Script" path="res://src/ui/components/CaptureWindow.gd" id="2_script"]
+
+[node name="CaptureWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CapturePanel" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_minimum_size = Vector2(300, 400)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/CapturePanel"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/CapturePanel/VBoxContainer"]
+layout_mode = 2
+text = "¡Pez Capturado!"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="FishInfo" type="VBoxContainer" parent="CenterContainer/CapturePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FishName" type="Label" parent="CenterContainer/CapturePanel/VBoxContainer/FishInfo"]
+layout_mode = 2
+text = "Nombre del Pez"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="FishSprite" type="TextureRect" parent="CenterContainer/CapturePanel/VBoxContainer/FishInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 4
+stretch_mode = 5
+
+[node name="FishStats" type="VBoxContainer" parent="CenterContainer/CapturePanel/VBoxContainer/FishInfo"]
+layout_mode = 2
+
+[node name="WeightLabel" type="Label" parent="CenterContainer/CapturePanel/VBoxContainer/FishInfo/FishStats"]
+layout_mode = 2
+text = "Peso: 0.0 kg"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="CenterContainer/CapturePanel/VBoxContainer/FishInfo/FishStats"]
+layout_mode = 2
+text = "Valor: 0 monedas"
+horizontal_alignment = 1
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="CenterContainer/CapturePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="KeepButton" type="Button" parent="CenterContainer/CapturePanel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mantener"
+
+[node name="SellButton" type="Button" parent="CenterContainer/CapturePanel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Vender"
+
+[node name="ReleaseButton" type="Button" parent="CenterContainer/CapturePanel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Liberar"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/CapturePanel/VBoxContainer"]
+layout_mode = 2
+text = "Cerrar"

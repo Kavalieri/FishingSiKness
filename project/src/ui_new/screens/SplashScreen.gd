@@ -3,7 +3,7 @@ extends Control
 
 # Pantalla de splash según especificación
 
-signal splash_complete
+signal splash_finished
 
 var loading_progress: float = 0.0
 var is_loading: bool = true
@@ -87,7 +87,12 @@ func _animate_tap_indicator() -> void:
 	tween.tween_property(tap_to_continue, "modulate:a", 1.0, 1.0)
 
 func _complete_splash() -> void:
-	"""Completar splash screen"""
+	"""Completar splash screen y cambiar a main"""
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, 0.5)
-	tween.tween_callback(func(): splash_complete.emit())
+	tween.tween_callback(_change_to_main_scene)
+
+func _change_to_main_scene() -> void:
+	"""Cambiar a la escena principal"""
+	splash_finished.emit()
+	get_tree().change_scene_to_file("res://scenes/ui_new/Main.tscn")

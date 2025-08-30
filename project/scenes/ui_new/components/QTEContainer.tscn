@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5x8f9g2h3k4l"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_theme"]
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_qte_style"]
+[ext_resource type="Script" path="res://src/ui_new/components/QTEContainer.gd" id="3_script"]
 
 [node name="QTEContainer" type="Control"]
 layout_mode = 3
@@ -14,7 +14,7 @@ offset_left = -100.0
 offset_top = -100.0
 offset_right = 100.0
 offset_bottom = 100.0
-theme = ExtResource("1_theme")
+script = ExtResource("3_script")
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 1

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cjv7t0r01hq1m"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app.theme" id="1_nhlxw"]
+[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_nhlxw"]
 [ext_resource type="StyleBox" uid="uid://tgq47pj8xsqj" path="res://themes/tooltip.tres" id="2_48hdh"]
 
 [node name="Tooltip" type="Control"]

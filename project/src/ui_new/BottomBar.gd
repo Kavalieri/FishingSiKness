@@ -6,18 +6,20 @@ extends Control
 
 signal tab_selected(tab_name: String)
 
-@onready var btn_fishing: Button = $HBoxContainer/FishingBtn/TextureButton
-@onready var btn_map: Button = $HBoxContainer/MapBtn/TextureButton
-@onready var btn_market: Button = $HBoxContainer/MarketBtn/TextureButton
-@onready var btn_upgrades: Button = $HBoxContainer/UpgradesBtn/TextureButton
-@onready var btn_prestige: Button = $HBoxContainer/PrestigeBtn/TextureButton
+@onready var btn_fishing: TextureButton = $HBoxContainer/FishingBtn/TextureButton
+@onready var btn_map: TextureButton = $HBoxContainer/MapBtn/TextureButton
+@onready var btn_market: TextureButton = $HBoxContainer/MarketBtn/TextureButton
+@onready var btn_upgrades: TextureButton = $HBoxContainer/UpgradesBtn/TextureButton
+@onready var btn_prestige: TextureButton = $HBoxContainer/PrestigeBtn/TextureButton
 
 var current_tab := "fishing"
 
 func _ready() -> void:
+	print("[BottomBar] _ready() called")
 	_connect_buttons()
 	_set_dynamic_tooltips()
 	_set_initial_tab()
+	print("[BottomBar] Initialization completed")
 
 func _set_dynamic_tooltips() -> void:
 	"""Configurar tooltips dinámicos con i18n"""
@@ -26,8 +28,6 @@ func _set_dynamic_tooltips() -> void:
 	btn_market.tooltip_text = tr("ui.tab.market")
 	btn_upgrades.tooltip_text = tr("ui.tab.upgrades")
 	btn_prestige.tooltip_text = tr("ui.tab.prestige")
-		button.expand_icon = false
-		button.text = "" # Solo icono según especificación
 
 func _connect_buttons() -> void:
 	"""Conectar señales de botones"""
@@ -44,6 +44,7 @@ func _select_tab(tab_name: String) -> void:
 
 	current_tab = tab_name
 	_update_visual_state()
+	print("[BottomBar] Emitiendo señal tab_selected: ", tab_name)
 	tab_selected.emit(tab_name)
 
 func _set_initial_tab() -> void:
@@ -64,7 +65,7 @@ func _update_visual_state() -> void:
 		var is_active = btn_data.tab == current_tab
 		_set_button_active_state(btn_data.button, is_active)
 
-func _set_button_active_state(button: Button, is_active: bool) -> void:
+func _set_button_active_state(button: TextureButton, is_active: bool) -> void:
 	"""Establecer estado visual activo/inactivo del botón"""
 	# TODO: Aplicar theme/estilo para estado activo
 	# Por ahora usamos modulate como placeholder
