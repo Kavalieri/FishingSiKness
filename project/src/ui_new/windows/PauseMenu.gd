@@ -72,7 +72,7 @@ func _setup_tooltips() -> void:
 	resume_button.tooltip_text = "Continuar el juego (ESC)"
 	options_button.tooltip_text = "Configurar audio, gráficos y controles"
 	save_button.tooltip_text = "Guardar progreso o cargar partida"
-	exit_button.tooltip_text = "Volver al menú principal"
+	exit_button.tooltip_text = "Guardar y salir al escritorio"
 
 func _animate_show() -> void:
 	"""Animar entrada del menú"""
@@ -127,8 +127,8 @@ func _on_save_pressed() -> void:
 	save_requested.emit()
 
 func _on_exit_pressed() -> void:
-	"""Salir al menú principal"""
-	print("[PauseMenu] Salir al menú principal")
+	"""Guardar y salir al escritorio"""
+	print("[PauseMenu] Guardar y salir al escritorio")
 	_confirm_exit()
 
 func _on_overlay_input(event: InputEvent) -> void:
@@ -139,16 +139,22 @@ func _on_overlay_input(event: InputEvent) -> void:
 			menu_closed.emit()
 
 func _confirm_exit() -> void:
-	"""Confirmar salida al menú principal"""
+	"""Confirmar salida al escritorio"""
 	# TODO: Mostrar diálogo de confirmación
 	# Por ahora simplemente salir
-	print("[PauseMenu] Confirmando salida...")
+	print("[PauseMenu] Confirmando salida al escritorio...")
 
-	if Save:
-		Save.save_game() # Guardar automáticamente
+	# Auto-guardar en el slot actual antes de salir del juego
+	if Save and Save.has_valid_game_data():
+		print("💾 Auto-guardando partida en slot %d antes de salir..." % Save.current_save_slot)
+		Save.save_to_slot(Save.current_save_slot)
+		Save.save_last_used_slot()
+		print("✅ Partida guardada automáticamente en slot %d" % Save.current_save_slot)
+	else:
+		print("⚠️ No hay datos válidos para guardar")
 
-	# Cambiar a escena del menú principal
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	# Salir al escritorio
+	get_tree().quit()
 
 # Input handling
 func _unhandled_input(event: InputEvent) -> void:

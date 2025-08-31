@@ -147,6 +147,10 @@ func _animate_show() -> void:
 	var scale_tween = create_tween()
 	scale_tween.tween_property(panel_container, "scale", Vector2(1.0, 1.0), 0.25)
 
+func close_animated() -> void:
+	"""Cerrar ventana con animación (API pública)"""
+	_animate_close()
+
 func _animate_close() -> void:
 	"""Animar cierre de la ventana"""
 	var fade_tween = create_tween()

@@ -87,17 +87,11 @@ func _load_save_slots() -> void:
 		_update_slot_ui(i, slot_data)
 
 func _get_slot_data(slot_id: int) -> Dictionary:
-	"""Obtener datos del slot de guardado"""
-	var slot_file = "user://savegame/slot_%d.save" % slot_id
-
-	if FileAccess.file_exists(slot_file):
-		var file = FileAccess.open(slot_file, FileAccess.READ)
-		if file:
-			var json_string = file.get_as_text()
-			file.close()
-
-			var json = JSON.new()
-			var parse_result = json.parse(json_string)
+	"""Obtener datos del slot de guardado usando Save.gd"""
+	if Save:
+		return Save.get_save_slot_info(slot_id)
+	else:
+		return {"exists": false, "empty": true}
 
 			if parse_result == OK:
 				var data = json.data
@@ -236,6 +230,10 @@ func _animate_show() -> void:
 	var scale_tween = create_tween()
 	scale_tween.tween_property(panel_container, "scale", Vector2(1.0, 1.0), 0.3)
 
+func close_animated() -> void:
+	"""Cerrar ventana con animación (API pública)"""
+	_animate_close()
+
 func _animate_close() -> void:
 	"""Animar cierre de la ventana"""
 	var fade_tween = create_tween()
@@ -254,14 +252,11 @@ func _on_load_pressed(slot_id: int) -> void:
 	"""Cargar partida del slot especificado"""
 	print("[SaveWindow] Cargando partida del slot %d..." % slot_id)
 
-	if Save and Save.has_method("load_game_from_slot"):
-		if Save.load_game_from_slot(slot_id):
-			print("[SaveWindow] ✓ Partida cargada exitosamente")
-			game_loaded.emit(slot_id)
-			_animate_close()
-		else:
-			print("[SaveWindow] ❌ Error al cargar partida")
-			_show_error_message("Error al cargar la partida")
+	if Save:
+		Save.load_from_slot(slot_id)
+		print("[SaveWindow] ✓ Partida cargada exitosamente")
+		game_loaded.emit(slot_id)
+		_animate_close()
 	else:
 		print("[SaveWindow] ❌ Sistema de guardado no disponible")
 
@@ -284,16 +279,13 @@ func _confirm_overwrite(slot_id: int) -> void:
 
 func _perform_save(slot_id: int) -> void:
 	"""Realizar el guardado en el slot especificado"""
-	if Save and Save.has_method("save_game_to_slot"):
-		if Save.save_game_to_slot(slot_id):
-			print("[SaveWindow] ✓ Partida guardada en slot %d" % slot_id)
-			game_saved.emit(slot_id)
+	if Save:
+		Save.save_to_slot(slot_id)
+		print("[SaveWindow] ✓ Partida guardada en slot %d" % slot_id)
+		game_saved.emit(slot_id)
 
-			# Recargar información de slots
-			_load_save_slots()
-		else:
-			print("[SaveWindow] ❌ Error al guardar partida")
-			_show_error_message("Error al guardar la partida")
+		# Recargar información de slots
+		_load_save_slots()
 	else:
 		print("[SaveWindow] ❌ Sistema de guardado no disponible")
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://oc7mqky7u5ku"
-path="res://.godot/imported/ChatGPT Image 26 ago 2025, 14_35_36.png-0dcda1c3182995f5e9d9ff6875a1d44c.ctex"
+uid="uid://0mt8em0i4cs8"
+path="res://.godot/imported/puestasol.png-ff6d91faff97d045026a52378ce03eec.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/env/ChatGPT Image 26 ago 2025, 14_35_36.png"
-dest_files=["res://.godot/imported/ChatGPT Image 26 ago 2025, 14_35_36.png-0dcda1c3182995f5e9d9ff6875a1d44c.ctex"]
+source_file="res://art/env/puestasol.png"
+dest_files=["res://.godot/imported/puestasol.png-ff6d91faff97d045026a52378ce03eec.ctex"]
 
 [params]
 

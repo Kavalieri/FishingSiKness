@@ -6,6 +6,11 @@
 - El GDD oficial está en `docs/GDD/GDD_0.1.0.md` y define reglas, flujos y contratos entre sistemas.
 - Fondos visuales por zona se asignan en los recursos `.tres` de cada zona.
 
+## UI - Interfaz - Botones - convenciones
+- [background](E:\GitHub\Fishing-SiKness\.github\instructions\background-instructions.md)
+- [UI-Interfaz-Botones-Temas-plantillas](E:\GitHub\Fishing-SiKness\.github\instructions\UIMain-instructions.md)
+- [UI-Interfaz-Botones-Temas-plantillas](E:\GitHub\Fishing-SiKness\.github\instructions\UIassets-instructions.md)
+
 ## Developer Workflows & Git Conventions
 - **Automated Releases**: Usamos release-please con conventional commits para releases automáticas.
 - **Commit Guidelines para Alpha**:

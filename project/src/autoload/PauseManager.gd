@@ -12,6 +12,10 @@ signal pause_menu_closed()
 var is_pause_menu_open: bool = false
 var current_pause_window: Control = null
 
+# Control de ventanas secundarias para toggle behavior
+var current_options_window: Control = null
+var current_save_window: Control = null
+
 # Referencias para obtener el nodo Main actual
 var main_node: Control = null
 
@@ -111,6 +115,10 @@ func _close_pause_menu() -> void:
 
 	print("[PauseManager] Cerrando menú de pausa...")
 
+	# Cerrar ventanas secundarias primero
+	_close_options_window()
+	_close_save_window()
+
 	# Animar cierre si el menú lo soporta
 	if current_pause_window.has_method("close_animated"):
 		current_pause_window.close_animated()
@@ -150,30 +158,88 @@ func _on_pause_menu_closed() -> void:
 	_close_pause_menu()
 
 func _show_options_window() -> void:
-	"""Mostrar ventana de opciones"""
+	"""Mostrar/ocultar ventana de opciones con toggle behavior"""
 	if not main_node:
 		return
 
+	# Si ya existe una ventana de opciones, cerrarla (toggle)
+	if current_options_window != null and is_instance_valid(current_options_window):
+		print("[PauseManager] Toggle - cerrando ventana de opciones")
+		if current_options_window.has_method("close_animated"):
+			current_options_window.close_animated()
+		else:
+			current_options_window.queue_free()
+		current_options_window = null
+		return
+
+	# Cerrar ventana de guardado si está abierta (solo una ventana secundaria a la vez)
+	_close_save_window()
+
+	print("[PauseManager] Abriendo ventana de opciones")
 	var options_scene = load("res://scenes/ui_new/windows/OptionsWindow.tscn")
 	if options_scene:
 		var options_window = options_scene.instantiate()
 		main_node.add_child(options_window)
+		current_options_window = options_window
 
 		if options_window.has_signal("window_closed"):
-			options_window.window_closed.connect(func(): print("[PauseManager] Ventana opciones cerrada"))
+			options_window.window_closed.connect(_on_options_window_closed)
 
 func _show_save_window() -> void:
-	"""Mostrar ventana de guardado"""
+	"""Mostrar/ocultar ventana de guardado con toggle behavior"""
 	if not main_node:
 		return
 
+	# Si ya existe una ventana de guardado, cerrarla (toggle)
+	if current_save_window != null and is_instance_valid(current_save_window):
+		print("[PauseManager] Toggle - cerrando ventana de guardado")
+		if current_save_window.has_method("close_animated"):
+			current_save_window.close_animated()
+		else:
+			current_save_window.queue_free()
+		current_save_window = null
+		return
+
+	# Cerrar ventana de opciones si está abierta (solo una ventana secundaria a la vez)
+	_close_options_window()
+
+	print("[PauseManager] Abriendo ventana de guardado")
 	var save_scene = load("res://scenes/ui_new/windows/SaveWindow.tscn")
 	if save_scene:
 		var save_window = save_scene.instantiate()
 		main_node.add_child(save_window)
+		current_save_window = save_window
 
 		if save_window.has_signal("window_closed"):
-			save_window.window_closed.connect(func(): print("[PauseManager] Ventana guardado cerrada"))
+			save_window.window_closed.connect(_on_save_window_closed)
+
+func _close_options_window() -> void:
+	"""Cerrar ventana de opciones si está abierta"""
+	if current_options_window != null and is_instance_valid(current_options_window):
+		if current_options_window.has_method("close_animated"):
+			current_options_window.close_animated()
+		else:
+			current_options_window.queue_free()
+		current_options_window = null
+
+func _close_save_window() -> void:
+	"""Cerrar ventana de guardado si está abierta"""
+	if current_save_window != null and is_instance_valid(current_save_window):
+		if current_save_window.has_method("close_animated"):
+			current_save_window.close_animated()
+		else:
+			current_save_window.queue_free()
+		current_save_window = null
+
+func _on_options_window_closed() -> void:
+	"""Handler cuando la ventana de opciones se cierra"""
+	print("[PauseManager] Ventana opciones cerrada")
+	current_options_window = null
+
+func _on_save_window_closed() -> void:
+	"""Handler cuando la ventana de guardado se cierra"""
+	print("[PauseManager] Ventana guardado cerrada")
+	current_save_window = null
 
 # API pública para integración con TopBar/SplashScreen
 func is_menu_open() -> bool:
