@@ -4,6 +4,7 @@ extends PanelContainer
 # Componente tarjeta reutilizable según especificación
 
 signal action_pressed(card_data: Dictionary)
+signal info_pressed(card_data: Dictionary)
 
 var card_data: Dictionary = {}
 
@@ -12,12 +13,16 @@ var card_data: Dictionary = {}
 @onready var description_label: Label = $MarginContainer/HBoxContainer/ZoneInfo/Description
 @onready var difficulty_label: Label = $MarginContainer/HBoxContainer/ZoneInfo/Stats/DifficultyLabel
 @onready var fish_count_label: Label = $MarginContainer/HBoxContainer/ZoneInfo/Stats/FishCountLabel
-@onready var action_button: Button = $MarginContainer/HBoxContainer/ActionButton
+@onready var action_button: Button = $MarginContainer/HBoxContainer/ButtonsContainer/ActionButton
+@onready var info_button: Button = $MarginContainer/HBoxContainer/ButtonsContainer/InfoButton
 
 func _ready() -> void:
-	# Conectar señal del botón si no está conectada ya
+	# Conectar señales de los botones si no están conectadas ya
 	if action_button and not action_button.pressed.is_connected(_on_action_pressed):
 		action_button.pressed.connect(_on_action_pressed)
+
+	if info_button and not info_button.pressed.is_connected(_on_info_pressed):
+		info_button.pressed.connect(_on_info_pressed)
 
 func setup_card(data: Dictionary) -> void:
 	"""Configurar tarjeta con datos"""
@@ -42,7 +47,9 @@ func _setup_card_deferred(data: Dictionary) -> void:
 	if not fish_count_label:
 		fish_count_label = $MarginContainer/HBoxContainer/ZoneInfo/Stats/FishCountLabel
 	if not action_button:
-		action_button = $MarginContainer/HBoxContainer/ActionButton
+		action_button = $MarginContainer/HBoxContainer/ButtonsContainer/ActionButton
+	if not info_button:
+		info_button = $MarginContainer/HBoxContainer/ButtonsContainer/InfoButton
 	if not icon:
 		icon = $MarginContainer/HBoxContainer/Icon
 
@@ -72,3 +79,6 @@ func _setup_card_deferred(data: Dictionary) -> void:
 
 func _on_action_pressed() -> void:
 	action_pressed.emit(card_data)
+
+func _on_info_pressed() -> void:
+	info_pressed.emit(card_data)

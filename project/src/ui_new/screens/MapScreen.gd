@@ -272,7 +272,8 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 	card.setup_card(card_data)
 
 	# Configurar estado visual
-	var action_button = card.get_node("MarginContainer/HBoxContainer/ActionButton")
+	var action_button = card.get_node("MarginContainer/HBoxContainer/ButtonsContainer/ActionButton")
+	var info_button = card.get_node("MarginContainer/HBoxContainer/ButtonsContainer/InfoButton")
 	if is_current:
 		action_button.disabled = true
 		card.modulate = Color(1.2, 1.2, 1.0, 1.0) # Resaltado dorado
@@ -292,6 +293,9 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 	elif not is_unlocked and Save and Save.get_coins() >= unlock_cost:
 		card.action_pressed.connect(_on_zone_unlock_pressed_wrapper.bind(zone_data))
 
+	# Conectar siempre el botón de información
+	card.info_pressed.connect(_on_zone_info_pressed_wrapper.bind(zone_data))
+
 	return card
 
 func _format_number(number: int) -> String:
@@ -304,97 +308,56 @@ func _format_number(number: int) -> String:
 		return str(number)
 
 func _add_zone_indicators(card: Control, zone_data: Dictionary) -> void:
-	"""Añadir indicadores visuales profesionales a la tarjeta"""
-	var difficulty = zone_data.get("difficulty", 1)
-	var fish_species = zone_data.get("fish_species", [])
-	var fish_count = fish_species.size()
+	"""Añadir indicadores visuales profesionales a la tarjeta (solo información adicional)"""
 	var multiplier = zone_data.get("price_multiplier", 1.0)
+	var fish_species = zone_data.get("fish_species", [])
 
-	# Crear contenedor para indicadores
+	# Solo añadir indicadores si hay información extra relevante
+	if multiplier <= 1.0 and fish_species.size() == 0:
+		return # No hay información adicional que mostrar
+
+	# Crear contenedor para indicadores adicionales
 	var indicators_container = VBoxContainer.new()
 	indicators_container.add_theme_constant_override("separation", 4)
 
-	# Primera fila: Dificultad y especies
-	var first_row = HBoxContainer.new()
+	var info_row = HBoxContainer.new()
 
-	# Indicador de dificultad
-	var difficulty_indicator = Label.new()
-	var stars = ""
-	for i in range(difficulty):
-		stars += "⭐"
-	difficulty_indicator.text = "Dificultad: %s" % stars
-	difficulty_indicator.add_theme_font_size_override("font_size", 12)
-	first_row.add_child(difficulty_indicator)
+	# Solo multiplicador si es mayor a 1.0
+	if multiplier > 1.0:
+		var multiplier_indicator = Label.new()
+		multiplier_indicator.text = "💰 x%.1f precio" % multiplier
+		multiplier_indicator.add_theme_font_size_override("font_size", 11)
+		multiplier_indicator.add_theme_color_override("font_color", Color.YELLOW)
+		info_row.add_child(multiplier_indicator)
 
-	# Espaciador
-	var spacer1 = Control.new()
-	spacer1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	first_row.add_child(spacer1)
+	# Solo añadir la fila si tiene contenido
+	if info_row.get_child_count() > 0:
+		indicators_container.add_child(info_row)
+		card.add_child(indicators_container)
 
-	# Indicador de especies
-	var species_indicator = Label.new()
-	species_indicator.text = "🐟 %d especies" % fish_count
-	species_indicator.add_theme_font_size_override("font_size", 12)
-	first_row.add_child(species_indicator)
+func _on_zone_info_pressed_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
+	"""Wrapper para manejar información de zona - ignora card_data y usa zone_data"""
+	_on_zone_info_pressed(zone_data)
 
-	indicators_container.add_child(first_row)
+func _on_zone_info_pressed(zone_data: Dictionary) -> void:
+	"""Mostrar información detallada de la zona"""
+	print("[MapScreen] Mostrando información detallada de zona: %s" % zone_data.get("name", "?"))
 
-	# Segunda fila: Multiplicador y rareza (si hay datos)
-	if multiplier > 1.0 or fish_species.size() > 0:
-		var second_row = HBoxContainer.new()
+	# TODO: Implementar modal de información detallada
+	# Por ahora solo mostramos un print de debug
+	var zone_id = zone_data.get("id", "")
+	var fish_list = Content.get_fish_for_zone(zone_id)
 
-		# Multiplicador
-		if multiplier > 1.0:
-			var multiplier_indicator = Label.new()
-			multiplier_indicator.text = "💰 x%.1f precio" % multiplier
-			multiplier_indicator.add_theme_font_size_override("font_size", 11)
-			multiplier_indicator.add_theme_color_override("font_color", Color.GOLD)
-			second_row.add_child(multiplier_indicator)
+	print("=== INFORMACIÓN DE ZONA ===")
+	print("Nombre: %s" % zone_data.get("name", ""))
+	print("Descripción: %s" % zone_data.get("description", ""))
+	print("Dificultad: %s/5" % zone_data.get("difficulty", 1))
+	print("Especies disponibles: %d" % fish_list.size())
 
-		# Espaciador
-		var spacer2 = Control.new()
-		spacer2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		second_row.add_child(spacer2)
-
-		# Mejor rareza disponible
-		if fish_species.size() > 0:
-			var max_rarity = 0
-			for fish in fish_species:
-				var rarity = fish.get("rarity", 0)
-				if rarity > max_rarity:
-					max_rarity = rarity
-
-			var rarity_indicator = Label.new()
-			var rarity_text = ""
-			var rarity_color = Color.WHITE
-
-			match max_rarity:
-				0:
-					rarity_text = "Común"
-					rarity_color = Color.WHITE
-				1:
-					rarity_text = "Poco común"
-					rarity_color = Color.GREEN
-				2:
-					rarity_text = "Raro"
-					rarity_color = Color.BLUE
-				3:
-					rarity_text = "Épico"
-					rarity_color = Color.PURPLE
-				4:
-					rarity_text = "Legendario"
-					rarity_color = Color.GOLD
-
-			rarity_indicator.text = "✨ Hasta %s" % rarity_text
-			rarity_indicator.add_theme_font_size_override("font_size", 11)
-			rarity_indicator.add_theme_color_override("font_color", rarity_color)
-			second_row.add_child(rarity_indicator)
-
-		indicators_container.add_child(second_row)
-
-	# Añadir al final de la tarjeta
-	var description_container = card.get_node("MarginContainer/VBoxContainer")
-	description_container.add_child(indicators_container)
+	for fish in fish_list:
+		if fish:
+			print("  - %s (rareza: %s)" % [fish.name, fish.rarity])
+	print("========================")
 
 func _on_zone_card_selected_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
 	"""Wrapper para manejar selección de zona - ignora card_data y usa zone_data"""

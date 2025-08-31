@@ -1,0 +1,13 @@
+[gd_resource type="FishDef" load_steps=2 format=3 uid="uid://fish_calamar_colosal"]
+
+[ext_resource type="Texture2D" uid="uid://bjq2ajjjbgbmy" path="res://art/fish/calamar.png" id="1_calamar_icon"]
+
+[resource]
+id = "calamar_colosal"
+name = "Calamar Colosal"
+rarity = 4
+base_market_value = 18200
+size_min = 200.0
+size_max = 500.0
+sprite = ExtResource("1_calamar_icon")
+description = "El mayor invertebrado del mundo. Habita las profundidades antárticas y es extremadamente raro de avistar."

@@ -1,0 +1,16 @@
+[gd_resource type="ZoneDef" load_steps=3 format=3 uid="uid://zone_oceanos_profundos_csv"]
+
+[ext_resource type="Resource" uid="uid://fish_calamar_colosal" path="res://data/fish/fish_calamar_colosal_csv.tres" id="1_calamar_colosal"]
+
+[sub_resource type="Resource" id="LootEntry_1"]
+script = ExtResource("1_calamar_colosal")
+fish = ExtResource("1_calamar_colosal")
+weight = 10
+
+[resource]
+id = "oceanos_profundos_csv"
+name = "Océanos Profundos - Antártida"
+price_multiplier = 5.0
+background = "res://art/env/space.png"
+entries = Array[Resource]([SubResource("LootEntry_1")])
+description = "Las profundidades más remotas y frías del planeta. Hogar del calamar colosal y otras criaturas abisales extraordinariamente raras."

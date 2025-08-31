@@ -1,0 +1,13 @@
+[gd_resource type="FishDef" load_steps=2 format=3 uid="uid://fish_arapaima_gigas"]
+
+[ext_resource type="Texture2D" uid="uid://bjq2ajjjbgbmy" path="res://art/fish/salmon.png" id="1_arapaima_icon"]
+
+[resource]
+id = "arapaima_gigas"
+name = "Arapaima (Pirarucú)"
+rarity = 4
+base_market_value = 5605
+size_min = 30.0
+size_max = 200.0
+sprite = ExtResource("1_arapaima_icon")
+description = "Gigante de las aguas amazónicas. Requiere permisos especiales, salta poderosamente y necesita respirar aire superficial."

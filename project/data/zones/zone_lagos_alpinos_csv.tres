@@ -1,0 +1,22 @@
+[gd_resource type="ZoneDef" load_steps=4 format=3 uid="uid://zone_lagos_alpinos"]
+
+[ext_resource type="Resource" uid="uid://fish_grayling_europeo" path="res://data/fish/fish_grayling_europeo.tres" id="1_grayling"]
+[ext_resource type="Resource" uid="uid://cf3nj1l56q03l" path="res://data/fish/fish_trucha_arcoiris.tres" id="2_trucha_arcoiris"]
+
+[sub_resource type="Resource" id="LootEntry_1"]
+script = ExtResource("1_grayling")
+fish = ExtResource("1_grayling")
+weight = 70
+
+[sub_resource type="Resource" id="LootEntry_2"]
+script = ExtResource("2_trucha_arcoiris")
+fish = ExtResource("2_trucha_arcoiris")
+weight = 30
+
+[resource]
+id = "lagos_alpinos"
+name = "Lagos de Montaña - Alpes"
+price_multiplier = 1.2
+background = "res://art/env/snow.png"
+entries = Array[Resource]([SubResource("LootEntry_1"), SubResource("LootEntry_2")])
+description = "Aguas cristalinas de alta montaña donde habitan especies adaptadas al frío. Trucha arcoíris y grayling europeo nadan en estos ríos y lagos prístinos."
