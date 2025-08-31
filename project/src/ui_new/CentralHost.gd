@@ -47,11 +47,13 @@ func _load_new_screen(scene_path: String, setup_data: Dictionary = {}) -> void:
 func _setup_screen_with_data(screen: Node, scene_path: String, _setup_data: Dictionary) -> void:
 	"""Configurar pantalla con datos apropiados según su tipo"""
 	var screen_name = scene_path.get_file().get_basename()
+	print("[CentralHost] DEBUG: Configurando screen_name: '%s'" % screen_name)
 
 	match screen_name:
 		"FishingScreen":
 			_setup_fishing_screen(screen)
 		"MapScreen":
+			print("[CentralHost] DEBUG: Llamando _setup_map_screen")
 			_setup_map_screen(screen)
 		"MarketScreen":
 			_setup_market_screen(screen)
@@ -76,29 +78,32 @@ func _setup_fishing_screen(screen: Control) -> void:
 		var zone_def = Content.get_zone_data(current_zone_id) \
 			if current_zone_id else Content.get_default_zone()
 
-		# Convertir ZoneDef a Dictionary para compatibilidad
-		var zone_data = {}
-		if zone_def:
-			zone_data = {
-				"id": zone_def.id,
-				"name": zone_def.name,
-				"price_multiplier": zone_def.price_multiplier,
-				"background_path": zone_def.background
-			}
-
 		var stats = {} # TODO: Obtener estadísticas de pesca
 
-		screen.setup_fishing_screen(zone_data, stats)
+		# Pasar ZoneDef directamente, sin conversión
+		screen.setup_fishing_screen(zone_def, stats)
 
 func _setup_map_screen(screen: Control) -> void:
 	"""Configurar pantalla de mapa con zonas disponibles"""
+	print("[CentralHost] DEBUG: Configurando MapScreen")
+	print("[CentralHost] DEBUG: Content disponible: %s" % (Content != null))
+	print("[CentralHost] DEBUG: Screen tiene setup_map: %s" % screen.has_method("setup_map"))
+
 	if Content and screen.has_method("setup_map"):
-		var zones = Content.get_all_zones()
+		var zone_defs = Content.get_all_zones()
+
 		var current_zone_id = ""
 		if Save and Save.game_data.has("current_zone"):
 			current_zone_id = Save.game_data.current_zone
 
-		screen.setup_map(zones, current_zone_id)
+		print("[CentralHost] Setup mapa con %d zonas ZoneDef" % zone_defs.size())
+		for zone_def in zone_defs:
+			print("[CentralHost] - Zona: %s (%s)" % [zone_def.id, zone_def.name])
+
+		# Pasar ZoneDef directamente, sin conversión
+		screen.setup_map(zone_defs, current_zone_id)
+	else:
+		print("[CentralHost] ERROR: No se puede configurar mapa - Content: %s, has_method: %s" % [Content != null, screen.has_method("setup_map")])
 
 func _setup_market_screen(screen: Control) -> void:
 	"""Configurar pantalla de mercado con inventario real del jugador"""

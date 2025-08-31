@@ -79,9 +79,18 @@ func _setup_capture_window() -> void:
 
 	# TODO: Integrar con FishingSystem cuando esté disponible como autoload
 
-func setup_fishing_screen(zone_data: Dictionary, stats: Dictionary) -> void:
+func setup_fishing_screen(zone_def, stats: Dictionary) -> void:
 	"""Configurar pantalla de pesca con zona y estadísticas"""
-	current_zone = zone_data
+	# Convertir ZoneDef a Dictionary interno para compatibilidad con código existente
+	current_zone = {}
+	if zone_def:
+		current_zone = {
+			"id": zone_def.id,
+			"name": zone_def.name,
+			"price_multiplier": zone_def.price_multiplier,
+			"background_path": zone_def.background
+		}
+
 	fishing_stats = stats
 
 	_update_zone_background()

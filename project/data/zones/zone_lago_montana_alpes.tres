@@ -1,9 +1,11 @@
-[gd_resource type="ZoneDef" format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
 
 [resource]
-
+script = ExtResource("1")
 id = "lago_montana_alpes"
 name = "Lagos de Montaña - Alpes"
 price_multiplier = 1.0
-entries = []  # Se llena desde la loot table existente
-background = "snow"
+entries = Array[Resource]([])
+background = "res://art/env/snow.png"

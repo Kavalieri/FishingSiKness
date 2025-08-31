@@ -12,6 +12,9 @@
 - [UI-Interfaz-Botones-Temas-plantillas](E:\GitHub\Fishing-SiKness\.github\instructions\UIMain-instructions.md)
 - [UI-Interfaz-Botones-Temas-plantillas](E:\GitHub\Fishing-SiKness\.github\instructions\UIassets-instructions.md)
 
+## Documentación completa
+- [wiki-FishingSiKness](https://deepwiki.com/Kavalieri/FishingSiKness/3.1-project-configuration-and-bootstrap)
+
 ## Developer Workflows & Git Conventions
 - **Automated Releases**: Usamos release-please con conventional commits para releases automáticas.
 - **Commit Guidelines para Alpha**:

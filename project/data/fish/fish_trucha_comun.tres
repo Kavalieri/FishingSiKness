@@ -1,15 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/trucha.png" id="2"]
 
 [resource]
-
+script = ExtResource("1")
 id = "trucha_comun"
 name = "Trucha Común"
 description = "La trucha europea clásica, astuta y de agua fría. Prefiere corrientes cristalinas."
-rarity = "poco_comun"
-min_weight = 0.6
-max_weight = 8.0
-base_value = 40
-xp_reward = 105
-sprite_path = "res://art/fish/trucha.png"
-habitat = "rio_arroyo_lago"
-region = "europa_occidental"
+species_category = "Poco Común"
+rarity = 1
+base_market_value = 40
+size_min = 15.0
+size_max = 35.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["lago"])
+difficulty = 2

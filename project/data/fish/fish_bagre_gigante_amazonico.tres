@@ -1,14 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/pezglobo.png" id="2"]
 
 [resource]
+script = ExtResource("1")
 id = "bagre_gigante_amazonico"
 name = "Bagre Gigante Amazónico"
 description = "El bagre más grande del mundo, puede alcanzar tamaños monumentales en las profundidades del río Amazonas."
-icon = "res://art/fish/pezglobo.png"
-rarity = 85
-min_weight = 45.0
-max_weight = 180.0
-base_value = 12000
-xp_reward = 450
-habitat = "Ríos profundos del Amazonas"
-scientific_name = "Brachyplatystoma filamentosum"
+species_category = "Épico"
+rarity = 3
+base_market_value = 1200
+size_min = 200.0
+size_max = 400.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rio"])
+difficulty = 5

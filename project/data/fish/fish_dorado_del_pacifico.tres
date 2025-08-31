@@ -1,14 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/sardina.png" id="2"]
 
 [resource]
+script = ExtResource("1")
 id = "dorado_del_pacifico"
 name = "Dorado del Pacífico"
 description = "Pez pelágico de aguas profundas con brillante coloración dorada y excelentes cualidades culinarias."
-icon = "res://art/fish/sardina.png"
-rarity = 65
-min_weight = 8.5
-max_weight = 25.0
-base_value = 4200
-xp_reward = 160
-habitat = "Océanos profundos del Pacífico"
-scientific_name = "Coryphaena hippurus"
+species_category = "Raro"
+rarity = 2
+base_market_value = 420
+size_min = 60.0
+size_max = 120.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["mar"])
+difficulty = 3

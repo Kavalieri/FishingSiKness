@@ -1,15 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/lubina.png" id="2"]
 
 [resource]
-
+script = ExtResource("1")
 id = "muskellunge"
 name = "Muskellunge (Muskie)"
 description = "El depredador más esquivo de los Grandes Lagos. Muchas horas por un solo ataque."
-rarity = "raro"
-min_weight = 5.0
-max_weight = 20.0
-base_value = 180
-xp_reward = 240
-sprite_path = "res://art/fish/lubina.png"
-habitat = "lago_rio"
-region = "grandes_lagos"
+species_category = "Raro"
+rarity = 2
+base_market_value = 180
+size_min = 80.0
+size_max = 150.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["lago"])
+difficulty = 4

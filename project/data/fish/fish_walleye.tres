@@ -1,15 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/lubina.png" id="2"]
 
 [resource]
-
+script = ExtResource("1")
 id = "walleye"
 name = "Walleye (Lucioperca Americana)"
 description = "Se activa con poca luz y aguas turbias. Excelente en lago profundo."
-rarity = "poco_comun"
-min_weight = 1.0
-max_weight = 5.0
-base_value = 25
-xp_reward = 105
-sprite_path = "res://art/fish/lubina.png"
-habitat = "lago_profundo_rio"
-region = "grandes_lagos"
+species_category = "Poco Común"
+rarity = 1
+base_market_value = 25
+size_min = 25.0
+size_max = 50.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["lago"])
+difficulty = 2

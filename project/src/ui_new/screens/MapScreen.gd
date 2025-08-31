@@ -4,8 +4,6 @@ extends Control
 # Pantalla del mapa con sistema completo de zonas bloqueadas
 
 signal zone_selected(zone_id: String)
-signal fishing_requested(zone_id: String)
-signal zone_preview_requested(zone_id: String)
 signal zone_unlock_requested(zone_id: String, cost: int)
 
 var available_zones: Array[Dictionary] = []
@@ -33,54 +31,62 @@ const ZONE_UNLOCK_COSTS = {
 	"infernal": 50000000
 }
 
-@onready var zones_grid: GridContainer = $VBoxContainer/MapContainer/ZonesScroll/ZonesGrid
-@onready var zone_icon: TextureRect = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer/ZoneIcon
-@onready var zone_name: Label = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer / \
-	ZoneDetails / ZoneName
-@onready var zone_description: Label = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer / \
-	ZoneDetails / ZoneDescription
-@onready var difficulty_label: Label = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer / \
-	ZoneDetails / ZoneStats / DifficultyLabel
-@onready var fish_count_label: Label = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer / \
-	ZoneDetails / ZoneStats / FishCountLabel
-@onready var fishing_button: Button = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer / \
-	ActionButtons / FishingButton
-@onready var preview_button: Button = $VBoxContainer/CurrentZoneInfo/ZoneInfoContainer / \
-	ActionButtons / PreviewButton
+@onready var zones_list: VBoxContainer = $VBoxContainer/MapContainer/ZonesScroll/ZonesList
 
 func _ready() -> void:
-	_connect_signals()
+	pass # Ya no necesitamos conectar señales del panel eliminado
 
-func _connect_signals() -> void:
-	fishing_button.pressed.connect(_on_fishing_button_pressed)
-	preview_button.pressed.connect(_on_preview_button_pressed)
-
-func setup_map(zones: Array[Dictionary], current_zone_id: String = "") -> void:
+func setup_map(zones: Array, current_zone_id: String = "") -> void:
 	"""Configurar mapa con zonas disponibles y estado de desbloqueo"""
+	print("[MapScreen] DEBUG: Recibiendo %d zonas" % zones.size())
 	available_zones = []
 
-	# Procesar zonas con información completa
-	for zone_data in zones:
-		var zone_id = zone_data.get("id", "")
-		var zone_info = _enrich_zone_data(zone_data, zone_id)
-		available_zones.append(zone_info)
+	# Procesar zonas ZoneDef directamente
+	for i in range(zones.size()):
+		var zone_def = zones[i]
+		print("[MapScreen] DEBUG: Procesando zona %d: %s" % [i, zone_def.id if zone_def else "NULL"])
+		if zone_def and zone_def.id:
+			var zone_info = _enrich_zone_data_from_def(zone_def)
+			print("[MapScreen] DEBUG: Zona procesada - ID: %s, Desbloqueada: %s" % [zone_info.get("id", "?"), zone_info.get("unlocked", false)])
+			available_zones.append(zone_info)
+
+	print("[MapScreen] DEBUG: Total zonas procesadas: %d" % available_zones.size())
+	print("[MapScreen] DEBUG: Current zone ID: '%s'" % current_zone_id)
 
 	# Encontrar zona actual
 	if current_zone_id != "":
 		for zone in available_zones:
 			if zone.get("id", "") == current_zone_id:
 				current_zone = zone
+				print("[MapScreen] DEBUG: Zona actual encontrada: %s" % zone.get("name", "?"))
 				break
 
 	if current_zone.is_empty() and available_zones.size() > 0:
+		print("[MapScreen] DEBUG: No hay zona actual, buscando primera desbloqueada...")
 		# Seleccionar primera zona desbloqueada
 		for zone in available_zones:
 			if zone.get("unlocked", false):
 				current_zone = zone
+				print("[MapScreen] DEBUG: Zona inicial seleccionada: %s (desbloqueada: %s)" % [zone.get("name", "?"), zone.get("unlocked", false)])
 				break
 
-	_refresh_zones_grid()
-	_update_current_zone_display()
+	_refresh_zones_list()
+
+func _enrich_zone_data_from_def(zone_def) -> Dictionary:
+	"""Enriquecer datos de zona directamente desde ZoneDef"""
+	var zone_id = zone_def.id
+	var enriched = {
+		"id": zone_def.id,
+		"name": zone_def.name,
+		"price_multiplier": zone_def.price_multiplier,
+		"background_path": zone_def.background,
+		"unlocked": _is_zone_unlocked(zone_id),
+		"unlock_cost": ZONE_UNLOCK_COSTS.get(zone_id, 0),
+		"fish_species": _get_zone_fish_list(zone_def),
+		"description": _generate_zone_description(zone_def)
+	}
+
+	return enriched
 
 func _enrich_zone_data(zone_data: Dictionary, zone_id: String) -> Dictionary:
 	"""Enriquecer datos de zona con información de desbloqueo y contenido"""
@@ -102,14 +108,19 @@ func _enrich_zone_data(zone_data: Dictionary, zone_id: String) -> Dictionary:
 
 func _is_zone_unlocked(zone_id: String) -> bool:
 	"""Verificar si una zona está desbloqueada"""
-	if zone_id == "orilla":
-		return true # Zona inicial siempre desbloqueada
+	# Zonas iniciales gratuitas
+	if zone_id == "orilla" or zone_id == "lago_montana_alpes":
+		print("[MapScreen] DEBUG: Zona inicial desbloqueada: %s" % zone_id)
+		return true
 
 	if not Save:
+		print("[MapScreen] DEBUG: No hay Save, zona bloqueada: %s" % zone_id)
 		return false
 
-	var unlocked_zones = Save.game_data.get("unlocked_zones", ["orilla"])
-	return unlocked_zones.has(zone_id)
+	var unlocked_zones = Save.game_data.get("unlocked_zones", ["orilla", "lago_montana_alpes"])
+	var is_unlocked = unlocked_zones.has(zone_id)
+	print("[MapScreen] DEBUG: Verificando zona %s - Desbloqueada: %s (Lista: %s)" % [zone_id, is_unlocked, str(unlocked_zones)])
+	return is_unlocked
 
 func _get_zone_fish_list(zone_def) -> Array:
 	"""Obtener lista de especies de una zona"""
@@ -162,20 +173,48 @@ func _analyze_zone_rarities(zone_def) -> Array:
 
 	return rarity_names
 
-func _refresh_zones_grid() -> void:
-	"""Actualizar grilla de zonas"""
+func _refresh_zones_list() -> void:
+	"""Actualizar lista de zonas ordenada por dificultad"""
+	print("[MapScreen] DEBUG: Refrescando lista con %d zonas" % available_zones.size())
+
 	# Limpiar zonas existentes
-	for child in zones_grid.get_children():
+	for child in zones_list.get_children():
 		child.queue_free()
 
-	# Crear tarjetas para cada zona
-	for zone in available_zones:
-		var zone_card = _create_zone_card(zone)
-		zones_grid.add_child(zone_card)
+	# Ordenar zonas por unlock_cost (dificultad)
+	var sorted_zones = available_zones.duplicate()
+	sorted_zones.sort_custom(_compare_zones_by_difficulty)
+
+	# Crear tarjetas para cada zona ordenada
+	for i in range(sorted_zones.size()):
+		var zone = sorted_zones[i]
+		print("[MapScreen] DEBUG: Creando tarjeta %d para zona: %s (costo: %s)" % [i, zone.get("name", "?"), zone.get("unlock_cost", 0)])
+		_create_zone_card(zone)
+
+	print("[MapScreen] DEBUG: Lista actualizada con %d tarjetas" % zones_list.get_child_count())
+
+func _compare_zones_by_difficulty(a: Dictionary, b: Dictionary) -> bool:
+	"""Comparar zonas por dificultad (unlock_cost). Zonas desbloqueadas primero, luego por costo"""
+	var cost_a = a.get("unlock_cost", 0)
+	var cost_b = b.get("unlock_cost", 0)
+	var unlocked_a = a.get("unlocked", false)
+	var unlocked_b = b.get("unlocked", false)
+
+	# Zonas desbloqueadas van primero
+	if unlocked_a and not unlocked_b:
+		return true
+	if unlocked_b and not unlocked_a:
+		return false
+
+	# Si ambas tienen el mismo estado de desbloqueo, ordenar por costo
+	return cost_a < cost_b
 
 func _create_zone_card(zone_data: Dictionary) -> Control:
 	"""Crear tarjeta de zona con información completa de desbloqueo"""
 	var card = ZONE_CARD_SCENE.instantiate()
+
+	# Añadir al árbol primero para que los nodos @onready funcionen
+	zones_list.add_child(card)
 
 	# Información básica
 	var name = zone_data.get("name", "")
@@ -204,11 +243,36 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 	if multiplier > 1.0:
 		rich_description += "\n💎 Bonificación: x%.1f valor" % multiplier
 
+	# Preparar información de dificultad
+	var difficulty_text = ""
+	if unlock_cost == 0:
+		difficulty_text = "⭐ Muy Fácil"
+	elif unlock_cost <= 1000:
+		difficulty_text = "⭐⭐ Fácil"
+	elif unlock_cost <= 5000:
+		difficulty_text = "⭐⭐⭐ Medio"
+	elif unlock_cost <= 15000:
+		difficulty_text = "⭐⭐⭐⭐ Difícil"
+	else:
+		difficulty_text = "⭐⭐⭐⭐⭐ Muy Difícil"
+
+	# Contar especies de peces disponibles en la zona
+	var fish_count = Content.get_fish_for_zone(zone_data.get("id", "")).size()
+	var fish_text = "%d especies" % fish_count
+
 	# Configurar tarjeta
-	card.setup_card(name, rich_description, icon, action_text)
+	var card_data = {
+		"title": name,
+		"description": rich_description,
+		"icon_path": icon,
+		"action_text": action_text,
+		"difficulty": difficulty_text,
+		"fish_count": fish_text
+	}
+	card.setup_card(card_data)
 
 	# Configurar estado visual
-	var action_button = card.get_node("MarginContainer/VBoxContainer/ActionButton")
+	var action_button = card.get_node("MarginContainer/HBoxContainer/ActionButton")
 	if is_current:
 		action_button.disabled = true
 		card.modulate = Color(1.2, 1.2, 1.0, 1.0) # Resaltado dorado
@@ -224,9 +288,9 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 
 	# Conectar señales según estado
 	if is_unlocked and not is_current:
-		card.action_pressed.connect(_on_zone_card_selected.bind(zone_data))
+		card.action_pressed.connect(_on_zone_card_selected_wrapper.bind(zone_data))
 	elif not is_unlocked and Save and Save.get_coins() >= unlock_cost:
-		card.action_pressed.connect(_on_zone_unlock_pressed.bind(zone_data))
+		card.action_pressed.connect(_on_zone_unlock_pressed_wrapper.bind(zone_data))
 
 	return card
 
@@ -332,75 +396,18 @@ func _add_zone_indicators(card: Control, zone_data: Dictionary) -> void:
 	var description_container = card.get_node("MarginContainer/VBoxContainer")
 	description_container.add_child(indicators_container)
 
-func _update_current_zone_display() -> void:
-	"""Actualizar información de zona actual con datos profesionales"""
-	if current_zone.is_empty():
-		zone_name.text = "Ninguna zona seleccionada"
-		zone_description.text = "Selecciona una zona del mapa para pescar"
-		difficulty_label.text = "Dificultad: -"
-		fish_count_label.text = "- especies"
-		fishing_button.disabled = true
-		preview_button.disabled = true
-		return
+func _on_zone_card_selected_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
+	"""Wrapper para manejar selección de zona - ignora card_data y usa zone_data"""
+	_on_zone_card_selected(zone_data)
 
-	# Información básica
-	var name = current_zone.get("name", "Zona Desconocida")
-	var multiplier = current_zone.get("price_multiplier", 1.0)
-
-	zone_name.text = "Zona Actual: %s" % name
-	if multiplier > 1.0:
-		zone_name.text += " (x%.1f bonus)" % multiplier
-
-	zone_description.text = current_zone.get("description", "")
-	zone_icon.texture = current_zone.get("icon", null)
-
-	# Actualizar dificultad con colores
-	var difficulty = current_zone.get("difficulty", 1)
-	var stars = ""
-	for i in range(difficulty):
-		stars += "⭐"
-	difficulty_label.text = "Dificultad: %s" % stars
-
-	# Color según dificultad
-	match difficulty:
-		1: difficulty_label.add_theme_color_override("font_color", Color.GREEN)
-		2: difficulty_label.add_theme_color_override("font_color", Color.YELLOW)
-		3: difficulty_label.add_theme_color_override("font_color", Color.ORANGE)
-		4: difficulty_label.add_theme_color_override("font_color", Color.RED)
-		_: difficulty_label.add_theme_color_override("font_color", Color.PURPLE)
-
-	# Actualizar conteo de especies con información detallada
-	var fish_species = current_zone.get("fish_species", [])
-	var fish_count = fish_species.size()
-	fish_count_label.text = "%d especies disponibles" % fish_count
-
-	# Agregar información de rarezas disponibles
-	if fish_species.size() > 0:
-		var rarities = {}
-		for fish in fish_species:
-			var rarity = fish.get("rarity", 0)
-			rarities[rarity] = true
-
-		var rarity_count = rarities.size()
-		fish_count_label.text += " (%d tipos de rareza)" % rarity_count
-
-	# Habilitar botones solo si la zona está desbloqueada
-	var is_unlocked = current_zone.get("unlocked", false)
-	fishing_button.disabled = not is_unlocked
-	preview_button.disabled = not is_unlocked
-
-	if not is_unlocked:
-		fishing_button.text = "🔒 Zona Bloqueada"
-		preview_button.text = "🔒 Vista Previa"
-	else:
-		fishing_button.text = "🎣 Ir a Pescar"
-		preview_button.text = "👁 Vista Previa"
+func _on_zone_unlock_pressed_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
+	"""Wrapper para manejar desbloqueo de zona - ignora card_data y usa zone_data"""
+	_on_zone_unlock_pressed(zone_data)
 
 func _on_zone_card_selected(zone_data: Dictionary) -> void:
 	"""Manejar selección de zona desbloqueada"""
 	current_zone = zone_data
-	_update_current_zone_display()
-	_refresh_zones_grid() # Refrescar para actualizar indicadores
+	_refresh_zones_list() # Refrescar para actualizar indicadores
 
 	var zone_id = zone_data.get("id", "")
 	if zone_id != "":
@@ -441,15 +448,3 @@ func unlock_zone_success(zone_id: String) -> void:
 		SFX.play_event("unlock_success")
 
 	print("Zona desbloqueada exitosamente: %s" % zone_id)
-
-func _on_fishing_button_pressed() -> void:
-	"""Solicitar ir a pescar en la zona actual"""
-	if not current_zone.is_empty():
-		var zone_id = current_zone.get("id", "")
-		fishing_requested.emit(zone_id)
-
-func _on_preview_button_pressed() -> void:
-	"""Solicitar vista previa de la zona actual"""
-	if not current_zone.is_empty():
-		var zone_id = current_zone.get("id", "")
-		zone_preview_requested.emit(zone_id)

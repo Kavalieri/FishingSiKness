@@ -172,3 +172,22 @@ func get_random_fish_for_zone(zone_id: String) -> Dictionary:
 
 	print("[Content] ERROR: No se pudo seleccionar pez en zona: %s" % zone_id)
 	return {}
+
+func get_fish_for_zone(zone_id: String) -> Array:
+	"""Obtener lista de todos los peces disponibles en una zona específica"""
+	var zone_def = get_zone_by_id(zone_id)
+	if not zone_def:
+		print("[Content] ERROR: Zona no encontrada: %s" % zone_id)
+		return []
+
+	if not zone_def.entries or zone_def.entries.size() == 0:
+		print("[Content] ERROR: Zona sin loot entries: %s" % zone_id)
+		return []
+
+	var fish_list = []
+	for entry in zone_def.entries:
+		if entry and entry.fish:
+			fish_list.append(entry.fish)
+
+	print("[Content] DEBUG: Zona %s tiene %d especies de peces" % [zone_id, fish_list.size()])
+	return fish_list

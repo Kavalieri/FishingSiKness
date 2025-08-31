@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "oceanos_profundos"
+name = "Océanos Profundos"
+price_multiplier = 3.0
+entries = Array[Resource]([])
+background = "res://art/env/space.png"rce type="ZoneDef" format=3]
+
+[resource]
+
+id = "oceanos_profundos"
+name = "Océanos Profundos"
+price_multiplier = 3.0
+entries = []  # Peces pelágicos y de aguas profundas del CSV
+background = "space"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "costas_atlanticas"
+name = "Costas Atlánticas"
+price_multiplier = 1.5
+entries = Array[Resource]([])
+background = "res://art/env/beach.png"

@@ -1,15 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
 
 [resource]
-
+script = ExtResource("1")
 id = "arapaima"
 name = "Arapaima (Paiche)"
 description = "Gigante de agua dulce del Amazonas. Requiere permisos especiales y combate de respiración aérea."
-rarity = "legendario"
-min_weight = 30.0
-max_weight = 200.0
-base_value = 5605
-xp_reward = 675
-sprite_path = "res://art/fish/salmon.png"  # Reutilizamos el sprite más grande
-habitat = "laguna_varzea"
-region = "amazonas"
+species_category = "Legendario"
+rarity = 4
+base_market_value = 560
+size_min = 150.0
+size_max = 300.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rio"])
+difficulty = 5

@@ -1,9 +1,11 @@
-[gd_resource type="ZoneDef" format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
 
 [resource]
-
+script = ExtResource("1")
 id = "grandes_lagos_norteamerica"
 name = "Grandes Lagos de Norteamérica"
 price_multiplier = 1.2
-entries = []  # Se llena con especies como bass, walleye, muskellunge del CSV
-background = "forest"
+entries = Array[Resource]([])
+background = "res://art/env/forest.png"

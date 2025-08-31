@@ -1,14 +1,18 @@
-[gd_resource type="FishDef" format=3]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/pezglobo.png" id="2"]
 
 [resource]
+script = ExtResource("1")
 id = "pez_angel_emperador"
 name = "Pez Ángel Emperador"
 description = "Un majestuoso pez ángel con rayas azules distintivas, habitante de arrecifes tropicales profundos."
-icon = "res://art/fish/pezglobo.png"
-rarity = 45
-min_weight = 1.2
-max_weight = 4.8
-base_value = 1850
-xp_reward = 85
-habitat = "Arrecifes profundos del Atlántico"
-scientific_name = "Pomacanthus imperator"
+species_category = "Raro"
+rarity = 2
+base_market_value = 185
+size_min = 30.0
+size_max = 45.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["costa"])
+difficulty = 3
