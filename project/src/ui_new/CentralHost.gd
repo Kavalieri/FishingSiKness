@@ -71,8 +71,19 @@ func _setup_fishing_screen(screen: FishingScreen) -> void:
 		if Save and Save.game_data.has("current_zone"):
 			current_zone_id = Save.game_data.current_zone
 
-		var zone_data = Content.get_zone_data(current_zone_id) \
+		var zone_def = Content.get_zone_data(current_zone_id) \
 			if current_zone_id else Content.get_default_zone()
+
+		# Convertir ZoneDef a Dictionary para compatibilidad
+		var zone_data = {}
+		if zone_def:
+			zone_data = {
+				"id": zone_def.id,
+				"name": zone_def.name,
+				"price_multiplier": zone_def.price_multiplier,
+				"background_path": zone_def.background
+			}
+
 		var stats = {} # TODO: Obtener estadísticas de pesca
 
 		screen.setup_fishing_screen(zone_data, stats)

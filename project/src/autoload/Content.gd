@@ -115,3 +115,51 @@ func get_next_prestige_requirement(current_level: int):
 	"""Obtener puntos necesarios para el siguiente nivel de prestigio"""
 	# TODO: Implementar cálculo de requisitos de prestigio
 	return (current_level + 1) * 1000
+
+func get_random_fish_for_zone(zone_id: String) -> Dictionary:
+	"""Obtener un pez aleatorio de una zona específica usando loot tables"""
+	var zone_def = get_zone_by_id(zone_id)
+	if not zone_def:
+		print("[Content] ERROR: Zona no encontrada: %s" % zone_id)
+		return {}
+
+	if not zone_def.entries or zone_def.entries.size() == 0:
+		print("[Content] ERROR: Zona sin loot entries: %s" % zone_id)
+		return {}
+
+	# Calcular peso total
+	var total_weight = 0
+	for entry in zone_def.entries:
+		if entry and entry.fish:
+			total_weight += entry.weight
+
+	if total_weight == 0:
+		print("[Content] ERROR: Total weight es 0 en zona: %s" % zone_id)
+		return {}
+
+	# Seleccionar pez por peso
+	var random_roll = randi() % total_weight
+	var current_weight = 0
+
+	for entry in zone_def.entries:
+		if entry and entry.fish:
+			current_weight += entry.weight
+			if random_roll < current_weight:
+				var fish_def = entry.fish
+				# Generar datos del pez capturado
+				var random_size = randf_range(fish_def.size_min, fish_def.size_max)
+				var base_price = fish_def.base_market_value
+				var final_price = int(base_price * zone_def.price_multiplier)
+
+				return {
+					"id": fish_def.id,
+					"name": fish_def.name,
+					"size": random_size,
+					"value": final_price,
+					"rarity": fish_def.rarity,
+					"zone_caught": zone_id,
+					"timestamp": Time.get_datetime_dict_from_system()
+				}
+
+	print("[Content] ERROR: No se pudo seleccionar pez en zona: %s" % zone_id)
+	return {}
