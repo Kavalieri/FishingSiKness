@@ -1,7 +1,7 @@
 
 # 🎯 Post‑Refactor: Fondo Único Global con UI Transparente/Translúcida (Godot 4, Mobile Portrait)
 
-**Modo prompt para agente IA + guía paso a paso.**  
+**Modo prompt para agente IA + guía paso a paso.**
 Objetivo: Sustituir fondos locales de escenas por **un único fondo principal** en `Main.tscn` y **pintar toda la UI encima** con transparencias o texturas a demanda, manteniendo responsividad, Safe Area y estilos centralizados.
 
 ---
@@ -16,10 +16,10 @@ Objetivo: Sustituir fondos locales de escenas por **un único fondo principal** 
 ---
 
 ## 1) Pre‑requisitos
-- Proyecto ya refactorizado con estructura base (Top 11% / Central 77% / Bottom 12%).  
+- Proyecto ya refactorizado con estructura base (Top 11% / Central 77% / Bottom 12%).
 - `Main.tscn` con `VBoxContainer` para layout vertical.
 - TopBar y BottomBar **no dependen** de imágenes de fondo propias (o se retirarán).
-- `app.theme` aplicado globalmente.
+- `app_theme.tres` aplicado globalmente.
 
 ---
 
@@ -50,7 +50,7 @@ Main (Control)
 ```
 
 ### 2.3 Orden de dibujo
-- Asegúrate de que **Background** está **antes** del `VBoxContainer` (debajo en el árbol).  
+- Asegúrate de que **Background** está **antes** del `VBoxContainer` (debajo en el árbol).
   En Control, el orden del árbol define el *z-order* (de atrás hacia delante).
 
 ---
@@ -130,7 +130,7 @@ func _ready() -> void:
 ```
 
 ### 5.3 Reemplazo temático global (por Theme único)
-- Asigna `app.theme` al `Main` o a `ProjectSettings` y luego **override** finos por nodo donde toque.
+- Asigna `app_theme.tres` al `Main` o a `ProjectSettings` y luego **override** finos por nodo donde toque.
 - No copies estilos en cada escena; **reutiliza** `.tres`.
 
 ---
@@ -205,7 +205,7 @@ func _ready() -> void:
 
 ## 10) Prompt de operación para agente IA
 > **Acción**: Migrar el proyecto a **fondo global único** y UI transparente/translúcida para que todo comparta el mismo fondo.
-> 
+>
 > **Pasos obligatorios**:
 > 1. En `Main.tscn`, crear `TextureRect (Background)` antes del `VBoxContainer`, con `expand=true` y `STRETCH_KEEP_ASPECT_COVER`. Cargar `res://assets/ui/backgrounds/main_bg_1080p.png`.
 > 2. Asegurar que TopBar/BottomBar/CentralHost **no tienen fondos opacos**. Sustituir por `StyleBoxEmpty`. Donde convenga legibilidad, aplicar `panel_translucent.tres`.
@@ -228,8 +228,8 @@ func _ready() -> void:
 ## 12) Notas de estilo
 - Por defecto todo **transparente**; sube a **translúcido** solo si el texto pierde legibilidad.
 - Evita texturas de marco pesadas; usa 9‑patch (`StyleBoxTexture` con márgenes) para escalado limpio.
-- Mantén las fuentes y tamaños en `app.theme`.
+- Mantén las fuentes y tamaños en `app_theme.tres`.
 
 ---
 
-**Fin.** A partir de ahora, el fondo de la app es único y la UI lo respeta. Cambiar look & feel pasa por: cambiar la textura del BG, regular velos (alpha) y elegir texturas de marco donde toque.  
+**Fin.** A partir de ahora, el fondo de la app es único y la UI lo respeta. Cambiar look & feel pasa por: cambiar la textura del BG, regular velos (alpha) y elegir texturas de marco donde toque.

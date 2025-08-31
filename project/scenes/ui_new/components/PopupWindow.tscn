@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://popup_window_component"]
+[gd_scene load_steps=1 format=3 uid="uid://popup_window_component"]
 
-[ext_resource type="StyleBox" uid="uid://card_style" path="res://themes/card.tres" id="1_window_style"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="1_window_style"]
 [ext_resource type="Script" path="res://src/ui_new/components/PopupWindow.gd" id="2_popup_script"]
 
 [node name="PopupWindow" type="Control"]

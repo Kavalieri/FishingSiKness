@@ -12,7 +12,7 @@
 - **Contenedores**: nada de posiciones absolutas. Todo `VBoxContainer`, `HBoxContainer`, `GridContainer`, `MarginContainer`, `AspectRatioContainer`.
 - **Responsivo**: % + clamps + `Safe Area ON` + escalado por DPI.
 - **Reutilizable**: escenas modulares (`TopBar.tscn`, `BottomBar.tscn`, `Card.tscn`, etc.).
-- **Consistente**: estilos centralizados en `.theme` y `.tres` (`app.theme`, `tooltip.tres`, `progress_xp.tres`).
+- **Consistente**: estilos centralizados en `.tres` files (`app_theme.tres`, `tooltip.tres`, `progress_xp.tres`).
 - **Interactivo**: todos los elementos importantes son clicables, con `tooltip_text` y estados (hover/pressed/disabled).
 - **Accesibilidad**: hit-target ≥ 56 px; tooltips, contrastes, tipografías legibles.
 
@@ -35,7 +35,7 @@ Button/TextureButton
 └── Label (Texto opcional)
 ```
 - **Botones principales**: `TextureButton` con imagen (SVG/PNG 32–48 px).
-- **Estados** definidos en `app.theme`.
+- **Estados** definidos en `app_theme.tres`.
 - **Botones cuadrados**: usar `AspectRatioContainer (1:1)`.
 
 **Ejemplo ASCII**
@@ -50,7 +50,7 @@ PanelContainer (frame_base.tscn)
 └── MarginContainer
     └── VBoxContainer (contenido)
 ```
-- Fondo semitransparente + borde definido en `.theme`.
+- Fondo semitransparente + borde definido en `.tres` theme files.
 - Usado como base para **ventanas, menús y tarjetas**.
 
 ### 2.3 Tooltips
@@ -226,7 +226,7 @@ Incluye:
 
 ## 6) Themes (.tres)
 
-### 6.1 `app.theme`
+### 6.1 `app_theme.tres`
 - Tipografía global (labels/buttons).
 - Colores primarios/secundarios.
 - Botones: estados + paddings + bordes.
@@ -243,7 +243,7 @@ Incluye:
 - Bordes finos.
 - Animación al ganar XP (Tween).
 
-### 6.4 `card.theme`
+### 6.4 `card_theme.tres`
 - Fondo claro/oscuro con sombra.
 - Padding interno uniforme.
 - Borde redondeado 6–8 px.
@@ -295,7 +295,7 @@ Ventana Opciones
 ## 8) Guía de expansión futura
 - **Nuevos elementos** deben ser subescenas reutilizables.
 - **Siempre** usar contenedores y flags, nunca posiciones absolutas.
-- **Theme centralizado**: cualquier nuevo elemento se conecta a `app.theme`.
+- **Theme centralizado**: cualquier nuevo elemento se conecta a `app_theme.tres`.
 - **Documentar** cada nuevo patrón en este manual, con ASCII y estructura.
 - **Versionar**: mantener `docs/ui/CHANGELOG_UI.md` para cambios de diseño.
 - **Testing QA**: probar en 720×1600, 1080×2400 y 1440×3200.
@@ -307,7 +307,7 @@ Ventana Opciones
 - [ ] XP Progress estilada y clicable.
 - [ ] Splash completa con logo, carga, tips, footer.
 - [ ] Componentes reusables listos: botones, tarjetas, ventanas, menús.
-- [ ] Themes creados (`app.theme`, `tooltip.tres`, `progress_xp.tres`, `card.theme`).
+- [ ] Themes creados (`app_theme.tres`, `tooltip.tres`, `progress_xp.tres`, `card_theme.tres`).
 - [ ] Escenas de ejemplo: OptionsWindow, ShopScreen, RewardPopup, ZoneSelect.
 - [ ] Fondos optimizados, imágenes escalables.
 - [ ] QA hecho en múltiples resoluciones.

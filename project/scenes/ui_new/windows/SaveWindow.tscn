@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://d8e9f0g1h2i3j"]
+[gd_scene load_steps=1 format=3 uid="uid://d8e9f0g1h2i3j"]
 
 [ext_resource type="Script" path="res://src/ui_new/windows/SaveWindow.gd" id="1_save"]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1d2e3f4g5h6i"]
+[gd_scene load_steps=1 format=3 uid="uid://c1d2e3f4g5h6i"]
 
 [ext_resource type="Script" path="res://src/ui_new/TopBar.gd" id="1_topbar"]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5x8f9g2h3k4l"]
+[gd_scene load_steps=1 format=3 uid="uid://c5x8f9g2h3k4l"]
 
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_qte_style"]
 [ext_resource type="Script" path="res://src/ui_new/components/QTEContainer.gd" id="3_script"]

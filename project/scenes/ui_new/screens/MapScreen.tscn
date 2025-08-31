@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://1sdbw5y4w3sb"]
+[gd_scene load_steps=1 format=3 uid="uid://1sdbw5y4w3sb"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_m8n5v"]
+
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_d8tlm"]
 
 [node name="MapScreen" type="Control"]
@@ -8,7 +8,7 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource("1_m8n5v")
+
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1

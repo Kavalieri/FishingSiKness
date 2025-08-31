@@ -1,13 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cd1fq4m6o8c4w"]
+[gd_scene load_steps=1 format=3 uid="uid://cd1fq4m6o8c4w"]
 
-[ext_resource type="Theme" uid="uid://bl4v70twh0buk" path="res://themes/app_simple.theme" id="1_j5nlq"]
+
 
 [node name="RewardPopup" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource("1_j5nlq")
+
 
 [node name="Overlay" type="ColorRect" parent="."]
 layout_mode = 1

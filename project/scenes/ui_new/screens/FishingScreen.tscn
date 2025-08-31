@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5bnch8t8hqjo"]
+[gd_scene load_steps=1 format=3 uid="uid://b5bnch8t8hqjo"]
 
-[ext_resource type="PackedScene" uid="uid://qte123" path="res://scenes/ui_new/components/QTEContainer.tscn" id="2_qte"]
+[ext_resource type="PackedScene" uid="uid://c5x8f9g2h3k4l" path="res://scenes/ui_new/components/QTEContainer.tscn" id="2_qte"]
 [ext_resource type="Script" path="res://src/ui_new/screens/FishingScreen.gd" id="3_script"]
 
 [node name="FishingScreen" type="Control"]

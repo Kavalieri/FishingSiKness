@@ -49,7 +49,7 @@ res://scenes/ui/SplashScreen.tscn      ← splash con carga, tips, logo, versió
 res://scenes/screens/...               ← pantallas (Pesca, Mapa, Mercado, Mejoras, Prestigio)
 res://scripts/Main.gd                  ← ratios + clamps + bootstrap
 res://scripts/SplashScreen.gd          ← flujo splash → main
-res://themes/app.theme                 ← tema global
+res://themes/app_theme.tres              ← tema global
 res://themes/tooltip.tres              ← estilo tooltip
 res://themes/progress_xp.tres          ← estilo ProgressBar XP
 res://assets/ui/icons/...              ← iconos raster/SVG (dinero, gemas, social, pausa, tabs)

@@ -42,6 +42,10 @@ window/stretch/scale_mode="viewport"
 window/handheld/orientation=1
 window/handheld/use_safe_area=true
 
+[gui]
+
+theme/custom="res://themes/app_theme.tres"
+
 [input]
 
 click={

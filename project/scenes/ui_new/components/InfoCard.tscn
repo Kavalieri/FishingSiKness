@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://info_card_component"]
+[gd_scene load_steps=1 format=3 uid="uid://info_card_component"]
 
-[ext_resource type="StyleBox" uid="uid://card_style" path="res://themes/card.tres" id="1_card_style"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="1_card_style"]
 [ext_resource type="Script" path="res://src/ui_new/components/InfoCard.gd" id="2_info_script"]
 
 [node name="InfoCard" type="PanelContainer"]
