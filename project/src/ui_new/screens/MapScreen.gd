@@ -15,6 +15,13 @@ const ZONE_CARD_SCENE = preload("res://scenes/ui_new/components/Card.tscn")
 
 # Costos de desbloqueo de zonas (progresivos por dificultad)
 const ZONE_UNLOCK_COSTS = {
+	# Zonas geográficas realistas
+	"lago_montana_alpes": 0, # Zona inicial gratuita
+	"grandes_lagos_norteamerica": 2500,
+	"costas_atlanticas": 8500,
+	"rios_amazonicos": 15000,
+	"oceanos_profundos": 500000,
+	# Zonas legacy para compatibilidad
 	"orilla": 0,
 	"lago": 1000,
 	"rio": 5000,

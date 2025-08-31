@@ -1,0 +1,14 @@
+[gd_resource type="FishDef" format=3]
+
+[resource]
+id = "dorado_del_pacifico"
+name = "Dorado del Pacífico"
+description = "Pez pelágico de aguas profundas con brillante coloración dorada y excelentes cualidades culinarias."
+icon = "res://art/fish/sardina.png"
+rarity = 65
+min_weight = 8.5
+max_weight = 25.0
+base_value = 4200
+xp_reward = 160
+habitat = "Océanos profundos del Pacífico"
+scientific_name = "Coryphaena hippurus"

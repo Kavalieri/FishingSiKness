@@ -1,0 +1,15 @@
+[gd_resource type="FishDef" format=3]
+
+[resource]
+
+id = "muskellunge"
+name = "Muskellunge (Muskie)"
+description = "El depredador más esquivo de los Grandes Lagos. Muchas horas por un solo ataque."
+rarity = "raro"
+min_weight = 5.0
+max_weight = 20.0
+base_value = 180
+xp_reward = 240
+sprite_path = "res://art/fish/lubina.png"
+habitat = "lago_rio"
+region = "grandes_lagos"

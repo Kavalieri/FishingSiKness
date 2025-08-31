@@ -1,0 +1,9 @@
+[gd_resource type="ZoneDef" format=3]
+
+[resource]
+
+id = "rios_amazonicos"
+name = "Ríos Amazónicos"
+price_multiplier = 1.8
+entries = []  # Arapaima, tucunaré, piraña, arowana del CSV
+background = "forest"

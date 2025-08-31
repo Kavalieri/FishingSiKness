@@ -1,0 +1,36 @@
+[gd_resource type="LootTable" load_steps=6 format=3]
+
+[ext_resource type="Resource" uid="uid://bm3k4n7p8rtvx" path="res://data/fish/fish_arapaima.tres" id="1"]
+[ext_resource type="Resource" uid="uid://oekc77pnqxxk" path="res://data/fish/fish_muskellunge.tres" id="2"]
+[ext_resource type="Resource" uid="uid://cm7r2v1nqixjw" path="res://data/fish/fish_salmon_atlantico.tres" id="3"]
+[ext_resource type="Resource" uid="uid://o4l8c6a5fgvjy" path="res://data/fish/fish_trucha_arcoiris.tres" id="4"]
+[ext_resource type="Resource" path="res://data/fish/fish_dorado_del_pacifico.tres" id="5"]
+
+[resource]
+items = [
+	{
+		"item": ExtResource("5"),
+		"weight": 3,
+		"min_rarity": 60
+	},
+	{
+		"item": ExtResource("1"),
+		"weight": 2,
+		"min_rarity": 80
+	},
+	{
+		"item": ExtResource("2"),
+		"weight": 5,
+		"min_rarity": 50
+	},
+	{
+		"item": ExtResource("3"),
+		"weight": 20,
+		"min_rarity": 25
+	},
+	{
+		"item": ExtResource("4"),
+		"weight": 70,
+		"min_rarity": 10
+	}
+]

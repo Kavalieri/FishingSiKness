@@ -1,0 +1,15 @@
+[gd_resource type="FishDef" format=3]
+
+[resource]
+
+id = "arapaima"
+name = "Arapaima (Paiche)"
+description = "Gigante de agua dulce del Amazonas. Requiere permisos especiales y combate de respiración aérea."
+rarity = "legendario"
+min_weight = 30.0
+max_weight = 200.0
+base_value = 5605
+xp_reward = 675
+sprite_path = "res://art/fish/salmon.png"  # Reutilizamos el sprite más grande
+habitat = "laguna_varzea"
+region = "amazonas"

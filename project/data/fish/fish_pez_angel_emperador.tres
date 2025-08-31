@@ -1,0 +1,14 @@
+[gd_resource type="FishDef" format=3]
+
+[resource]
+id = "pez_angel_emperador"
+name = "Pez Ángel Emperador"
+description = "Un majestuoso pez ángel con rayas azules distintivas, habitante de arrecifes tropicales profundos."
+icon = "res://art/fish/pezglobo.png"
+rarity = 45
+min_weight = 1.2
+max_weight = 4.8
+base_value = 1850
+xp_reward = 85
+habitat = "Arrecifes profundos del Atlántico"
+scientific_name = "Pomacanthus imperator"

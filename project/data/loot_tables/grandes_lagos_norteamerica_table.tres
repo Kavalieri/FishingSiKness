@@ -1,0 +1,24 @@
+[gd_resource type="LootTable" load_steps=4 format=3]
+
+[ext_resource type="Resource" uid="uid://oekc77pnqxxk" path="res://data/fish/fish_muskellunge.tres" id="1"]
+[ext_resource type="Resource" uid="uid://d35d6gykdaprm" path="res://data/fish/fish_walleye.tres" id="2"]
+[ext_resource type="Resource" uid="uid://o4l8c6a5fgvjy" path="res://data/fish/fish_trucha_arcoiris.tres" id="3"]
+
+[resource]
+items = [
+	{
+		"item": ExtResource("1"),
+		"weight": 5,
+		"min_rarity": 40
+	},
+	{
+		"item": ExtResource("2"),
+		"weight": 25,
+		"min_rarity": 15
+	},
+	{
+		"item": ExtResource("3"),
+		"weight": 70,
+		"min_rarity": 5
+	}
+]
