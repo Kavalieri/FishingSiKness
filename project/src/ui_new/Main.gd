@@ -17,27 +17,59 @@ const BOT_MAX := 104
 func _ready() -> void:
 	print("=== MAIN READY START ===")
 
-	# Esperar hasta que los nodos estén listos
+	# Esperar hasta que los nodos estén completamente listos
+	await get_tree().process_frame
 	await get_tree().process_frame
 
+	# Verificar referencias de nodos
+	print("[Main] Verificando nodos:")
+	print("  - Background: ", background != null)
+	print("  - VBox: ", vbox != null)
+	print("  - TopBar: ", topbar != null)
+	print("  - CentralHost: ", central_host != null)
+	print("  - BottomBar: ", bottombar != null)
+
+	# Conectar señales de forma directa y explícita
+	_setup_signal_connections()
+
 	_apply_clamps()
-	_connect_signals()
 
 	print("=== MAIN READY COMPLETE ===")
 
-func _delayed_initialization() -> void:
-	print("=== DELAYED INIT START ===")
-	_apply_clamps()
-	_connect_signals()
+func _setup_signal_connections() -> void:
+	print("[Main] === SETUP SIGNAL CONNECTIONS ===")
 
-	# Test directo de botones
-	if bottombar:
-		print("[Main] BottomBar encontrado, probando conexión directa...")
-		if bottombar.has_method("_select_tab"):
-			print("[Main] Método _select_tab existe en BottomBar")
+	# Obtener referencia directa al BottomBar
+	var bottom_bar_node = get_node("VBoxContainer/BottomBar")
+	print("[Main] BottomBar direct ref: ", bottom_bar_node)
+
+	if bottom_bar_node:
+		# Conectar usando la referencia directa
+		if bottom_bar_node.has_signal("tab_selected"):
+			bottom_bar_node.tab_selected.connect(_on_tab_selected_direct)
+			print("[Main] ✓ Conexión directa establecida")
 		else:
-			print("[Main] ERROR: Método _select_tab NO existe en BottomBar")
-	print("=== DELAYED INIT END ===") func _notification(what):
+			print("[Main] ❌ Señal no encontrada")
+
+	print("[Main] === END SIGNAL SETUP ===")
+
+func _on_tab_selected_direct(tab_name: String) -> void:
+	print("[Main] ¡¡¡CONEXIÓN DIRECTA FUNCIONA!!! Tab: ", tab_name)
+
+	# Ahora cambiar pantalla
+	var central = get_node("VBoxContainer/CentralHost")
+	if central and central.has_method("show_screen"):
+		match tab_name:
+			"fishing":
+				central.show_screen("res://scenes/ui_new/screens/FishingScreen.tscn")
+			"map":
+				central.show_screen("res://scenes/ui_new/screens/MapScreen.tscn")
+			"market":
+				central.show_screen("res://scenes/ui_new/screens/MarketScreen.tscn")
+			"upgrades":
+				central.show_screen("res://scenes/ui_new/screens/UpgradesScreen.tscn")
+			"prestige":
+				central.show_screen("res://scenes/ui_new/screens/PrestigeScreen.tscn") func _notification(what):
 	if what == NOTIFICATION_RESIZED:
 		_apply_clamps()
 
@@ -68,28 +100,33 @@ func _connect_signals() -> void:
 	print("[Main] === CONECTANDO SEÑALES ===")
 	print("[Main] TopBar existe: ", topbar != null)
 	print("[Main] BottomBar existe: ", bottombar != null)
+	print("[Main] CentralHost existe: ", central_host != null)
 
-	# TopBar signals
-	if topbar and topbar.has_signal("button_pressed"):
-		topbar.button_pressed.connect(_on_topbar_button_pressed)
-		print("[Main] ✓ Señal TopBar conectada")
-	else:
-		print("[Main] ❌ ERROR: TopBar no tiene señal button_pressed")
-		if topbar:
-			print("[Main] Señales disponibles en TopBar: ", topbar.get_signal_list())
-
-	# BottomBar signals
+	# BottomBar signals - PRIORIDAD MÁXIMA
 	if bottombar and bottombar.has_signal("tab_selected"):
-		bottombar.tab_selected.connect(_on_bottombar_tab_selected)
-		print("[Main] ✓ Señal BottomBar conectada")
+		if not bottombar.tab_selected.is_connected(_on_bottombar_tab_selected):
+			bottombar.tab_selected.connect(_on_bottombar_tab_selected)
+			print("[Main] ✓ Señal BottomBar conectada exitosamente")
+		else:
+			print("[Main] ⚠️ Señal BottomBar ya estaba conectada")
 	else:
 		print("[Main] ❌ ERROR: BottomBar no tiene señal tab_selected")
 		if bottombar:
 			print("[Main] Señales disponibles en BottomBar: ", bottombar.get_signal_list())
 
-	print("[Main] === FIN CONEXIÓN SEÑALES ===")
+	# TopBar signals
+	if topbar and topbar.has_signal("button_pressed"):
+		if not topbar.button_pressed.is_connected(_on_topbar_button_pressed):
+			topbar.button_pressed.connect(_on_topbar_button_pressed)
+			print("[Main] ✓ Señal TopBar conectada")
+		else:
+			print("[Main] ⚠️ Señal TopBar ya estaba conectada")
+	else:
+		print("[Main] ❌ ERROR: TopBar no tiene señal button_pressed")
+		if topbar:
+			print("[Main] Señales disponibles en TopBar: ", topbar.get_signal_list())
 
-func _on_topbar_button_pressed(button_type: String) -> void:
+	print("[Main] === FIN CONEXIÓN SEÑALES ===") func _on_topbar_button_pressed(button_type: String) -> void:
 	"""Manejar pulsaciones de botones en TopBar"""
 	print("[Main] Recibida señal TopBar: ", button_type)
 
@@ -117,32 +154,35 @@ func _on_topbar_button_pressed(button_type: String) -> void:
 
 func _on_bottombar_tab_selected(tab_name: String) -> void:
 	"""Manejar selección de tabs en BottomBar"""
-	print("[Main] Recibida señal BottomBar: ", tab_name)
+	print("[Main] ¡¡¡SEÑAL RECIBIDA EN MAIN!!! Tab: ", tab_name)
 
 	# Verificar que CentralHost existe y tiene el método
 	if central_host and central_host.has_method("show_screen"):
-		print("[Main] CentralHost tiene método show_screen")
+		print("[Main] CentralHost verificado - cambiando pantalla")
 
 		match tab_name:
 			"fishing":
-				print("[Main] Cargando pantalla de pesca")
+				print("[Main] → Cambiando a FishingScreen")
 				central_host.show_screen("res://scenes/ui_new/screens/FishingScreen.tscn")
 			"map":
-				print("[Main] Cargando pantalla de mapa")
+				print("[Main] → Cambiando a MapScreen")
 				central_host.show_screen("res://scenes/ui_new/screens/MapScreen.tscn")
 			"market":
-				print("[Main] Cargando pantalla de mercado")
+				print("[Main] → Cambiando a MarketScreen")
 				central_host.show_screen("res://scenes/ui_new/screens/MarketScreen.tscn")
 			"upgrades":
-				print("[Main] Cargando pantalla de mejoras")
+				print("[Main] → Cambiando a UpgradesScreen")
 				central_host.show_screen("res://scenes/ui_new/screens/UpgradesScreen.tscn")
 			"prestige":
-				print("[Main] Cargando pantalla de prestigio")
+				print("[Main] → Cambiando a PrestigeScreen")
 				central_host.show_screen("res://scenes/ui_new/screens/PrestigeScreen.tscn")
 			_:
 				print("[Main] ERROR: Tab desconocido: ", tab_name)
 	else:
 		print("[Main] ERROR: CentralHost no disponible o no tiene método show_screen")
+		print("[Main] CentralHost existe: ", central_host != null)
+		if central_host:
+			print("[Main] Métodos de CentralHost: ", central_host.get_method_list())
 
 # Métodos auxiliares para mostrar pantallas/menús
 func _show_economy_screen() -> void:

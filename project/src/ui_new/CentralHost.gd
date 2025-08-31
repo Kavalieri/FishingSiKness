@@ -103,7 +103,9 @@ func _setup_market_screen(screen: MarketScreen) -> void:
 		# TODO: Obtener items disponibles para compra desde Content
 		var buyable_items = []
 
-		screen.setup_market(money, gems, inventory, buyable_items) func _setup_upgrades_screen(screen: UpgradesScreen) -> void:
+		screen.setup_market(money, gems, inventory, buyable_items)
+
+func _setup_upgrades_screen(screen: UpgradesScreen) -> void:
 	"""Configurar pantalla de mejoras con datos del jugador"""
 	if screen.has_method("setup_upgrades_screen"):
 		var upgrades = []
