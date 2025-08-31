@@ -23,11 +23,27 @@ var tips: Array[String] = [
 @onready var tip_text: Label = $CenterContainer/VBoxContainer/TipContainer/TipText
 @onready var tap_to_continue: Label = $TapToContinue
 @onready var version_label: Label = $VersionLabel
+@onready var pause_button: Button = $TopBarZone/PauseButton
 
 func _ready() -> void:
 	_setup_initial_state()
 	_show_random_tip()
+	_connect_pause_button()
 	_start_loading()
+
+func _connect_pause_button() -> void:
+	"""Conectar botón de pausa con PauseManager"""
+	if pause_button:
+		pause_button.pressed.connect(_on_pause_button_pressed)
+
+func _on_pause_button_pressed() -> void:
+	"""Manejar botón de pausa desde splash screen"""
+	print("[SplashScreen] Botón pausa presionado")
+
+	if PauseManager:
+		PauseManager.request_pause_menu()
+	else:
+		print("[SplashScreen] PauseManager no disponible")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and can_skip:

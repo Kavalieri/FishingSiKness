@@ -11,13 +11,11 @@ config_version=5
 [application]
 
 config/name="FishingSiKness"
-run/main_scene="res://scenes/ui_new/Main.tscn"
+run/main_scene="res://scenes/core/MainWithSplash.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="FishingSiKness"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-boot_splash/image="uid://jgare7iuoc1w"
 config/icon="res://icon.svg"
-boot_splash/minimum_display_time=2
 
 [autoload]
 
@@ -33,6 +31,7 @@ FishDataManager="*res://src/systems/FishDataManager.gd"
 InventorySystem="*res://src/systems/InventorySystem.gd"
 App="*res://src/autoload/App.gd"
 WindowManager="*res://src/autoload/WindowManager.gd"
+PauseManager="*res://src/autoload/PauseManager.gd"
 
 [display]
 

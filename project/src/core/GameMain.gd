@@ -1,12 +1,12 @@
 extends Control
 
 const SPLASH_SCENE = preload("res://scenes/views/SplashScreen.tscn")
-const MAIN_GAME_SCENE = preload("res://scenes/core/Main.tscn")
+const MAIN_GAME_SCENE = preload("res://scenes/ui_new/Main.tscn")
 
 var main_game_instance: Control
 
 func _ready():
-	print("GAME GameMain: Initializing...")
+	print("🎮 GameMain: Initializing...")
 	await get_tree().process_frame
 
 	# 1. Instantiate the main game scene but keep it invisible and paused.
@@ -14,7 +14,7 @@ func _ready():
 	main_game_instance.visible = false
 	main_game_instance.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(main_game_instance)
-	print("OK Main game instance created and paused.")
+	print("✅ Main game instance created and paused.")
 
 	# 2. Show the splash screen.
 	show_splash_screen()
@@ -24,19 +24,19 @@ func show_splash_screen():
 
 	# Connect signals
 	splash_instance.splash_finished.connect(_on_splash_finished)
-	
-	# The main_game_instance is the ScreenManager. We connect the splash's pause request to it.
-	if main_game_instance.has_method("show_pause_menu"):
-		splash_instance.pause_requested.connect(main_game_instance.show_pause_menu)
-		print("OK Connected splash screen's pause_requested to ScreenManager")
+
+	# Connect pause to PauseManager (nueva arquitectura)
+	if PauseManager:
+		splash_instance.pause_requested.connect(PauseManager.request_pause_menu)
+		print("✅ Connected splash screen's pause_requested to PauseManager")
 	else:
-		print("ERROR: Main game instance does not have show_pause_menu method.")
+		print("ERROR: PauseManager no disponible")
 
 	add_child(splash_instance)
-	print("OK Splash Screen loaded.")
+	print("✅ Splash Screen loaded.")
 
 func _on_splash_finished():
-	print("TARGET Splash finished - transitioning to main game...")
+	print("🎯 Splash finished - transitioning to main game...")
 
 	# Free the splash screen
 	var splash_screen = null
@@ -52,4 +52,4 @@ func _on_splash_finished():
 	if main_game_instance:
 		main_game_instance.visible = true
 		main_game_instance.process_mode = Node.PROCESS_MODE_INHERIT
-		print("GAME Main game is now active.")
+		print("🎮 Main game is now active.")
