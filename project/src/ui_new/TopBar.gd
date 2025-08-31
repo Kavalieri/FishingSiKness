@@ -8,16 +8,16 @@ extends Control
 signal button_pressed(button_type: String)
 
 # Referencias a nodos TopRow (fila superior)
-@onready var money_cell: Button = $VBoxContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer/MoneyCell
-@onready var gems_cell: Button = $VBoxContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer/GemsCell
-@onready var zone_cell: Button = $VBoxContainer/TopRow/HBoxContainer/CenterThird
-@onready var social_cell: Button = $VBoxContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/SocialCell
-@onready var pause_cell: Button = $VBoxContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/PauseCell
+@onready var money_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer/MoneyCell
+@onready var gems_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer/GemsCell
+@onready var zone_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/CenterThird
+@onready var social_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/SocialCell
+@onready var pause_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/PauseCell
 
 # Referencias a nodos BottomRow (fila inferior XP)
-@onready var xp_progress: ProgressBar = $VBoxContainer/BottomRow/MarginContainer/XPProgress
-@onready var level_label: Label = $VBoxContainer/BottomRow/MarginContainer/XPProgress/LevelLabel
-@onready var value_label: Label = $VBoxContainer/BottomRow/MarginContainer/XPProgress/ValueLabel
+@onready var xp_progress: ProgressBar = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress
+@onready var level_label: Label = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/LevelLabel
+@onready var value_label: Label = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/ValueLabel
 
 func _ready() -> void:
 	print("[TopBar] _ready() called")
@@ -27,13 +27,13 @@ func _ready() -> void:
 	print("[TopBar] Initialization completed")
 
 func _set_dynamic_tooltips() -> void:
-	"""Configurar tooltips dinámicos con i18n"""
-	money_cell.tooltip_text = tr("ui.money.tooltip")
-	gems_cell.tooltip_text = tr("ui.gems.tooltip")
-	zone_cell.tooltip_text = tr("ui.zone.tooltip")
-	social_cell.tooltip_text = tr("ui.social.tooltip")
-	pause_cell.tooltip_text = tr("ui.pause.tooltip")
-	xp_progress.tooltip_text = tr("ui.xp.tooltip")
+	"""Configurar tooltips profesionales"""
+	money_cell.tooltip_text = "Dinero disponible - Click para ir al Mercado"
+	gems_cell.tooltip_text = "Gemas premium - Click para la Tienda"
+	zone_cell.tooltip_text = "Zona de pesca actual - Click para cambiar zona"
+	social_cell.tooltip_text = "Redes sociales - Síguenos y comparte"
+	pause_cell.tooltip_text = "Configuración del juego"
+	xp_progress.tooltip_text = "Progreso de experiencia - Click para habilidades"
 
 func _connect_buttons() -> void:
 	"""Conectar señales de botones"""

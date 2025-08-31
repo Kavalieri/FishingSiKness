@@ -1,6 +1,12 @@
-[gd_scene load_steps=1 format=3 uid="uid://c1d2e3f4g5h6i"]
+[gd_scene load_steps=8 format=3 uid="uid://c1d2e3f4g5h6i"]
 
 [ext_resource type="Script" path="res://src/ui_new/TopBar.gd" id="1_topbar"]
+[ext_resource type="Texture2D" uid="uid://by8iw7v33kvey" path="res://art/ui/assets/coins.png" id="2_coins"]
+[ext_resource type="Texture2D" uid="uid://cl5r0xsojy5sy" path="res://art/ui/assets/diamonds.png" id="3_diamonds"]
+[ext_resource type="Texture2D" uid="uid://bogjmnpfvqpxn" path="res://art/ui/assets/zones-map.png" id="4_zones"]
+[ext_resource type="Texture2D" uid="uid://cbiphhgvmjy1l" path="res://art/ui/buttons/button_social.png" id="5_social"]
+[ext_resource type="Texture2D" uid="uid://cjjydjhj6u4qr" path="res://art/ui/buttons/button_pause_options.png" id="6_options"]
+[ext_resource type="Texture2D" uid="uid://b8gfp8xj30wy0" path="res://art/ui/assets/xp.png" id="7_xp"]
 
 [node name="TopBar" type="Control"]
 layout_mode = 3
@@ -9,77 +15,110 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_topbar")
 
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.1, 0.15, 0.95)
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_constants/separation = 5
 
-[node name="TopRow" type="Control" parent="VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ContentContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TopRow" type="Control" parent="VBoxContainer/MarginContainer/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="LeftThird" type="Control" parent="VBoxContainer/TopRow/HBoxContainer"]
+[node name="LeftThird" type="Control" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow/HBoxContainer/LeftThird"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="MoneyCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer"]
+[node name="MoneyCell" type="Button" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("2_coins")
 text = "$ 0"
+expand_icon = true
 
-[node name="GemsCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer"]
+[node name="GemsCell" type="Button" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("3_diamonds")
 text = "0"
+expand_icon = true
 
-[node name="CenterThird" type="Button" parent="VBoxContainer/TopRow/HBoxContainer"]
+[node name="CenterThird" type="Button" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("4_zones")
 text = "ZONA"
+expand_icon = true
 
-[node name="RightThird" type="Control" parent="VBoxContainer/TopRow/HBoxContainer"]
+[node name="RightThird" type="Control" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow/HBoxContainer/RightThird"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+alignment = 2
 
-[node name="SocialCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/RightThird/HBoxContainer"]
+[node name="SocialCell" type="Button" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 size_flags_vertical = 3
-text = "SOCIAL"
+custom_minimum_size = Vector2(48, 48)
+icon = ExtResource("5_social")
+flat = true
+expand_icon = true
 
-[node name="PauseCell" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/RightThird/HBoxContainer"]
+[node name="PauseCell" type="Button" parent="VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 size_flags_vertical = 3
-text = "PAUSA"
+custom_minimum_size = Vector2(48, 48)
+icon = ExtResource("6_options")
+flat = true
+expand_icon = true
 
-[node name="BottomRow" type="Control" parent="VBoxContainer"]
+[node name="BottomRow" type="Control" parent="VBoxContainer/MarginContainer/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/BottomRow"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/ContentContainer/BottomRow"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,12 +128,12 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 4
 
-[node name="XPProgress" type="ProgressBar" parent="VBoxContainer/BottomRow/MarginContainer"]
+[node name="XPProgress" type="ProgressBar" parent="VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer"]
 layout_mode = 2
 max_value = 100.0
 value = 45.0
 
-[node name="LevelLabel" type="Label" parent="VBoxContainer/BottomRow/MarginContainer/XPProgress"]
+[node name="LevelLabel" type="Label" parent="VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -105,7 +144,7 @@ offset_right = 48.0
 offset_bottom = 11.5
 text = "LVL 1"
 
-[node name="ValueLabel" type="Label" parent="VBoxContainer/BottomRow/MarginContainer/XPProgress"]
+[node name="ValueLabel" type="Label" parent="VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress"]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0

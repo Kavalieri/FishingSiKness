@@ -1,68 +1,102 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcpcr83t1dfvl"]
+[gd_scene load_steps=8 format=3 uid="uid://bcpcr83t1dfvl"]
 
 [ext_resource type="Script" path="res://src/ui/TopBar.gd" id="1_xwyhj"]
+[ext_resource type="Texture2D" uid="uid://by8iw7v33kvey" path="res://art/ui/assets/coins.png" id="2_coins"]
+[ext_resource type="Texture2D" uid="uid://cl5r0xsojy5sy" path="res://art/ui/assets/diamonds.png" id="3_diamonds"]
+[ext_resource type="Texture2D" uid="uid://bogjmnpfvqpxn" path="res://art/ui/assets/zones-map.png" id="4_zones"]
+[ext_resource type="Texture2D" uid="uid://cbiphhgvmjy1l" path="res://art/ui/buttons/button_social.png" id="5_social"]
+[ext_resource type="Texture2D" uid="uid://cjjydjhj6u4qr" path="res://art/ui/buttons/button_pause_options.png" id="6_options"]
+[ext_resource type="Texture2D" uid="uid://b8gfp8xj30wy0" path="res://art/ui/assets/xp.png" id="7_xp"]
 
 [node name="TopBar" type="VBoxContainer"]
 script = ExtResource("1_xwyhj")
 custom_minimum_size = Vector2(0, 100)
 size_flags_vertical = 4
 
-[node name="Row1" type="HBoxContainer" parent="."]
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 2
+color = Color(0.1, 0.1, 0.15, 0.95)
+
+[node name="MainContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ContentVBox" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="MainContainer/ContentVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 custom_minimum_size = Vector2(0, 45)
 
-[node name="MoneyGemsBlock" type="HBoxContainer" parent="Row1"]
+[node name="MoneyGemsBlock" type="HBoxContainer" parent="MainContainer/ContentVBox/Row1"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BtnMoney" type="Button" parent="Row1/MoneyGemsBlock"]
+[node name="BtnMoney" type="Button" parent="MainContainer/ContentVBox/Row1/MoneyGemsBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("2_coins")
 text = "$ 0"
+expand_icon = true
 
-[node name="BtnGems" type="Button" parent="Row1/MoneyGemsBlock"]
+[node name="BtnGems" type="Button" parent="MainContainer/ContentVBox/Row1/MoneyGemsBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("3_diamonds")
 text = "0"
+expand_icon = true
 
-[node name="ZoneBlock" type="HBoxContainer" parent="Row1"]
+[node name="ZoneBlock" type="HBoxContainer" parent="MainContainer/ContentVBox/Row1"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="BtnZone" type="Button" parent="Row1/ZoneBlock"]
+[node name="BtnZone" type="Button" parent="MainContainer/ContentVBox/Row1/ZoneBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("4_zones")
 text = "ZONA"
+expand_icon = true
 
-[node name="SocialOptionsBlock" type="HBoxContainer" parent="Row1"]
+[node name="SocialOptionsBlock" type="HBoxContainer" parent="MainContainer/ContentVBox/Row1"]
 layout_mode = 2
 size_flags_horizontal = 3
-alignment = 1
+alignment = 2
 
-[node name="BtnSocial" type="Button" parent="Row1/SocialOptionsBlock"]
+[node name="BtnSocial" type="Button" parent="MainContainer/ContentVBox/Row1/SocialOptionsBlock"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 size_flags_vertical = 3
-text = "SOCIAL"
+custom_minimum_size = Vector2(48, 48)
+icon = ExtResource("5_social")
+flat = true
+expand_icon = true
 
-[node name="BtnOptions" type="Button" parent="Row1/SocialOptionsBlock"]
+[node name="BtnOptions" type="Button" parent="MainContainer/ContentVBox/Row1/SocialOptionsBlock"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 size_flags_vertical = 3
-text = "OPTIONS"
+custom_minimum_size = Vector2(48, 48)
+icon = ExtResource("6_options")
+flat = true
+expand_icon = true
 
-[node name="Row2" type="HBoxContainer" parent="."]
+[node name="Row2" type="HBoxContainer" parent="MainContainer/ContentVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 custom_minimum_size = Vector2(0, 45)
 
-[node name="XPProgressButton" type="Button" parent="Row2"]
+[node name="XPProgressButton" type="Button" parent="MainContainer/ContentVBox/Row2"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("7_xp")
 text = "NIVEL 1 - 0 / 100 XP"
+expand_icon = true

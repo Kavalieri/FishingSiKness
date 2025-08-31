@@ -1,7 +1,7 @@
 extends Control
 
-signal splash_finished()
-signal pause_requested()
+signal splash_finished
+signal pause_requested
 
 # Variables principales
 var logo_texture: TextureRect
@@ -16,6 +16,9 @@ var license_label: Label
 var discord_button: Button
 var twitter_button: Button
 var options_button: Button
+
+# Referencias @onready para los elementos del .tscn
+@onready var options_button_tscn: Button = $TopBarContainer/TopBarHBox/OptionsButton
 
 # Estado de carga
 var loading_progress := 0.0
@@ -116,7 +119,7 @@ func setup_ui_from_scene():
 	setup_loading(loading_container)
 	setup_social_buttons(social_container)
 	setup_version(version_container)
-	setup_options_button() # Botón de opciones en esquina superior derecha
+	setup_new_options_button() # Botón de opciones configurado desde .tscn
 
 func setup_logo(container: Control):
 	"""Logo configurado SOLO desde .tscn - NO tocar desde código"""
@@ -359,48 +362,13 @@ func continue_to_game():
 	print("TARGET Usuario presionó para continuar - emitiendo splash_finished")
 	splash_finished.emit()
 
-func setup_options_button():
-	"""Botón de opciones en esquina superior derecha"""
-	var options_container = Control.new()
-	options_container.name = "OptionsContainer"
-	# Posicionar en esquina superior derecha
-	options_container.anchor_left = 1.0
-	options_container.anchor_right = 1.0
-	options_container.anchor_top = 0.0
-	options_container.anchor_bottom = 0.0
-	options_container.offset_left = -90.0 # Ancho del botón + margen
-	options_container.offset_right = -10.0 # Margen derecho
-	options_container.offset_top = 10.0 # Margen superior
-	options_container.offset_bottom = 50.0 # Alto del botón + margen
-	add_child(options_container)
-
-	var top_options_button = Button.new()
-	top_options_button.name = "OptionsButton"
-
-	# Configurar icono de pausa con tamaño controlado usando el nuevo botón
-	var icon_size = 35 # Aumentado a 35x35 píxeles
-	var options_texture = load("res://art/ui/buttons/button_pause_options.png")
-	if options_texture:
-		var options_image = options_texture.get_image()
-		options_image.resize(icon_size, icon_size)
-		var options_icon = ImageTexture.new()
-		options_icon.set_image(options_image)
-		top_options_button.icon = options_icon
-		top_options_button.expand_icon = false
-		top_options_button.text = "" # Sin texto, solo icono
+func setup_new_options_button():
+	"""Configurar botón de opciones desde .tscn - nueva versión profesional"""
+	if options_button_tscn:
+		options_button_tscn.pressed.connect(_on_options_pressed)
+		print("OK Botón de opciones configurado desde .tscn (profesional)")
 	else:
-		top_options_button.text = "SETTINGS" # Fallback si no se puede cargar el icono
-
-	top_options_button.custom_minimum_size = Vector2(80, 40)
-	# El botón llena completamente su container
-	top_options_button.anchor_left = 0.0
-	top_options_button.anchor_right = 1.0
-	top_options_button.anchor_top = 0.0
-	top_options_button.anchor_bottom = 1.0
-	top_options_button.pressed.connect(_on_options_pressed)
-	options_container.add_child(top_options_button)
-
-	print("OK Botón de opciones configurado en esquina superior derecha")
+		print("ERROR No se encontró options_button_tscn en .tscn")
 
 func _on_options_pressed():
 	"""
