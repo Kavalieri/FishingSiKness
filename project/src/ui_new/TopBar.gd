@@ -11,11 +11,12 @@ signal button_pressed(button_type: String)
 @onready var money_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer/MoneyCell
 @onready var gems_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/LeftThird/HBoxContainer/GemsCell
 @onready var zone_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/CenterThird
-@onready var social_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/SocialCell
-@onready var pause_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/PauseCell
+@onready var social_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/SocialBlock/SocialContainer/SocialCell
+@onready var pause_cell: Button = $VBoxContainer/MarginContainer/ContentContainer/TopRow/HBoxContainer/RightThird/HBoxContainer/PauseBlock/PauseContainer/PauseCell
 
 # Referencias a nodos BottomRow (fila inferior XP)
 @onready var xp_progress: ProgressBar = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress
+@onready var xp_icon: TextureRect = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/XPIcon
 @onready var level_label: Label = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/LevelLabel
 @onready var value_label: Label = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/ValueLabel
 
