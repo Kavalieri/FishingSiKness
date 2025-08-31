@@ -238,7 +238,7 @@ func setup_version(container: Control):
 
 	# Línea de versión - ocupa todo el ancho disponible
 	version_label = Label.new()
-	version_label.text = "Fishing SiKness v0.1.0 pre-release alpha"
+	version_label.text = "Fishing SiKness v0.2.5-alpha pre-release"
 	version_label.anchor_left = 0.0
 	version_label.anchor_right = 1.0
 	version_label.anchor_top = 0.0

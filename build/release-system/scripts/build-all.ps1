@@ -23,6 +23,22 @@ Write-Host "📁 Proyecto: $rootDir"
 Write-Host "📂 Scripts: $scriptsDir"
 Write-Host ""
 
+# 🔄 SINCRONIZAR VERSIÓN ANTES DE TODOS LOS BUILDS
+Write-Host "🔄 Sincronizando versión..." -ForegroundColor Cyan
+$syncScriptPath = Join-Path $scriptsDir "sync-version.ps1"
+try {
+    $syncResult = & $syncScriptPath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "⚠️  Advertencia: No se pudo sincronizar la versión, continuando con builds..." -ForegroundColor Yellow
+    } else {
+        Write-Host "✅ Versión sincronizada correctamente para todos los builds" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "⚠️  Advertencia: Error al sincronizar versión: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "   Continuando con los builds..." -ForegroundColor Yellow
+}
+Write-Host ""
+
 # Limpiar builds anteriores si se solicita
 if ($Clean) {
     Write-Host "🧹 Limpiando builds anteriores..." -ForegroundColor Yellow

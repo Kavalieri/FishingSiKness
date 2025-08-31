@@ -5,6 +5,23 @@ Write-Host "🚀 FishingSiKness - Build Windows" -ForegroundColor Green
 Write-Host "===================================" -ForegroundColor Cyan
 Write-Host "💡 Optimizado para compatibilidad máxima" -ForegroundColor Yellow
 
+# 🔄 SINCRONIZAR VERSIÓN ANTES DEL BUILD
+Write-Host "`n🔄 Sincronizando versión..." -ForegroundColor Cyan
+$syncScriptPath = Join-Path $PSScriptRoot "sync-version.ps1"
+try {
+    $syncResult = & $syncScriptPath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "⚠️  Advertencia: No se pudo sincronizar la versión, continuando con build..." -ForegroundColor Yellow
+    }
+    else {
+        Write-Host "✅ Versión sincronizada correctamente" -ForegroundColor Green
+    }
+}
+catch {
+    Write-Host "⚠️  Advertencia: Error al sincronizar versión: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "   Continuando con el build..." -ForegroundColor Yellow
+}
+
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 $RootDir = Get-Location
 $ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..\project")
