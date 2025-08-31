@@ -70,6 +70,18 @@ func _setup_background() -> void:
 		if Save and Save.game_data.has("current_zone"):
 			current_zone = Save.game_data.current_zone
 
+		# Si la zona es una de las nuevas, usar el fondo correcto
+		if current_zone == "lago_montana_alpes":
+			current_zone = "snow" # Usar fondo de nieve para los Alpes
+		elif current_zone == "grandes_lagos_norteamerica":
+			current_zone = "forest" # Usar fondo de bosque para los grandes lagos
+		elif current_zone == "costas_atlanticas":
+			current_zone = "beach" # Usar fondo de playa para las costas
+		elif current_zone == "rios_amazonicos":
+			current_zone = "forest" # Usar fondo de bosque para el Amazonas
+		elif current_zone == "oceanos_profundos":
+			current_zone = "nether" # Usar fondo profundo para océanos
+
 		set_background(current_zone)
 	else:
 		print("[Main] ❌ No se pudo configurar fondo - nodo Background no encontrado")

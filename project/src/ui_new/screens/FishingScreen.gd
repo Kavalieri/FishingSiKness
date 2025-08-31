@@ -268,7 +268,7 @@ func _generate_caught_fish() -> Dictionary:
 
 	# Si tenemos Content, usar datos reales
 	if Content and Content.has_method("get_random_fish_for_zone"):
-		var zone_id = current_zone.get("id", "orilla") # zona por defecto
+		var zone_id = current_zone.get("id", "lago_montana_alpes") # zona por defecto
 		print("🐟 [Fish Gen] Usando Content para zona: %s" % zone_id)
 		var fish_data = Content.get_random_fish_for_zone(zone_id)
 		if fish_data:

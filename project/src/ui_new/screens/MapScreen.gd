@@ -6,29 +6,19 @@ extends Control
 signal zone_selected(zone_id: String)
 signal zone_unlock_requested(zone_id: String, cost: int)
 
-var available_zones: Array[Dictionary] = []
+var available_zones: Array[Dictionary] # Zonas disponibles
 var current_zone: Dictionary = {}
 
 const ZONE_CARD_SCENE = preload("res://scenes/ui_new/components/Card.tscn")
 
-# Costos de desbloqueo de zonas (progresivos por dificultad)
+# Costos de desbloqueo de zonas (solo zonas realistas basadas en CSV)
 const ZONE_UNLOCK_COSTS = {
-	# Zonas geográficas realistas
-	"lago_montana_alpes": 0, # Zona inicial gratuita
-	"grandes_lagos_norteamerica": 2500,
-	"costas_atlanticas": 8500,
-	"rios_amazonicos": 15000,
-	"oceanos_profundos": 500000,
-	# Zonas legacy para compatibilidad
-	"orilla": 0,
-	"lago": 1000,
-	"rio": 5000,
-	"costa": 25000,
-	"mar": 100000,
-	"glaciar": 500000,
-	"industrial": 2000000,
-	"abismo": 10000000,
-	"infernal": 50000000
+	# Orden por price_multiplier: 1.0 → 1.2 → 1.5 → 1.8 → 3.0
+	"lago_montana_alpes": 0, # x1.0 - Zona inicial gratuita
+	"grandes_lagos_norteamerica": 1500, # x1.2 - Progresión suave
+	"costas_atlanticas": 5000, # x1.5 - Costo medio
+	"rios_amazonicos": 15000, # x1.8 - Costo alto
+	"oceanos_profundos": 100000, # x3.0 - Costo muy alto
 }
 
 @onready var zones_list: VBoxContainer = $VBoxContainer/MapContainer/ZonesScroll/ZonesList
@@ -108,8 +98,8 @@ func _enrich_zone_data(zone_data: Dictionary, zone_id: String) -> Dictionary:
 
 func _is_zone_unlocked(zone_id: String) -> bool:
 	"""Verificar si una zona está desbloqueada"""
-	# Zonas iniciales gratuitas
-	if zone_id == "orilla" or zone_id == "lago_montana_alpes":
+	# Solo la primera zona realista está desbloqueada por defecto
+	if zone_id == "lago_montana_alpes":
 		print("[MapScreen] DEBUG: Zona inicial desbloqueada: %s" % zone_id)
 		return true
 
@@ -117,7 +107,7 @@ func _is_zone_unlocked(zone_id: String) -> bool:
 		print("[MapScreen] DEBUG: No hay Save, zona bloqueada: %s" % zone_id)
 		return false
 
-	var unlocked_zones = Save.game_data.get("unlocked_zones", ["orilla", "lago_montana_alpes"])
+	var unlocked_zones = Save.game_data.get("unlocked_zones", ["lago_montana_alpes"])
 	var is_unlocked = unlocked_zones.has(zone_id)
 	print("[MapScreen] DEBUG: Verificando zona %s - Desbloqueada: %s (Lista: %s)" % [zone_id, is_unlocked, str(unlocked_zones)])
 	return is_unlocked
@@ -140,13 +130,7 @@ func _generate_zone_description(zone_def) -> String:
 	var description = ""
 
 	if zone_def:
-		var fish_count = zone_def.entries.size() if zone_def.entries else 0
-		var multiplier = zone_def.price_multiplier
-
-		description = "🐟 %d especies disponibles\n" % fish_count
-		description += "💰 Multiplicador de precio: x%.1f\n" % multiplier
-
-		# Añadir información de rareza
+		# Añadir información de rareza sin duplicar especies ni multiplicador
 		var rarity_info = _analyze_zone_rarities(zone_def)
 		if rarity_info.size() > 0:
 			description += "✨ Rarezas: %s" % " ".join(rarity_info)
@@ -194,9 +178,9 @@ func _refresh_zones_list() -> void:
 	print("[MapScreen] DEBUG: Lista actualizada con %d tarjetas" % zones_list.get_child_count())
 
 func _compare_zones_by_difficulty(a: Dictionary, b: Dictionary) -> bool:
-	"""Comparar zonas por dificultad (unlock_cost). Zonas desbloqueadas primero, luego por costo"""
-	var cost_a = a.get("unlock_cost", 0)
-	var cost_b = b.get("unlock_cost", 0)
+	"""Comparar zonas por multiplicador de precio. Zonas desbloqueadas primero, luego por multiplicador"""
+	var multiplier_a = a.get("price_multiplier", 1.0)
+	var multiplier_b = b.get("price_multiplier", 1.0)
 	var unlocked_a = a.get("unlocked", false)
 	var unlocked_b = b.get("unlocked", false)
 
@@ -206,8 +190,8 @@ func _compare_zones_by_difficulty(a: Dictionary, b: Dictionary) -> bool:
 	if unlocked_b and not unlocked_a:
 		return false
 
-	# Si ambas tienen el mismo estado de desbloqueo, ordenar por costo
-	return cost_a < cost_b
+	# Si ambas tienen el mismo estado de desbloqueo, ordenar por multiplicador (menor a mayor)
+	return multiplier_a < multiplier_b
 
 func _create_zone_card(zone_data: Dictionary) -> Control:
 	"""Crear tarjeta de zona con información completa de desbloqueo"""
@@ -240,8 +224,8 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 
 	# Preparar descripción enriquecida
 	var rich_description = description
-	if multiplier > 1.0:
-		rich_description += "\n💎 Bonificación: x%.1f valor" % multiplier
+	# Siempre mostrar el multiplicador
+	rich_description += "\n� Multiplicador: x%.1f valor" % multiplier
 
 	# Preparar información de dificultad
 	var difficulty_text = ""
@@ -258,16 +242,32 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 
 	# Contar especies de peces disponibles en la zona
 	var fish_count = Content.get_fish_for_zone(zone_data.get("id", "")).size()
-	var fish_text = "%d especies" % fish_count
 
-	# Configurar tarjeta
+	# Preparar descripción enriquecida INCLUYENDO especies
+	var rich_description = description
+	rich_description += "\n🐟 %d especies disponibles" % fish_count
+	rich_description += "\n� Multiplicador: x%.1f valor" % multiplier
+
+	# Preparar información de dificultad
+	var difficulty_text = ""
+	if unlock_cost == 0:
+		difficulty_text = "⭐ Muy Fácil"
+	elif unlock_cost <= 1000:
+		difficulty_text = "⭐⭐ Fácil"
+	elif unlock_cost <= 5000:
+		difficulty_text = "⭐⭐⭐ Medio"
+	elif unlock_cost <= 15000:
+		difficulty_text = "⭐⭐⭐⭐ Difícil"
+	else:
+		difficulty_text = "⭐⭐⭐⭐⭐ Muy Difícil"
+
+	# Configurar tarjeta (SIN fish_count separado)
 	var card_data = {
 		"title": name,
 		"description": rich_description,
 		"icon_path": icon,
 		"action_text": action_text,
-		"difficulty": difficulty_text,
-		"fish_count": fish_text
+		"difficulty": difficulty_text
 	}
 	card.setup_card(card_data)
 
@@ -308,13 +308,8 @@ func _format_number(number: int) -> String:
 		return str(number)
 
 func _add_zone_indicators(card: Control, zone_data: Dictionary) -> void:
-	"""Añadir indicadores visuales profesionales a la tarjeta (solo información adicional)"""
+	"""Añadir indicadores visuales profesionales a la tarjeta"""
 	var multiplier = zone_data.get("price_multiplier", 1.0)
-	var fish_species = zone_data.get("fish_species", [])
-
-	# Solo añadir indicadores si hay información extra relevante
-	if multiplier <= 1.0 and fish_species.size() == 0:
-		return # No hay información adicional que mostrar
 
 	# Crear contenedor para indicadores adicionales
 	var indicators_container = VBoxContainer.new()
@@ -322,18 +317,16 @@ func _add_zone_indicators(card: Control, zone_data: Dictionary) -> void:
 
 	var info_row = HBoxContainer.new()
 
-	# Solo multiplicador si es mayor a 1.0
-	if multiplier > 1.0:
-		var multiplier_indicator = Label.new()
-		multiplier_indicator.text = "💰 x%.1f precio" % multiplier
-		multiplier_indicator.add_theme_font_size_override("font_size", 11)
-		multiplier_indicator.add_theme_color_override("font_color", Color.YELLOW)
-		info_row.add_child(multiplier_indicator)
+	# Mostrar multiplicador siempre (incluyendo 1.0)
+	var multiplier_indicator = Label.new()
+	multiplier_indicator.text = "💰 x%.1f precio" % multiplier
+	multiplier_indicator.add_theme_font_size_override("font_size", 11)
+	multiplier_indicator.add_theme_color_override("font_color", Color.YELLOW)
+	info_row.add_child(multiplier_indicator)
 
-	# Solo añadir la fila si tiene contenido
-	if info_row.get_child_count() > 0:
-		indicators_container.add_child(info_row)
-		card.add_child(indicators_container)
+	# Añadir la fila
+	indicators_container.add_child(info_row)
+	card.add_child(indicators_container)
 
 func _on_zone_info_pressed_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
 	"""Wrapper para manejar información de zona - ignora card_data y usa zone_data"""
@@ -403,7 +396,7 @@ func unlock_zone_success(zone_id: String) -> void:
 	# Refrescar datos para mostrar zona como desbloqueada
 	if Content:
 		var zones = Content.get_all_zones()
-		var current_zone_id = Save.game_data.get("current_zone", "orilla") if Save else "orilla"
+		var current_zone_id = Save.game_data.get("current_zone", "lago_montana_alpes") if Save else "lago_montana_alpes"
 		setup_map(zones, current_zone_id)
 
 	# Reproducir sonido de éxito

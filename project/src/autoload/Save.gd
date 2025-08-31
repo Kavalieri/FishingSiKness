@@ -44,9 +44,9 @@ var game_data := {
 	"schema": 2,
 	"coins": 1000,
 	"gems": 25,
-	"zone": "orilla",
-	"current_zone": "orilla",
-	"unlocked_zones": ["orilla"],
+	"zone": "lago_montana_alpes",
+	"current_zone": "lago_montana_alpes",
+	"unlocked_zones": ["lago_montana_alpes"],
 	"max_inventory": 12,
 	"upgrades": {},
 	"equipment": {},
@@ -253,7 +253,7 @@ func load_data() -> Dictionary:
 func migrate_game_data():
 	# Asegurar que existen todas las propiedades nuevas
 	if not game_data.has("current_zone"):
-		game_data.current_zone = "orilla"
+		game_data.current_zone = "lago_montana_alpes"
 	# ... (otras migraciones)
 
 func migrate(data: Dictionary) -> Dictionary:
@@ -378,9 +378,9 @@ func reset_to_default():
 		"schema": 2,
 		"coins": 1000,
 		"gems": 25,
-		"zone": "orilla",
-		"current_zone": "orilla",
-		"unlocked_zones": ["orilla"],
+		"zone": "lago_montana_alpes",
+		"current_zone": "lago_montana_alpes",
+		"unlocked_zones": ["lago_montana_alpes"],
 		"max_inventory": 12,
 		"upgrades": {},
 		"equipment": {},
