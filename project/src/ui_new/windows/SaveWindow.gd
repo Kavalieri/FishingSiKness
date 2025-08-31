@@ -41,6 +41,9 @@ func _ready() -> void:
 
 func _setup_translucent_style() -> void:
 	"""Configurar estilo translúcido"""
+	# Configurar overlay para recibir input
+	overlay.mouse_filter = Control.MOUSE_FILTER_PASS
+
 	var style_box = StyleBoxFlat.new()
 	style_box.bg_color = Color(0.1, 0.1, 0.1, 0.85)
 	style_box.corner_radius_top_left = 10
@@ -92,28 +95,6 @@ func _get_slot_data(slot_id: int) -> Dictionary:
 		return Save.get_save_slot_info(slot_id)
 	else:
 		return {"exists": false, "empty": true}
-
-			if parse_result == OK:
-				var data = json.data
-				return {
-					"slot_id": slot_id,
-					"exists": true,
-					"player_level": data.get("player_level", 1),
-					"current_zone": data.get("current_zone", "orilla"),
-					"coins": data.get("coins", 0),
-					"timestamp": data.get("save_timestamp", ""),
-					"playtime": data.get("playtime", 0)
-				}
-
-	return {
-		"slot_id": slot_id,
-		"exists": false,
-		"player_level": 0,
-		"current_zone": "",
-		"coins": 0,
-		"timestamp": "",
-		"playtime": 0
-	}
 
 func _update_slot_ui(slot_index: int, slot_data: Dictionary) -> void:
 	"""Actualizar UI de un slot específico"""
@@ -203,6 +184,13 @@ func _connect_signals() -> void:
 
 	# Cerrar con overlay
 	overlay.gui_input.connect(_on_overlay_input)
+	overlay.mouse_filter = Control.MOUSE_FILTER_PASS
+	overlay.z_index = 0
+	panel_container.z_index = 1
+
+	# CRÍTICO: Hacer que el CenterContainer no bloquee el input del overlay
+	var center_container = $CenterContainer
+	center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _setup_tooltips() -> void:
 	"""Configurar tooltips"""
@@ -308,8 +296,10 @@ func _show_error_message(message: String) -> void:
 
 func _on_overlay_input(event: InputEvent) -> void:
 	"""Cerrar al hacer clic en overlay"""
+	print("[SaveWindow] Overlay input recibido: %s" % event)
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			print("[SaveWindow] Clic en overlay - cerrando ventana")
 			_on_close_pressed()
 
 func _unhandled_input(event: InputEvent) -> void:

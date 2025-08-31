@@ -54,6 +54,9 @@ func _ready() -> void:
 
 func _setup_translucent_style() -> void:
 	"""Configurar estilo translúcido"""
+	# Configurar overlay para recibir input
+	overlay.mouse_filter = Control.MOUSE_FILTER_PASS
+
 	var style_box = StyleBoxFlat.new()
 	style_box.bg_color = Color(0.15, 0.15, 0.15, 0.9) # Más opaco que el menú de pausa
 	style_box.corner_radius_top_left = 10
@@ -124,6 +127,13 @@ func _connect_signals() -> void:
 
 	# Cerrar con overlay
 	overlay.gui_input.connect(_on_overlay_input)
+	overlay.mouse_filter = Control.MOUSE_FILTER_PASS
+	overlay.z_index = 0
+	panel_container.z_index = 1
+
+	# CRÍTICO: Hacer que el CenterContainer no bloquee el input del overlay
+	var center_container = $CenterContainer
+	center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _setup_tooltips() -> void:
 	"""Configurar tooltips"""

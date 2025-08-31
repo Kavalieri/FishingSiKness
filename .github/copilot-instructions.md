@@ -6,6 +6,7 @@
 - El GDD oficial está en `docs/GDD/GDD_0.1.0.md` y define reglas, flujos y contratos entre sistemas.
 - Fondos visuales por zona se asignan en los recursos `.tres` de cada zona.
 
+<!-- AI NOTE: ANTES DE CREAR CUALQUIER NUEVO ELEMENTO O MODIFICAR EL EXISTENTE REVISAR ESTOS DOCUMENTOS -->
 ## UI - Interfaz - Botones - convenciones
 - [background](E:\GitHub\Fishing-SiKness\.github\instructions\background-instructions.md)
 - [UI-Interfaz-Botones-Temas-plantillas](E:\GitHub\Fishing-SiKness\.github\instructions\UIMain-instructions.md)

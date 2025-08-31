@@ -33,13 +33,40 @@ func _ready() -> void:
 	# Configurar tooltips
 	_setup_tooltips()
 
+	# Configurar overlay para recibir input
+	_setup_overlay_input()
+
 	# Mostrar con animación
 	_animate_show()
 
 	print("[PauseMenu] ✓ Menú de pausa listo")
 
+func _setup_overlay_input() -> void:
+	"""Configurar el overlay para manejar input"""
+	print("[PauseMenu] Configurando overlay input...")
+
+	# Hacer que el overlay sea clickeable
+	overlay.gui_input.connect(_on_overlay_input)
+
+	# Configurar mouse filter para que pueda recibir input
+	overlay.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	# NO usar z-index negativo - eso puede causar problemas de input
+	# El overlay debe estar en el mismo nivel que el panel
+	overlay.z_index = 0
+	panel_container.z_index = 1 # Panel al frente para que los botones funcionen
+
+	# CRÍTICO: Hacer que el CenterContainer no bloquee el input del overlay
+	var center_container = $CenterContainer
+	center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	print("[PauseMenu] Overlay configurado - mouse_filter: %s" % overlay.mouse_filter)
+
 func _setup_translucent_style() -> void:
 	"""Configurar estilo translúcido siguiendo UI-BG-GLOBAL"""
+	# Configurar overlay para recibir input
+	overlay.mouse_filter = Control.MOUSE_FILTER_PASS
+
 	# El overlay ya tiene color semitransparente en el .tscn
 
 	# Aplicar estilo translúcido al panel principal
@@ -63,9 +90,6 @@ func _connect_button_signals() -> void:
 	options_button.pressed.connect(_on_options_pressed)
 	save_button.pressed.connect(_on_save_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
-
-	# Permitir cerrar haciendo clic en el overlay
-	overlay.gui_input.connect(_on_overlay_input)
 
 func _setup_tooltips() -> void:
 	"""Configurar tooltips de botones"""
@@ -133,6 +157,7 @@ func _on_exit_pressed() -> void:
 
 func _on_overlay_input(event: InputEvent) -> void:
 	"""Cerrar al hacer clic en el overlay"""
+	print("[PauseMenu] Overlay input recibido: %s" % event)
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			print("[PauseMenu] Clic en overlay - cerrando menú")
@@ -156,10 +181,10 @@ func _confirm_exit() -> void:
 	# Salir al escritorio
 	get_tree().quit()
 
-# Input handling
-func _unhandled_input(event: InputEvent) -> void:
-	"""Manejar inputs mientras el menú está abierto"""
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_pause"):
-		print("[PauseMenu] ESC presionado - cerrando menú")
+func _input(event: InputEvent) -> void:
+	"""Manejar input local del menú de pausa"""
+	# Solo procesar ESC si este menú está visible y activo
+	if visible and event.is_action_pressed("ui_cancel"):
+		print("[PauseMenu] ESC detectado - cerrando menú")
 		menu_closed.emit()
 		get_viewport().set_input_as_handled()

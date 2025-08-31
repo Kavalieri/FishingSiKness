@@ -42,16 +42,13 @@ func _setup_input_actions() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	"""Capturar inputs globales para pausa"""
-	# ESC en PC o botón atrás en Android
+	# ESC en PC o botón atrás en Android - SOLO para abrir el menú
 	if event.is_action_pressed("ui_pause") or event.is_action_pressed("ui_cancel"):
 		if not is_pause_menu_open:
-			print("[PauseManager] Input de pausa detectado")
+			print("[PauseManager] Input de pausa detectado - abriendo menú")
 			pause_menu_requested.emit()
 			get_viewport().set_input_as_handled()
-		else:
-			# Si ya está abierto, cerrar
-			_close_pause_menu()
-			get_viewport().set_input_as_handled()
+		# NO manejar el cierre aquí - lo maneja directamente PauseMenu
 
 func _notification(what: int) -> void:
 	"""Manejar notificaciones del sistema Android"""
@@ -170,10 +167,18 @@ func _show_options_window() -> void:
 		else:
 			current_options_window.queue_free()
 		current_options_window = null
+
+		# Mostrar el menú de pausa nuevamente
+		if current_pause_window:
+			current_pause_window.visible = true
 		return
 
 	# Cerrar ventana de guardado si está abierta (solo una ventana secundaria a la vez)
 	_close_save_window()
+
+	# Ocultar el menú de pausa mientras se muestra opciones
+	if current_pause_window:
+		current_pause_window.visible = false
 
 	print("[PauseManager] Abriendo ventana de opciones")
 	var options_scene = load("res://scenes/ui_new/windows/OptionsWindow.tscn")
@@ -198,10 +203,18 @@ func _show_save_window() -> void:
 		else:
 			current_save_window.queue_free()
 		current_save_window = null
+
+		# Mostrar el menú de pausa nuevamente
+		if current_pause_window:
+			current_pause_window.visible = true
 		return
 
 	# Cerrar ventana de opciones si está abierta (solo una ventana secundaria a la vez)
 	_close_options_window()
+
+	# Ocultar el menú de pausa mientras se muestra guardado
+	if current_pause_window:
+		current_pause_window.visible = false
 
 	print("[PauseManager] Abriendo ventana de guardado")
 	var save_scene = load("res://scenes/ui_new/windows/SaveWindow.tscn")
@@ -222,6 +235,10 @@ func _close_options_window() -> void:
 			current_options_window.queue_free()
 		current_options_window = null
 
+		# Solo mostrar el menú de pausa si está abierto
+		if current_pause_window and is_pause_menu_open:
+			current_pause_window.visible = true
+
 func _close_save_window() -> void:
 	"""Cerrar ventana de guardado si está abierta"""
 	if current_save_window != null and is_instance_valid(current_save_window):
@@ -231,15 +248,27 @@ func _close_save_window() -> void:
 			current_save_window.queue_free()
 		current_save_window = null
 
+		# Solo mostrar el menú de pausa si está abierto
+		if current_pause_window and is_pause_menu_open:
+			current_pause_window.visible = true
+
 func _on_options_window_closed() -> void:
 	"""Handler cuando la ventana de opciones se cierra"""
 	print("[PauseManager] Ventana opciones cerrada")
 	current_options_window = null
 
+	# Solo mostrar el menú de pausa si está abierto
+	if current_pause_window and is_pause_menu_open:
+		current_pause_window.visible = true
+
 func _on_save_window_closed() -> void:
 	"""Handler cuando la ventana de guardado se cierra"""
 	print("[PauseManager] Ventana guardado cerrada")
 	current_save_window = null
+
+	# Solo mostrar el menú de pausa si está abierto
+	if current_pause_window and is_pause_menu_open:
+		current_pause_window.visible = true
 
 # API pública para integración con TopBar/SplashScreen
 func is_menu_open() -> bool:
