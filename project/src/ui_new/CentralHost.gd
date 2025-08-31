@@ -150,6 +150,28 @@ func _connect_screen_signals(screen: Node, screen_name: String) -> void:
 			if screen.has_signal("prestige_confirmed"):
 				screen.prestige_confirmed.connect(main._on_prestige_confirmed)
 
+func _setup_prestige_screen(screen: PrestigeScreen) -> void:
+	"""Configurar pantalla de prestigio con datos actuales"""
+	if screen.has_method("setup_prestige_screen"):
+		# TODO: Obtener datos reales del sistema de prestigio cuando esté implementado
+		var prestige_level = 0 # Nivel actual de prestigio
+		var prestige_points = 0 # Puntos de prestigio disponibles
+		var next_points = 100 # Puntos necesarios para el siguiente prestigio
+		var bonuses: Array[Dictionary] = [] # Bonuses disponibles (vacío por ahora)
+		var can_do_prestige = false # Si el jugador puede hacer prestigio
+
+		# Si hay sistema de Save, obtener datos reales
+		if Save and Save.game_data.has("prestige"):
+			var prestige_data = Save.game_data.prestige
+			prestige_level = prestige_data.get("level", 0)
+			prestige_points = prestige_data.get("points", 0)
+			next_points = prestige_data.get("next_points", 100)
+			# can_do_prestige = (current_progress >= next_points)
+
+		screen.setup_prestige_screen(
+			prestige_level, prestige_points, next_points, bonuses, can_do_prestige
+		)
+
 func get_current_screen() -> Node:
 	"""Obtener referencia a la pantalla actual"""
 	return current_screen

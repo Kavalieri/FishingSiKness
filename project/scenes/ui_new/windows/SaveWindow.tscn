@@ -1,0 +1,203 @@
+[gd_scene load_steps=2 format=3 uid="uid://d8e9f0g1h2i3j"]
+
+[ext_resource type="Script" path="res://src/ui_new/windows/SaveWindow.gd" id="1_save"]
+
+[node name="SaveWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_save")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.35)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(480, 600)
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "GUARDAR / CARGAR"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 400)
+
+[node name="SlotsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SaveSlot1" type="PanelContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SlotIcon" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+
+[node name="InfoContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Partida 1"
+
+[node name="SlotDetails" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Nivel 15 - Zona: Mar Profundo"
+
+[node name="SlotDate" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Guardado: 31/08/2025 14:30"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LoadButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 32)
+text = "Cargar"
+
+[node name="SaveButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot1/HBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 32)
+text = "Guardar"
+
+[node name="SaveSlot2" type="PanelContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SlotIcon" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+
+[node name="InfoContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Partida 2"
+
+[node name="SlotDetails" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Slot vacío"
+
+[node name="SlotDate" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Nunca usado"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LoadButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 32)
+text = "Cargar"
+disabled = true
+
+[node name="SaveButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot2/HBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 32)
+text = "Guardar"
+
+[node name="SaveSlot3" type="PanelContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SlotIcon" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+
+[node name="InfoContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Partida 3"
+
+[node name="SlotDetails" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Slot vacío"
+
+[node name="SlotDate" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer/InfoContainer"]
+layout_mode = 2
+text = "Nunca usado"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LoadButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 32)
+text = "Cargar"
+disabled = true
+
+[node name="SaveButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer/SaveSlot3/HBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 32)
+text = "Guardar"
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ActionsContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AutoSaveButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ActionsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+text = "Guardar Ahora"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ActionsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+text = "Cerrar"

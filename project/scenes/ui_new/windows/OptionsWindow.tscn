@@ -1,0 +1,186 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2d3e4f5g6h7i"]
+
+[ext_resource type="Script" path="res://src/ui_new/windows/OptionsWindow.gd" id="1_options"]
+
+[node name="OptionsWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_options")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.3)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 500)
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "OPCIONES"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OptionsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="AudioSection" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AudioTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection"]
+layout_mode = 2
+text = "🔊 AUDIO"
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection"]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/MasterVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Volumen General"
+
+[node name="MasterSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/MasterVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="MasterValue" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/MasterVolumeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "100%"
+horizontal_alignment = 2
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Música"
+
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 80.0
+
+[node name="MusicValue" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/MusicVolumeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "80%"
+horizontal_alignment = 2
+
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection"]
+layout_mode = 2
+
+[node name="SFXLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Efectos de Sonido"
+
+[node name="SFXSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="SFXValue" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/AudioSection/SFXVolumeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "100%"
+horizontal_alignment = 2
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer"]
+layout_mode = 2
+
+[node name="GameplaySection" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GameplayTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection"]
+layout_mode = 2
+text = "🎮 GAMEPLAY"
+
+[node name="AutoSaveContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection"]
+layout_mode = 2
+
+[node name="AutoSaveLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection/AutoSaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Guardado Automático"
+
+[node name="AutoSaveCheck" type="CheckBox" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection/AutoSaveContainer"]
+layout_mode = 2
+button_pressed = true
+
+[node name="NotificationsContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection"]
+layout_mode = 2
+
+[node name="NotificationsLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection/NotificationsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Notificaciones"
+
+[node name="NotificationsCheck" type="CheckBox" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer/GameplaySection/NotificationsContainer"]
+layout_mode = 2
+button_pressed = true
+
+[node name="HSeparator3" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/OptionsContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResetButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+text = "Restablecer"
+
+[node name="AcceptButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+text = "Aceptar"
+
+[node name="CancelButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+text = "Cancelar"

@@ -41,8 +41,18 @@ func _connect_buttons() -> void:
 	gems_cell.pressed.connect(func(): button_pressed.emit("gems"))
 	zone_cell.pressed.connect(func(): button_pressed.emit("zone"))
 	social_cell.pressed.connect(func(): button_pressed.emit("social"))
-	pause_cell.pressed.connect(func(): button_pressed.emit("pause"))
+	pause_cell.pressed.connect(_on_pause_button_pressed)
 	xp_progress.gui_input.connect(_on_xp_progress_input)
+
+func _on_pause_button_pressed() -> void:
+	"""Manejar botón de pausa - conectar con PauseManager"""
+	print("[TopBar] Botón pausa presionado")
+
+	if PauseManager:
+		PauseManager.request_pause_menu()
+	else:
+		# Fallback: emitir señal tradicional
+		button_pressed.emit("pause")
 
 func _on_xp_progress_input(event: InputEvent) -> void:
 	"""Manejar click en barra XP (opcional según especificación)"""
