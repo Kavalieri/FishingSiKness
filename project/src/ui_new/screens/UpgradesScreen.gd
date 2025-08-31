@@ -17,19 +17,90 @@ func _ready() -> void:
 
 func _setup_upgrades_panel() -> void:
 	"""Configurar panel de mejoras reutilizable"""
-	upgrades_panel = UPGRADES_PANEL_SCENE.instantiate()
-	upgrades_panel.upgrade_panel_closed.connect(_on_upgrade_panel_closed)
-	upgrades_panel.upgrade_purchased.connect(_on_upgrade_purchased)
-	upgrades_panel_container.add_child(upgrades_panel)
-
-func setup_upgrades_screen(upgrades: Array[Dictionary], money: int, gems: int,
-	stats: Dictionary) -> void:
-	"""Configurar pantalla con datos de mejoras"""
+	upgrades_panel = UPGRADES_PANEL_SCENE.instantiate() as UpgradesPanel
 	if upgrades_panel:
-		upgrades_panel.setup_upgrades(upgrades, money, gems, stats)
+		upgrades_panel.upgrade_panel_closed.connect(_on_upgrade_panel_closed)
+		upgrades_panel.upgrade_purchased.connect(_on_upgrade_purchased)
+		upgrades_panel_container.add_child(upgrades_panel)
+	else:
+		Logger.error("No se pudo instanciar UpgradesPanel")
+
+func setup_screen() -> void:
+	"""Configurar pantalla con datos del UpgradeSystem"""
+	if upgrades_panel and UpgradeSystem:
+		var upgrades_data = _get_upgrades_data()
+		var money = Save.get_coins()
+		var gems = Save.get_gems()
+		var stats = _get_player_stats()
+
+		upgrades_panel.setup_upgrades(upgrades_data, money, gems, stats)
+
+func _get_upgrades_data() -> Array[Dictionary]:
+	"""Obtener datos de upgrades del sistema"""
+	var upgrades: Array[Dictionary] = []
+
+	for upgrade_id in UpgradeSystem.available_upgrades.keys():
+		var upgrade_info = UpgradeSystem.get_upgrade_info(upgrade_id)
+		var upgrade_data = {
+			"id": upgrade_id,
+			"name": upgrade_info.name,
+			"description": upgrade_info.description,
+			"category": _get_upgrade_category(upgrade_id),
+			"cost_money": upgrade_info.next_level_cost,
+			"cost_gems": 0, # Por ahora solo dinero
+			"owned": upgrade_info.current_level > 0,
+			"level": upgrade_info.current_level,
+			"max_level": upgrade_info.max_level
+		}
+		upgrades.append(upgrade_data)
+
+	return upgrades
+
+func _get_upgrade_category(upgrade_id: String) -> String:
+	"""Mapear upgrade_id a categoría"""
+	match upgrade_id:
+		"rod":
+			return "rod"
+		"hook":
+			return "hook"
+		"line":
+			return "line"
+		"reel", "bait", "zone_multiplier", "fridge":
+			return "boat" # Agrupamos otros upgrades en "boat"
+		_:
+			return "rod"
+
+func _get_player_stats() -> Dictionary:
+	"""Calcular estadísticas del jugador con upgrades aplicados"""
+	var stats = {
+		"fishing_power": 100, # Base power
+		"luck": 0
+	}
+
+	# Aplicar efectos de upgrades
+	for upgrade_id in UpgradeSystem.available_upgrades.keys():
+		var level = Save.get_data("upgrades/" + upgrade_id, 0)
+		if level > 0:
+			var upgrade_def = UpgradeSystem.available_upgrades[upgrade_id]
+			match upgrade_id:
+				"rod":
+					stats.fishing_power += level * 10
+				"hook":
+					stats.luck += level * 5
+
+	return stats
 
 func _on_upgrade_panel_closed() -> void:
 	upgrade_screen_closed.emit()
 
 func _on_upgrade_purchased(upgrade_id: String) -> void:
-	upgrade_purchased.emit(upgrade_id)
+	"""Manejar compra de upgrade"""
+	var success = UpgradeSystem.purchase_upgrade(upgrade_id)
+
+	if success:
+		Logger.info("Upgrade comprado: " + upgrade_id)
+		# Actualizar pantalla con nuevos datos
+		setup_screen()
+		upgrade_purchased.emit(upgrade_id)
+	else:
+		Logger.warn("No se pudo comprar upgrade: " + upgrade_id)

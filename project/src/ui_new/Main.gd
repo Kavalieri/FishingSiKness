@@ -203,7 +203,8 @@ func _show_economy_popup() -> void:
 
 func _show_gems_store() -> void:
 	"""Mostrar tienda de gemas premium"""
-	print("[Main] TODO: Implementar tienda de gemas")
+	print("[Main] Abriendo tienda de gemas")
+	central_host.show_screen("res://scenes/ui_new/screens/StoreScreen.tscn")
 
 func _show_zone_selector() -> void:
 	"""Mostrar selector rápido de zona"""
@@ -261,6 +262,7 @@ func _on_item_transaction(item_id: String, quantity: int, is_purchase: bool) -> 
 			print("[Main] Comprado: %s x%d" % [item_id, quantity])
 			if SFX:
 				SFX.play_event("purchase")
+			update_topbar() # Actualizar TopBar después de compra
 	else:
 		var value = item_data.get("sell_value", 0) * quantity
 		if Save:
@@ -268,3 +270,49 @@ func _on_item_transaction(item_id: String, quantity: int, is_purchase: bool) -> 
 			print("[Main] Vendido: %s x%d" % [item_id, quantity])
 			if SFX:
 				SFX.play_event("sell")
+			update_topbar() # Actualizar TopBar después de venta
+
+func update_topbar() -> void:
+	"""Actualizar TopBar con datos actuales"""
+	if topbar and topbar.has_method("update_display"):
+		topbar.update_display()
+		print("[Main] TopBar actualizada")
+
+# Callbacks para compras de upgrades y tienda
+
+func _on_upgrade_purchased(upgrade_id: String) -> void:
+	"""Callback para compra de upgrade"""
+	print("[Main] Upgrade comprado: " + upgrade_id)
+	update_topbar()
+	if SFX:
+		SFX.play_event("upgrade")
+
+func _on_gem_pack_purchased(pack_id: String) -> void:
+	"""Callback para compra de paquete de gemas (monetización)"""
+	print("[Main] Paquete de gemas comprado: " + pack_id)
+	# TODO: Implementar compra real con plataforma (Google Play, App Store, etc.)
+	# Por ahora simular la compra otorgando gemas
+	_simulate_gem_pack_purchase(pack_id)
+
+func _on_store_item_purchased(item_id: String) -> void:
+	"""Callback para compra de objeto premium con gemas"""
+	print("[Main] Objeto premium comprado: " + item_id)
+	update_topbar()
+	if SFX:
+		SFX.play_event("premium_purchase")
+
+func _simulate_gem_pack_purchase(pack_id: String) -> void:
+	"""Simular compra de gemas para desarrollo/testing"""
+	var gem_amounts = {
+		"small_gems": 100,
+		"medium_gems": 550, # 500 + 50 bonus
+		"large_gems": 1400, # 1200 + 200 bonus
+		"mega_gems": 3000 # 2500 + 500 bonus
+	}
+
+	var gems_to_add = gem_amounts.get(pack_id, 0)
+	if gems_to_add > 0 and Save:
+		var current_gems = Save.get_data("gems", 0)
+		Save.set_data("gems", current_gems + gems_to_add)
+		print("[Main] Gemas añadidas: %d (pack: %s)" % [gems_to_add, pack_id])
+		update_topbar()

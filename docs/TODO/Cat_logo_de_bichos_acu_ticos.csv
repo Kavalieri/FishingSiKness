@@ -1,0 +1,30 @@
+ID,Nombre,Nombre científico,Categoría,Agua,Región/Zona,Hábitat,Método,Cebo/Señuelo,Franja horaria,Temporada,Dificultad (1-10),Exclusividad,Peso mín (kg),Peso máx (kg),Precio venta (monedas),XP base,Notas
+1014,Cangrejo herradura (horseshoe crab),Limulus polyphemus,Artrópodo marino,Salobre,Atlántico Oeste (EE.UU.),"Playa, Estuario",Recolección manual,—,Noche,Primavera,3,Raro,1.0,4.0,35,60,Sangre azul usada en biomedicina; fósil viviente.
+1016,Calamar colosal,Mesonychoteuthis hamiltoni,Cefalópodo,Salada,Océano Antártico,Aguas profundas antárticas,Artes profundas,Jigs luminosos,Noche,Invierno,10,Legendario,200.0,500.0,18200,500,Mayor invertebrado del mundo; extremadamente raro.
+1017,Calamar flecha,Loligo vulgaris,Cefalópodo,Salada,Atlántico Este,Aguas costeras,"Eging, Redes",Poteras,Noche,Invierno-Primavera,3,Común,0.2,1.0,5,30,Muy utilizado como cebo y gastronomía.
+1018,Calamar flecha,Loligo vulgaris,Cefalópodo,Salada,Mediterráneo,Aguas costeras,"Eging, Redes",Poteras,Noche,Invierno-Primavera,3,Común,0.2,1.0,5,30,Muy utilizado como cebo y gastronomía.
+1019,Sepia flamboyante,Metasepia pfefferi,Cefalópodo,Salada,Indo-Pacífico,Fondos arenosos tropicales,Buceo,—,Día,Todo el año,6,Épico,0.1,0.2,5,180,Colores espectaculares y venenosa.
+1015,Anémona gigante,Condylactis gigantea,Cnidario,Salada,Caribe,Arrecife,Buceo,—,Día,Verano,2,Poco común,0.5,2.0,15,28,Colores vivos; simbiosis con peces payaso.
+1003,Medusa gigante melena de león,Cyanea capillata,Cnidario,Salada,Atlántico Norte,Aguas frías superficiales,Red especial,—,Día,Verano,7,Raro,10.0,200.0,1930,140,Tentáculos urticantes muy largos; especie espectacular.
+1004,Medusa gigante melena de león,Cyanea capillata,Cnidario,Salada,Ártico,Aguas frías superficiales,Red especial,—,Día,Verano,7,Raro,10.0,200.0,1930,140,Tentáculos urticantes muy largos; especie espectacular.
+1001,Medusa luna,Aurelia aurita,Cnidario,Salada,Atlántico NE,Superficie costera,"Red, Recolección manual",—,Noche,Verano,2,Común,0.2,2.0,10,20,Picadura leve; fosforescencia nocturna llamativa.
+1002,Medusa luna,Aurelia aurita,Cnidario,Salada,Mediterráneo,Superficie costera,"Red, Recolección manual",—,Noche,Verano,2,Común,0.2,2.0,10,20,Picadura leve; fosforescencia nocturna llamativa.
+1024,Carabela portuguesa,Physalia physalis,Cnidario sifonóforo,Salada,Atlántico,Superficie oceánica,Avistamiento,—,Día,Verano,9,Épico,1.0,2.0,45,270,"No es medusa, sino colonia; picadura peligrosa."
+1025,Carabela portuguesa,Physalia physalis,Cnidario sifonóforo,Salada,Indico,Superficie oceánica,Avistamiento,—,Día,Verano,9,Épico,1.0,2.0,45,270,"No es medusa, sino colonia; picadura peligrosa."
+1023,Camarón mantis,Odontodactylus scyllarus,Crustáceo,Salada,Indo-Pacífico,Arrecife,Buceo,—,Día,Todo el año,6,Raro,0.1,0.3,5,120,Golpe más rápido del reino animal; colores vivos.
+1012,Cangrejo violinista,Uca spp.,Crustáceo,Salobre,Caribe,"Manglar, Marisma",Recolección manual,—,Día,Todo el año,1,Común,0.05,0.1,0,10,Macho con pinza sobredimensionada; icono de marismas.
+1013,Cangrejo violinista,Uca spp.,Crustáceo,Salobre,Indo-Pacífico,"Manglar, Marisma",Recolección manual,—,Día,Todo el año,1,Común,0.05,0.1,0,10,Macho con pinza sobredimensionada; icono de marismas.
+1029,Krill antártico,Euphausia superba,Crustáceo,Salada,Océano Antártico,Aguas polares,Red planctónica,—,Noche,Invierno,1,Común,0.001,0.003,0,10,Base de la cadena alimentaria antártica.
+1010,Langosta espinosa,Panulirus argus,Crustáceo,Salada,Caribe,"Arrecife, Manglar","Buceo libre, Nasa",—,Noche,Verano-Otoño,6,Raro,1.0,5.0,55,120,"Sin pinzas, pero antenas duras; muy apreciada en cocina."
+1011,Langosta espinosa,Panulirus argus,Crustáceo,Salada,Atlántico tropical,"Arrecife, Manglar","Buceo libre, Nasa",—,Noche,Verano-Otoño,6,Raro,1.0,5.0,55,120,"Sin pinzas, pero antenas duras; muy apreciada en cocina."
+1008,Langostino tigre gigante,Penaeus monodon,Crustáceo,Salada,Índico,Fondos arenosos tropicales,"Redes, Chinchorros",—,Noche,Todo el año,2,Común,0.1,0.5,0,20,Especie cultivada extensamente; gran valor comercial.
+1009,Langostino tigre gigante,Penaeus monodon,Crustáceo,Salada,Pacífico tropical,Fondos arenosos tropicales,"Redes, Chinchorros",—,Noche,Todo el año,2,Común,0.1,0.5,0,20,Especie cultivada extensamente; gran valor comercial.
+1027,Percebe,Pollicipes pollicipes,Crustáceo,Salada,Atlántico NE,Acantilados batidos,Recolección peligrosa,—,Marea baja,Verano,5,Raro,0.05,0.2,0,100,Gran valor gastronómico; alto riesgo en captura.
+1028,Percebe,Pollicipes pollicipes,Crustáceo,Salada,Galicia,Acantilados batidos,Recolección peligrosa,—,Marea baja,Verano,5,Raro,0.05,0.2,0,100,Gran valor gastronómico; alto riesgo en captura.
+1006,Erizo de mar púrpura,Strongylocentrotus purpuratus,Equinodermo,Salada,Pacífico NE,Fondos rocosos,Recolección buceo,—,Día,Verano-Otoño,3,Poco común,0.2,0.6,5,42,Huevas muy apreciadas en gastronomía.
+1005,Estrella de mar común,Asterias rubens,Equinodermo,Salada,Atlántico NE,Fondos rocosos/arenosos,Recolección buceo,—,Día,Todo el año,1,Común,0.1,1.0,5,10,"No tiene valor gastronómico, sí decorativo/científico."
+1007,Pepino de mar gigante,Parastichopus californicus,Equinodermo,Salada,Pacífico NE,Fondos blandos,Buceo/recolección,—,Noche,Verano,4,Poco común,1.0,5.0,35,56,Exportación para gastronomía asiática; lento movimiento.
+1026,Almeja gigante,Tridacna gigas,Molusco bivalvo,Salada,Indo-Pacífico,Arrecife tropical,Buceo,—,Día,Todo el año,7,Épico,50.0,200.0,3450,210,Puede vivir más de 100 años; protegida.
+1022,Caracol cono geógrafo,Conus geographus,Molusco gasterópodo,Salada,Indo-Pacífico,Arrecife coralino,Recolección,—,Noche,Verano,8,Épico,0.1,0.2,5,240,Muy venenoso; mortal para humanos.
+1020,Nudibranquio dragón azul,Glaucus atlanticus,Molusco nudibranquio,Salada,Atlántico,Superficie oceánica,Avistamiento,—,Día,Verano,4,Raro,0.01,0.05,0,80,"Pequeño, espectacular coloración azul, tóxico."
+1021,Nudibranquio dragón azul,Glaucus atlanticus,Molusco nudibranquio,Salada,Pacífico,Superficie oceánica,Avistamiento,—,Día,Verano,4,Raro,0.01,0.05,0,80,"Pequeño, espectacular coloración azul, tóxico."

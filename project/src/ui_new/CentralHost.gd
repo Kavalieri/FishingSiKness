@@ -57,6 +57,8 @@ func _setup_screen_with_data(screen: Node, scene_path: String, _setup_data: Dict
 			_setup_market_screen(screen)
 		"UpgradesScreen":
 			_setup_upgrades_screen(screen)
+		"StoreScreen":
+			_setup_store_screen(screen)
 		"PrestigeScreen":
 			_setup_prestige_screen(screen)
 
@@ -99,26 +101,69 @@ func _setup_map_screen(screen: Control) -> void:
 		screen.setup_map(zones, current_zone_id)
 
 func _setup_market_screen(screen: Control) -> void:
-	"""Configurar pantalla de mercado con inventario del jugador"""
+	"""Configurar pantalla de mercado con inventario real del jugador"""
 	if screen.has_method("setup_market"):
 		var money = 0
 		var gems = 0
-		var inventory = []
+		var sell_items = []
+		var buy_items = []
 
 		if Save:
 			money = Save.get_coins()
 			gems = Save.get_gems()
-			# TODO: Obtener inventario real cuando esté implementado
-			inventory = []
 
-		# TODO: Obtener items disponibles para compra desde Content
-		var buyable_items = []
+		# Obtener inventario real de peces desde InventorySystem
+		if InventorySystem:
+			var fish_inventory = InventorySystem.get_inventory()
+			print("[CentralHost] Cargando inventario con %d peces" % fish_inventory.size())
+		else:
+			print("[CentralHost] InventorySystem no disponible")
 
-		screen.setup_market(money, gems, inventory, buyable_items)
+		# Obtener items disponibles para compra desde Content
+		if Content:
+			# TODO: Implementar sistema de items comprables
+			buy_items = _get_buyable_items()
+
+		screen.setup_market(money, gems, sell_items, buy_items)
+
+func _get_buyable_items() -> Array[Dictionary]:
+	"""Obtener items comprables del Content system"""
+	var items: Array[Dictionary] = []
+
+	# Por ahora, items de ejemplo basados en el store
+	if Content:
+		# Paquetes de gemas
+		items.append({
+			"id": "gems_120",
+			"name": "Paquete Pequeño de Gemas",
+			"description": "💎 120 gemas\nPerfecto para empezar",
+			"category": "gems",
+			"price": 100, # Precio en dinero real (ficticio)
+			"currency": "real_money",
+			"value": 120,
+			"icon": "res://art/ui/assets/diamonds.png"
+		})
+
+		# Items de mejora básicos
+		items.append({
+			"id": "bait_basic",
+			"name": "Cebo Básico",
+			"description": "🎣 Mejora las posibilidades de captura\n+10% probabilidad de pez raro",
+			"category": "consumable",
+			"price": 50,
+			"currency": "coins",
+			"value": 50,
+			"icon": "res://art/ui/assets/coins.png"
+		})
+
+	return items
 
 func _setup_upgrades_screen(screen: Control) -> void:
-	"""Configurar pantalla de mejoras con datos del jugador"""
-	if screen.has_method("setup_upgrades_screen"):
+	"""Configurar pantalla de mejoras con datos del UpgradeSystem"""
+	if screen.has_method("setup_screen"):
+		screen.setup_screen()
+	elif screen.has_method("setup_upgrades_screen"):
+		# Fallback para compatibilidad
 		var upgrades = []
 		var money = 0
 		var gems = 0
@@ -148,7 +193,13 @@ func _connect_screen_signals(screen: Node, screen_name: String) -> void:
 				screen.fish_caught.connect(main._on_fish_caught)
 		"MapScreen":
 			if screen.has_signal("zone_selected"):
-				screen.zone_selected.connect(main._on_zone_selected)
+				screen.zone_selected.connect(main._on_zone_changed)
+			if screen.has_signal("fishing_requested"):
+				screen.fishing_requested.connect(_on_fishing_requested)
+			if screen.has_signal("zone_preview_requested"):
+				screen.zone_preview_requested.connect(_on_zone_preview_requested)
+			if screen.has_signal("zone_unlock_requested"):
+				screen.zone_unlock_requested.connect(_on_zone_unlock_requested)
 		"MarketScreen":
 			if screen.has_signal("item_bought"):
 				screen.item_bought.connect(main._on_item_bought)
@@ -157,6 +208,13 @@ func _connect_screen_signals(screen: Node, screen_name: String) -> void:
 		"UpgradesScreen":
 			if screen.has_signal("upgrade_purchased"):
 				screen.upgrade_purchased.connect(main._on_upgrade_purchased)
+		"StoreScreen":
+			if screen.has_signal("store_screen_closed"):
+				screen.store_screen_closed.connect(_on_store_screen_closed)
+			if screen.has_signal("gem_pack_purchased"):
+				screen.gem_pack_purchased.connect(main._on_gem_pack_purchased)
+			if screen.has_signal("item_purchased"):
+				screen.item_purchased.connect(main._on_store_item_purchased)
 		"PrestigeScreen":
 			if screen.has_signal("prestige_confirmed"):
 				screen.prestige_confirmed.connect(main._on_prestige_confirmed)
@@ -183,6 +241,62 @@ func _setup_prestige_screen(screen: Control) -> void:
 			prestige_level, prestige_points, next_points, bonuses, can_do_prestige
 		)
 
+func _setup_store_screen(screen: Control) -> void:
+	"""Configurar pantalla de tienda"""
+	# StoreScreen se configura automáticamente en _ready()
+	# Solo necesitamos conectar señales aquí si es necesario
+	pass
+
 func get_current_screen() -> Node:
 	"""Obtener referencia a la pantalla actual"""
 	return current_screen
+
+func _on_fishing_requested(zone_id: String) -> void:
+	"""Manejar solicitud de ir a pescar en zona específica"""
+	# Cambiar a zona y abrir pantalla de pesca
+	var main = get_parent().get_parent()
+	if main and main.has_method("_on_zone_changed"):
+		main._on_zone_changed(zone_id)
+
+	show_screen("res://scenes/ui_new/screens/FishingScreen.tscn")
+
+func _on_zone_preview_requested(zone_id: String) -> void:
+	"""Manejar solicitud de vista previa de zona"""
+	print("Vista previa de zona solicitada: %s" % zone_id)
+	# TODO: Implementar panel de vista previa de zona
+
+func _on_zone_unlock_requested(zone_id: String, cost: int) -> void:
+	"""Manejar solicitud de desbloqueo de zona"""
+	if not Save:
+		print("Sistema de guardado no disponible")
+		return
+
+	if Save.get_coins() < cost:
+		print("Fondos insuficientes para desbloquear zona: %s" % zone_id)
+		if SFX and SFX.has_method("play_event"):
+			SFX.play_event("ui_error")
+		return
+
+	# Procesar desbloqueo
+	if Save.spend_coins(cost):
+		# Añadir zona a las desbloqueadas
+		var unlocked_zones = Save.game_data.get("unlocked_zones", ["orilla"])
+		if not unlocked_zones.has(zone_id):
+			unlocked_zones.append(zone_id)
+			Save.game_data.unlocked_zones = unlocked_zones
+			Save.save_game()
+
+		# Notificar al MapScreen del éxito
+		if current_screen and current_screen.has_method("unlock_zone_success"):
+			current_screen.unlock_zone_success(zone_id)
+
+		# Actualizar TopBar si es necesario
+		var main = get_parent().get_parent()
+		if main and main.has_method("update_topbar"):
+			main.update_topbar()
+
+		print("Zona %s desbloqueada exitosamente por %d monedas" % [zone_id, cost])
+
+func _on_store_screen_closed() -> void:
+	"""Cerrar pantalla de tienda y volver al juego"""
+	show_screen("res://scenes/ui_new/screens/FishingScreen.tscn")

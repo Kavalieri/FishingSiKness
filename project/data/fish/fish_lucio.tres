@@ -1,0 +1,3 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3][ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"][ext_resource type="Texture2D" path="res://art/fish/lubina.png" id="2"][resource]script = ExtResource("1")id = "lucio"name = "Lucio"description = "Un depredador feroz de aguas dulces. Sus dientes afilados lo convierten en un adversario temible."species_category = "Depredador"rarity = 2base_market_value = 85size_min = 40.0size_max = 120.0sprite = ExtResource("2")
+habitat_zones = Array[String](["lago", "rio"])
+difficulty = 4

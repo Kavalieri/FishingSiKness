@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "fridge"
-name = "Nevera Profesional"
-description = "Nevera de alta capacidad para almacenar más peces"
-max_level = 8
-cost_base = 100
+id = "reel"
+name = "Carrete Profesional"
+description = "Carrete de alta calidad que reduce el tiempo entre capturas"
+max_level = 7
+cost_base = 120
 cost_mult = 1.5
-effects = {"inventory_capacity": 5}
+effects = {"fishing_speed": 0.3}

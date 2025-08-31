@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "salmon_atlantico"
+name = "Salmón Atlántico"
+description = "El rey de los ríos del norte. Un pez poderoso que migra entre el mar y los ríos."
+species_category = "Salmónido"
+rarity = 3
+base_market_value = 120
+size_min = 60.0
+size_max = 150.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rio", "costa"])
+difficulty = 4

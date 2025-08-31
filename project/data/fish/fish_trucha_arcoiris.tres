@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/trucha.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "trucha_arcoiris"
+name = "Trucha Arcoíris"
+description = "Una trucha de colores vibrantes que habita en aguas frías de montaña. Su carne es muy apreciada."
+species_category = "Salmónido"
+rarity = 2
+base_market_value = 75
+size_min = 25.0
+size_max = 60.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["lago", "rio"])
+difficulty = 3

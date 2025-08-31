@@ -98,6 +98,14 @@ func get_all_upgrades():
 	"""Obtener todas las mejoras disponibles"""
 	return upgrade_defs()
 
+func get_upgrade_by_id(upgrade_id: String):
+	"""Obtener definición de una mejora específica por ID"""
+	var upgrades = upgrade_defs()
+	for upgrade in upgrades:
+		if upgrade and upgrade.get("id") == upgrade_id:
+			return upgrade
+	return null
+
 func get_upgrade_data(upgrade_id: String):
 	"""Obtener datos de una mejora específica"""
 	var upgrades = upgrade_defs()

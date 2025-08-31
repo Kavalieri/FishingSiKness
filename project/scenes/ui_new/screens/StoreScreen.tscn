@@ -1,0 +1,66 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8kf0xr2qe7lq"]
+
+[ext_resource type="Script" path="res://src/ui_new/screens/StoreScreen.gd" id="1_p0w5k"]
+
+[node name="StoreScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_p0w5k")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="VBoxContainer/Header"]
+layout_mode = 2
+text = "← Atrás"
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tienda"
+horizontal_alignment = 1
+
+[node name="ResourcesContainer" type="HBoxContainer" parent="VBoxContainer/Header"]
+layout_mode = 2
+
+[node name="MoneyLabel" type="Label" parent="VBoxContainer/Header/ResourcesContainer"]
+layout_mode = 2
+text = "0"
+
+[node name="GemsLabel" type="Label" parent="VBoxContainer/Header/ResourcesContainer"]
+layout_mode = 2
+text = "0 💎"
+
+[node name="TabsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="GemsTab" type="Button" parent="VBoxContainer/TabsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+text = "Gemas"
+
+[node name="ItemsTab" type="Button" parent="VBoxContainer/TabsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Objetos"
+
+[node name="OffersTab" type="Button" parent="VBoxContainer/TabsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Ofertas"
+
+[node name="ContentContainer" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3

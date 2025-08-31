@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "zone_multiplier"
+name = "Mapa Detallado"
+description = "Mapas detallados de zonas aumentan los multiplicadores de precio"
+max_level = 4
+cost_base = 500
+cost_mult = 2.0
+effects = {"zone_multiplier_bonus": 0.2}

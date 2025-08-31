@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "fridge"
-name = "Nevera Profesional"
-description = "Nevera de alta capacidad para almacenar más peces"
+id = "hook"
+name = "Anzuelo Mejorado"
+description = "Anzuelos más afilados aumentan la probabilidad de capturar peces raros"
 max_level = 8
-cost_base = 100
-cost_mult = 1.5
-effects = {"inventory_capacity": 5}
+cost_base = 75
+cost_mult = 1.6
+effects = {"rare_fish_chance": 0.05}

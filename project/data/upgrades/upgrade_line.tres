@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "fridge"
-name = "Nevera Profesional"
-description = "Nevera de alta capacidad para almacenar más peces"
-max_level = 8
-cost_base = 100
-cost_mult = 1.5
-effects = {"inventory_capacity": 5}
+id = "line"
+name = "Sedal Resistente"
+description = "Sedal ultra-resistente que mejora el tiempo de QTE"
+max_level = 5
+cost_base = 80
+cost_mult = 1.4
+effects = {"qte_time_bonus": 0.5}
