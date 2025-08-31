@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvdvc357vbuwi"
-path="res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"
+uid="uid://lxx6eh12mjba"
+path="res://.godot/imported/diamonds.png-143a151033067c317f8292623d148978.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/tabs/tab_market.png"
-dest_files=["res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"]
+source_file="res://art/ui/assets/diamonds.png"
+dest_files=["res://.godot/imported/diamonds.png-143a151033067c317f8292623d148978.ctex"]
 
 [params]
 

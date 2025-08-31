@@ -1,0 +1,67 @@
+[gd_scene load_steps=3 format=3 uid="uid://b7m9k5n2p4q8r"]
+
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="1_card_theme"]
+[ext_resource type="Script" path="res://src/ui_new/components/CatchHistoryItem.gd" id="2_script"]
+
+[node name="CatchHistoryItem" type="PanelContainer"]
+theme_override_styles/panel = ExtResource("1_card_theme")
+script = ExtResource("2_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FishIcon" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(48, 48)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InfoVBox" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="FishNameLabel" type="Label" parent="MarginContainer/HBoxContainer/InfoVBox"]
+layout_mode = 2
+text = "Nombre del Pez"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 2
+
+[node name="DetailsHBox" type="HBoxContainer" parent="MarginContainer/HBoxContainer/InfoVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SizeLabel" type="Label" parent="MarginContainer/HBoxContainer/InfoVBox/DetailsHBox"]
+layout_mode = 2
+text = "📏 25.4cm"
+theme_override_font_sizes/font_size = 12
+
+[node name="RarityLabel" type="Label" parent="MarginContainer/HBoxContainer/InfoVBox/DetailsHBox"]
+layout_mode = 2
+text = "⭐ Común"
+theme_override_font_sizes/font_size = 12
+
+[node name="RightVBox" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 4
+
+[node name="ValueLabel" type="Label" parent="MarginContainer/HBoxContainer/RightVBox"]
+layout_mode = 2
+text = "50 💰"
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="TimeLabel" type="Label" parent="MarginContainer/HBoxContainer/RightVBox"]
+layout_mode = 2
+text = "14:32"
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2

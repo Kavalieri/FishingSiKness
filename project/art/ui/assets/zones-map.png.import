@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvdvc357vbuwi"
-path="res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"
+uid="uid://d0pcios0ijnow"
+path="res://.godot/imported/zones-map.png-28d52a616f3221da4f60cc4ff14a5a09.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/tabs/tab_market.png"
-dest_files=["res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"]
+source_file="res://art/ui/assets/zones-map.png"
+dest_files=["res://.godot/imported/zones-map.png-28d52a616f3221da4f60cc4ff14a5a09.ctex"]
 
 [params]
 

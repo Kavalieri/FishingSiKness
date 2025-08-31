@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dst8spg8saes"
-path="res://.godot/imported/dontuse.png-2bd77ec8a78b4198316b8711a5490542.ctex"
+uid="uid://ck3jh2aj2s8su"
+path="res://.godot/imported/tab_zones_old.png-8ea91891e6d749732bf76652d3602e7c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/tabs/dontuse.png"
-dest_files=["res://.godot/imported/dontuse.png-2bd77ec8a78b4198316b8711a5490542.ctex"]
+source_file="res://art/ui/tabs/tab_zones_old.png"
+dest_files=["res://.godot/imported/tab_zones_old.png-8ea91891e6d749732bf76652d3602e7c.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvdvc357vbuwi"
-path="res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"
+uid="uid://dmcod44mql6oq"
+path="res://.godot/imported/button_social.png-363e2113ed8c6b45702d9acbe2fe2ece.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/tabs/tab_market.png"
-dest_files=["res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"]
+source_file="res://art/ui/buttons/button_social.png"
+dest_files=["res://.godot/imported/button_social.png-363e2113ed8c6b45702d9acbe2fe2ece.ctex"]
 
 [params]
 

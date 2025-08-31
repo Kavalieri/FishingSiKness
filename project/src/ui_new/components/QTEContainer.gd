@@ -74,6 +74,7 @@ func start_qte(type: QTEType, duration: float = 3.0, presses: int = 1,
 	if icon:
 		qte_icon.texture = icon
 		qte_icon.visible = true
+		qte_icon.custom_minimum_size = Vector2(80, 80) # Tamaño mínimo para mejor visibilidad
 	else:
 		qte_icon.visible = false
 

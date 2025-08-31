@@ -10,10 +10,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -100.0
-offset_right = 100.0
-offset_bottom = 100.0
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
 script = ExtResource("3_script")
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
@@ -30,14 +30,14 @@ theme_override_styles/panel = ExtResource("2_qte_style")
 
 [node name="MarginContainer" type="MarginContainer" parent="AspectRatioContainer/QTEPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
 [node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer/QTEPanel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
 [node name="QTEIcon" type="TextureRect" parent="AspectRatioContainer/QTEPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2

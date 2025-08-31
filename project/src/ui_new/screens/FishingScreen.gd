@@ -6,8 +6,6 @@ extends Control
 signal fishing_cast_requested
 signal auto_cast_toggled(enabled: bool)
 signal stats_requested
-signal boosters_requested
-signal inventory_requested
 signal fish_caught(fish_data: Dictionary)
 
 var current_zone: Dictionary = {}
@@ -16,16 +14,14 @@ var fishing_stats: Dictionary = {}
 var is_fishing: bool = false
 
 @onready var background: TextureRect = $Background
-@onready var fish_icon: TextureRect = $VBoxContainer/FishingArea/FishContainer/FishIcon
-@onready var cast_button: Button = $VBoxContainer/FishingArea/CastButton
-@onready var auto_cast_button: Button = $VBoxContainer/BottomPanel/LeftActions/AutoCastButton
-@onready var stats_button: Button = $VBoxContainer/BottomPanel/LeftActions/StatsButton
-@onready var boosters_button: Button = $VBoxContainer/BottomPanel/RightActions/BoostersButton
-@onready var inventory_button: Button = $VBoxContainer/BottomPanel/RightActions/InventoryButton
+@onready var cast_button: Button = $VBoxContainer/MarginContainer/ContentVBox/FishingArea/CastButton
+@onready var auto_cast_button: Button = $VBoxContainer/MarginContainer/ContentVBox/BottomButtonsContainer/BottomPanel/AutoCastButton
+@onready var stats_button: Button = $VBoxContainer/MarginContainer/ContentVBox/BottomButtonsContainer/BottomPanel/StatsButton
 @onready var qte_container = $QTEContainer
 
 # Instancia de la ventana de captura
 var capture_window: Control = null
+var stats_window: AcceptDialog = null
 
 func _ready() -> void:
 	_connect_signals()
@@ -36,8 +32,6 @@ func _connect_signals() -> void:
 	cast_button.pressed.connect(_on_cast_button_pressed)
 	auto_cast_button.pressed.connect(_on_auto_cast_toggled)
 	stats_button.pressed.connect(_on_stats_button_pressed)
-	boosters_button.pressed.connect(_on_boosters_button_pressed)
-	inventory_button.pressed.connect(_on_inventory_button_pressed)
 
 	# Conectar señales del QTE Container (solo si existe y tiene los métodos)
 	if qte_container and qte_container.has_signal("qte_success"):
@@ -69,6 +63,16 @@ func _setup_capture_window() -> void:
 	else:
 		print("⚠️ No se pudo cargar CaptureWindow.tscn")
 
+	# Configurar ventana de estadísticas
+	var stats_scene = load("res://scenes/ui_new/components/CatchStatsWindow.tscn")
+	if stats_scene:
+		stats_window = stats_scene.instantiate()
+		add_child(stats_window)
+		stats_window.window_closed.connect(_on_stats_window_closed)
+		print("✅ Ventana de estadísticas configurada")
+	else:
+		print("⚠️ No se pudo cargar CatchStatsWindow.tscn")
+
 	# Conectar con SFX para sonidos
 	if SFX:
 		print("SFX system disponible para efectos de sonido")
@@ -95,37 +99,14 @@ func _update_zone_background() -> void:
 
 func _update_fishing_display() -> void:
 	"""Actualizar elementos de visualización de pesca"""
-	# Por ahora, limpiar icono de pez hasta que se capture algo
-	fish_icon.texture = null
-	fish_icon.visible = false
-
 	# Actualizar texto del botón según estado
 	set_casting_state(is_fishing)
-	fish_icon.texture = null
-	fish_icon.visible = false
 
 func show_caught_fish(fish_data: Dictionary) -> void:
-	"""Mostrar pez capturado con animación"""
-	var fish_texture = fish_data.get("icon", null)
-	if fish_texture:
-		fish_icon.texture = fish_texture
-		fish_icon.visible = true
-		_animate_fish_catch()
-
-func _animate_fish_catch() -> void:
-	"""Animar captura de pez"""
-	var tween = create_tween()
-
-	# Animación de aparición
-	fish_icon.scale = Vector2.ZERO
-	fish_icon.modulate.a = 0.0
-
-	tween.parallel().tween_property(fish_icon, "scale", Vector2.ONE, 0.5)
-	tween.parallel().tween_property(fish_icon, "modulate:a", 1.0, 0.3)
-
-	# Pequeño rebote
-	tween.tween_property(fish_icon, "scale", Vector2(1.1, 1.1), 0.1)
-	tween.tween_property(fish_icon, "scale", Vector2.ONE, 0.1)
+	"""Mostrar pez capturado (ahora se maneja en QTE y ventana de captura)"""
+	# La visualización del pez se maneja ahora en el QTE y la ventana de captura
+	# Esta función se mantiene para compatibilidad pero ya no necesita hacer animaciones redundantes
+	print("🐟 [UI] Pez capturado: %s" % fish_data.get("name", "desconocido"))
 
 func set_casting_state(is_casting: bool) -> void:
 	"""Establecer estado de lanzamiento"""
@@ -181,6 +162,11 @@ func _start_qte_event() -> void:
 	# Pre-generar datos de pez para mostrar icono correcto
 	var preview_fish = _generate_caught_fish()
 	var fish_icon_texture = preview_fish.get("icon", null)
+
+	print("🎣 [QTE] Iniciando QTE con pez: %s" % preview_fish.get("name", "desconocido"))
+	print("🎣 [QTE] Sprite disponible: %s" % (fish_icon_texture != null))
+	if fish_icon_texture:
+		print("🎣 [QTE] Tamaño sprite: %dx%d" % [fish_icon_texture.get_width(), fish_icon_texture.get_height()])
 
 	# Mensaje dinámico según tipo de QTE
 	var qte_message = ""
@@ -269,12 +255,21 @@ func _show_timeout_message() -> void:
 
 func _generate_caught_fish() -> Dictionary:
 	"""Generar datos de pez capturado usando Content system"""
+	print("🐟 [Fish Gen] Generando pez...")
+
 	# Si tenemos Content, usar datos reales
 	if Content and Content.has_method("get_random_fish_for_zone"):
 		var zone_id = current_zone.get("id", "orilla") # zona por defecto
+		print("🐟 [Fish Gen] Usando Content para zona: %s" % zone_id)
 		var fish_data = Content.get_random_fish_for_zone(zone_id)
 		if fish_data:
+			print("🐟 [Fish Gen] Pez desde Content: %s" % fish_data.get("name", "sin nombre"))
+			print("🐟 [Fish Gen] Icono incluido: %s" % (fish_data.get("icon") != null))
 			return fish_data
+		else:
+			print("🐟 [Fish Gen] Content no devolvió datos")
+	else:
+		print("🐟 [Fish Gen] Content no disponible, usando fallback")
 
 	# Fallback: sistema básico de rareza
 	var fish_names = ["sardina", "trucha", "salmon", "lubina"]
@@ -304,6 +299,7 @@ func _generate_caught_fish() -> Dictionary:
 
 	# Intentar cargar el icono del pez
 	var fish_icon = _load_fish_icon(fish_name)
+	print("🐟 [Fish Gen] Fallback pez: %s, icono: %s" % [fish_name, fish_icon != null])
 
 	return {
 		"name": fish_name,
@@ -313,15 +309,23 @@ func _generate_caught_fish() -> Dictionary:
 	}
 
 func _load_fish_icon(fish_name: String) -> Texture2D:
-	"""Cargar icono de pez con fallback"""
+	"""Cargar icono de pez con fallback usando ResourceLoader"""
 	var icon_path = "res://art/fish/%s.png" % fish_name
-	var texture = load(icon_path)
-	if texture:
-		return texture
+
+	# Verificar si el archivo existe antes de cargarlo
+	if ResourceLoader.exists(icon_path):
+		var texture = ResourceLoader.load(icon_path, "Texture2D")
+		if texture:
+			return texture
 
 	# Fallback al primer pez disponible
 	var fallback_path = "res://art/fish/sardina.png"
-	return load(fallback_path)
+	if ResourceLoader.exists(fallback_path):
+		return ResourceLoader.load(fallback_path, "Texture2D")
+
+	# Si incluso el fallback falla, devolver null
+	print("⚠️ No se pudo cargar ningún sprite de pez para: %s" % fish_name)
+	return null
 
 func _on_auto_cast_toggled() -> void:
 	"""Manejar toggle del auto-cast"""
@@ -330,16 +334,22 @@ func _on_auto_cast_toggled() -> void:
 	auto_cast_toggled.emit(is_auto_casting)
 
 func _on_stats_button_pressed() -> void:
-	"""Mostrar estadísticas de pesca"""
+	"""Mostrar estadísticas/historial de capturas"""
+	if stats_window:
+		stats_window.show_catch_stats()
+	else:
+		print("⚠️ Ventana de estadísticas no disponible")
 	stats_requested.emit()
 
-func _on_boosters_button_pressed() -> void:
-	"""Mostrar potenciadores disponibles"""
-	boosters_requested.emit()
+func _on_stats_window_closed() -> void:
+	"""Manejar cierre de ventana de estadísticas"""
+	# La ventana se auto-limpia con queue_free()
+	pass
 
-func _on_inventory_button_pressed() -> void:
-	"""Mostrar inventario de pesca"""
-	inventory_requested.emit()
+# OBSOLETO: Botones removidos para simplificar UI
+# func _on_boosters_button_pressed() -> void:
+#	"""Mostrar potenciadores disponibles"""
+#	boosters_requested.emit()
 
 # Funciones para manejar la ventana de captura
 func _on_fish_kept(fish_data: Dictionary) -> void:
@@ -364,9 +374,13 @@ func _on_capture_window_closed() -> void:
 	pass
 
 func _process_caught_fish(fish_data: Dictionary) -> void:
-	"""Procesar pez capturado (añadir al inventario)"""
+	"""Procesar pez capturado (añadir al inventario y historial)"""
 	if Save and Save.has_method("add_fish"):
 		Save.add_fish(fish_data.name, 1)
+
+	# Agregar al historial de capturas
+	if Save and Save.has_method("add_catch_to_history"):
+		Save.add_catch_to_history(fish_data)
 
 	show_caught_fish(fish_data)
 	fish_caught.emit(fish_data)

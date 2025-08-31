@@ -6,15 +6,13 @@ enum BackgroundType {
 	SPLASH,
 	ZONE,
 	MENU,
-	FISHCARD,
 	MAIN_FALLBACK
 }
 
 # Mapeo de fondos por tipo
 const BACKGROUND_PATHS = {
 	BackgroundType.SPLASH: "res://art/env/splash.png",
-	BackgroundType.MAIN_FALLBACK: "res://art/env/main.png",
-	BackgroundType.FISHCARD: "res://art/ui/fishcard-square.png"
+	BackgroundType.MAIN_FALLBACK: "res://art/env/main.png"
 }
 
 # Cache de texturas cargadas
@@ -28,7 +26,6 @@ func preload_essential_textures():
 	"""Precargar texturas esenciales"""
 	load_texture(BACKGROUND_PATHS[BackgroundType.SPLASH])
 	load_texture(BACKGROUND_PATHS[BackgroundType.MAIN_FALLBACK])
-	load_texture(BACKGROUND_PATHS[BackgroundType.FISHCARD])
 
 func load_texture(path: String) -> Texture2D:
 	"""Cargar textura con cache"""
@@ -71,8 +68,6 @@ func get_background_path(bg_type: BackgroundType, zone_id: String = "") -> Strin
 			return get_zone_background_path(zone_id)
 		BackgroundType.MENU:
 			return get_menu_background_path()
-		BackgroundType.FISHCARD:
-			return BACKGROUND_PATHS[BackgroundType.FISHCARD]
 		BackgroundType.MAIN_FALLBACK:
 			return BACKGROUND_PATHS[BackgroundType.MAIN_FALLBACK]
 		_:
@@ -174,10 +169,6 @@ func setup_splash_background(node: Control):
 func setup_menu_background(node: Control):
 	"""Configurar fondo de menú flotante"""
 	setup_background(node, BackgroundType.MENU)
-
-func setup_fishcard_background(node: Control):
-	"""Configurar fondo de tarjeta de pez"""
-	setup_background(node, BackgroundType.FISHCARD)
 
 func setup_main_background(node: Control):
 	"""Configurar fondo principal/fallback"""

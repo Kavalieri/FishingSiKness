@@ -51,8 +51,8 @@ func _setup_button_icons() -> void:
 	"""Configurar iconos PNG para los botones de la TopBar con tamaño controlado"""
 	var icon_size = 35 # Tamaño fijo en píxeles - aumentado a 35x35
 
-	# Icono para dinero (temporal usando diamond, luego cambiar por moneda específica)
-	var money_texture = load("res://art/ui/assets/diamond.png")
+	# Icono para dinero (usando el nuevo icono coins.png)
+	var money_texture = load("res://art/ui/assets/coins.png")
 	if money_texture:
 		var money_image = money_texture.get_image()
 		money_image.resize(icon_size, icon_size)
@@ -61,8 +61,8 @@ func _setup_button_icons() -> void:
 		btn_money.icon = money_icon
 		btn_money.expand_icon = false
 
-	# Icono para gemas
-	var gems_texture = load("res://art/ui/assets/diamond.png")
+	# Icono para gemas (usando el nuevo icono diamonds.png)
+	var gems_texture = load("res://art/ui/assets/diamonds.png")
 	if gems_texture:
 		var gems_image = gems_texture.get_image()
 		gems_image.resize(icon_size, icon_size)
@@ -71,8 +71,8 @@ func _setup_button_icons() -> void:
 		btn_gems.icon = gems_icon
 		btn_gems.expand_icon = false
 
-	# Icono para zona (mundo/mapa)
-	var zone_texture = load("res://art/ui/assets/world.png")
+	# Icono para zona (usando el nuevo icono zones-map.png)
+	var zone_texture = load("res://art/ui/assets/zones-map.png")
 	if zone_texture:
 		var zone_image = zone_texture.get_image()
 		zone_image.resize(icon_size, icon_size)
@@ -81,8 +81,8 @@ func _setup_button_icons() -> void:
 		btn_zone.icon = zone_icon
 		btn_zone.expand_icon = false
 
-	# Botón de opciones con icono de pausa
-	var options_texture = load("res://art/ui/assets/pause-options.png")
+	# Botón de opciones con el nuevo botón de pausa/opciones
+	var options_texture = load("res://art/ui/buttons/button_pause_options.png")
 	if options_texture:
 		var options_image = options_texture.get_image()
 		options_image.resize(icon_size, icon_size)
@@ -95,8 +95,8 @@ func _setup_button_icons() -> void:
 		btn_options.text = "OPTIONS"
 		btn_options.icon = null
 
-	# Botón social con icono social
-	var social_texture = load("res://art/ui/assets/social.png")
+	# Botón social con el nuevo botón específico
+	var social_texture = load("res://art/ui/buttons/button_social.png")
 	if social_texture:
 		var social_image = social_texture.get_image()
 		social_image.resize(icon_size, icon_size)
@@ -106,11 +106,22 @@ func _setup_button_icons() -> void:
 		btn_social.expand_icon = false
 		btn_social.text = "" # Sin texto, solo icono
 	else:
-		btn_social.text = "SOCIAL"
-		btn_social.icon = null
+		# Fallback al icono genérico
+		var fallback_texture = load("res://art/ui/assets/social.png")
+		if fallback_texture:
+			var fallback_image = fallback_texture.get_image()
+			fallback_image.resize(icon_size, icon_size)
+			var fallback_icon = ImageTexture.new()
+			fallback_icon.set_image(fallback_image)
+			btn_social.icon = fallback_icon
+			btn_social.expand_icon = false
+			btn_social.text = "" # Sin texto, solo icono
+		else:
+			btn_social.text = "SOCIAL"
+			btn_social.icon = null
 
-	# Icono para XP (estrella)
-	var xp_texture = load("res://art/ui/assets/star.png")
+	# Icono para XP (usando el nuevo icono xp.png)
+	var xp_texture = load("res://art/ui/assets/xp.png")
 	if xp_texture:
 		var xp_image = xp_texture.get_image()
 		xp_image.resize(icon_size, icon_size)

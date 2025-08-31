@@ -377,9 +377,9 @@ func setup_options_button():
 	var top_options_button = Button.new()
 	top_options_button.name = "OptionsButton"
 
-	# Configurar icono de pausa con tamaño controlado
+	# Configurar icono de pausa con tamaño controlado usando el nuevo botón
 	var icon_size = 35 # Aumentado a 35x35 píxeles
-	var options_texture = load("res://art/ui/assets/pause-options.png")
+	var options_texture = load("res://art/ui/buttons/button_pause_options.png")
 	if options_texture:
 		var options_image = options_texture.get_image()
 		options_image.resize(icon_size, icon_size)

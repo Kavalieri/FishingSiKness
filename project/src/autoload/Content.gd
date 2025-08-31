@@ -158,7 +158,8 @@ func get_random_fish_for_zone(zone_id: String) -> Dictionary:
 					"value": final_price,
 					"rarity": fish_def.rarity,
 					"zone_caught": zone_id,
-					"timestamp": Time.get_datetime_dict_from_system()
+					"timestamp": Time.get_datetime_dict_from_system(),
+					"icon": fish_def.sprite # Incluir el sprite del pez
 				}
 
 	print("[Content] ERROR: No se pudo seleccionar pez en zona: %s" % zone_id)

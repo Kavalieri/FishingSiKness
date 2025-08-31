@@ -63,7 +63,7 @@ func _setup_screen_with_data(screen: Node, scene_path: String, _setup_data: Dict
 	# Conectar señales de la pantalla con Main
 	_connect_screen_signals(screen, screen_name)
 
-func _setup_fishing_screen(screen: FishingScreen) -> void:
+func _setup_fishing_screen(screen: Control) -> void:
 	"""Configurar pantalla de pesca con datos actuales"""
 	if Content and screen.has_method("setup_fishing_screen"):
 		# Obtener zona actual del Save o usar zona por defecto
@@ -88,7 +88,7 @@ func _setup_fishing_screen(screen: FishingScreen) -> void:
 
 		screen.setup_fishing_screen(zone_data, stats)
 
-func _setup_map_screen(screen: MapScreen) -> void:
+func _setup_map_screen(screen: Control) -> void:
 	"""Configurar pantalla de mapa con zonas disponibles"""
 	if Content and screen.has_method("setup_map"):
 		var zones = Content.get_all_zones()
@@ -98,7 +98,7 @@ func _setup_map_screen(screen: MapScreen) -> void:
 
 		screen.setup_map(zones, current_zone_id)
 
-func _setup_market_screen(screen: MarketScreen) -> void:
+func _setup_market_screen(screen: Control) -> void:
 	"""Configurar pantalla de mercado con inventario del jugador"""
 	if screen.has_method("setup_market"):
 		var money = 0
@@ -116,7 +116,7 @@ func _setup_market_screen(screen: MarketScreen) -> void:
 
 		screen.setup_market(money, gems, inventory, buyable_items)
 
-func _setup_upgrades_screen(screen: UpgradesScreen) -> void:
+func _setup_upgrades_screen(screen: Control) -> void:
 	"""Configurar pantalla de mejoras con datos del jugador"""
 	if screen.has_method("setup_upgrades_screen"):
 		var upgrades = []
@@ -161,7 +161,7 @@ func _connect_screen_signals(screen: Node, screen_name: String) -> void:
 			if screen.has_signal("prestige_confirmed"):
 				screen.prestige_confirmed.connect(main._on_prestige_confirmed)
 
-func _setup_prestige_screen(screen: PrestigeScreen) -> void:
+func _setup_prestige_screen(screen: Control) -> void:
 	"""Configurar pantalla de prestigio con datos actuales"""
 	if screen.has_method("setup_prestige_screen"):
 		# TODO: Obtener datos reales del sistema de prestigio cuando esté implementado

@@ -71,7 +71,8 @@ var game_data := {
 		"vibration": true,
 		"sfx": 0.8,
 		"music": 0.4
-	}
+	},
+	"catch_history": [] # Historial de capturas recientes
 }
 
 func _ready():
@@ -404,7 +405,8 @@ func reset_to_default():
 			"vibration": true,
 			"sfx": 0.8,
 			"music": 0.4
-		}
+		},
+		"catch_history": []
 	}
 
 	# Limpiar también el inventario del sistema
@@ -415,3 +417,81 @@ func reset_to_default():
 
 	# Emitir señal de datos cargados
 	data_loaded.emit(current_save_slot)
+
+
+# ========== HISTORIAL DE CAPTURAS ==========
+
+func add_catch_to_history(fish_data: Dictionary) -> void:
+	"""Agregar captura al historial"""
+	if not game_data.has("catch_history"):
+		game_data["catch_history"] = []
+
+	# Crear entrada del historial
+	var catch_entry = {
+		"name": fish_data.get("name", "Pez Desconocido"),
+		"id": fish_data.get("id", "unknown"),
+		"size": fish_data.get("size", 0.0),
+		"value": fish_data.get("value", 0),
+		"rarity": fish_data.get("rarity", "común"),
+		"zone_caught": fish_data.get("zone_caught", "desconocido"),
+		"timestamp": Time.get_datetime_dict_from_system(),
+		"icon": fish_data.get("icon", null) # Guardar referencia al icono
+	}
+
+	# Agregar al principio del array (más reciente primero)
+	game_data["catch_history"].push_front(catch_entry)
+
+	# Limitar a las últimas 50 capturas
+	if game_data["catch_history"].size() > 50:
+		game_data["catch_history"] = game_data["catch_history"].slice(0, 50)
+
+	# Emitir señal de cambio
+	inventory_changed.emit()
+
+	print("📊 [Save] Captura agregada al historial: %s" % fish_data.get("name", "Unknown"))
+
+func get_catch_history(max_entries: int = 20) -> Array[Dictionary]:
+	"""Obtener historial de capturas limitado"""
+	if not game_data.has("catch_history"):
+		return []
+
+	var history = game_data["catch_history"]
+	if max_entries > 0 and history.size() > max_entries:
+		return history.slice(0, max_entries)
+
+	return history
+
+func get_catch_stats() -> Dictionary:
+	"""Obtener estadísticas de capturas"""
+	if not game_data.has("catch_history"):
+		return {"total_catches": 0, "total_value": 0, "most_common_fish": ""}
+
+	var history = game_data["catch_history"]
+	var stats = {
+		"total_catches": history.size(),
+		"total_value": 0,
+		"fish_counts": {},
+		"most_common_fish": "",
+		"rarity_counts": {}
+	}
+
+	for catch_entry in history:
+		# Sumar valor total
+		stats["total_value"] += catch_entry.get("value", 0)
+
+		# Contar peces por nombre
+		var fish_name = catch_entry.get("name", "Desconocido")
+		stats["fish_counts"][fish_name] = stats["fish_counts"].get(fish_name, 0) + 1
+
+		# Contar por rareza
+		var rarity = catch_entry.get("rarity", "común")
+		stats["rarity_counts"][rarity] = stats["rarity_counts"].get(rarity, 0) + 1
+
+	# Encontrar pez más común
+	var max_count = 0
+	for fish_name in stats["fish_counts"]:
+		if stats["fish_counts"][fish_name] > max_count:
+			max_count = stats["fish_counts"][fish_name]
+			stats["most_common_fish"] = fish_name
+
+	return stats

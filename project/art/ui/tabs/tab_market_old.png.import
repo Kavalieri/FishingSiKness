@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvdvc357vbuwi"
-path="res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"
+uid="uid://c8h3nuaj713el"
+path="res://.godot/imported/tab_market_old.png-75aca5e5e561c31c6d5f8b0d29b14549.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/tabs/tab_market.png"
-dest_files=["res://.godot/imported/tab_market.png-d64da558c2776091da2df7023775fbef.ctex"]
+source_file="res://art/ui/tabs/tab_market_old.png"
+dest_files=["res://.godot/imported/tab_market_old.png-75aca5e5e561c31c6d5f8b0d29b14549.ctex"]
 
 [params]
 

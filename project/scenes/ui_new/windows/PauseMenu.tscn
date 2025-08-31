@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bj4k5l6m7n8o9"]
 
 [ext_resource type="Script" path="res://src/ui_new/windows/PauseMenu.gd" id="1_pausemenu"]
-[ext_resource type="Texture2D" path="res://art/ui/icons/resume.png" id="2_resume"]
-[ext_resource type="Texture2D" path="res://art/ui/icons/options.png" id="3_options"]
+[ext_resource type="Texture2D" path="res://art/ui/assets/pause-options.png" id="2_resume"]
+[ext_resource type="Texture2D" path="res://art/ui/assets/pause-options.png" id="3_options"]
 
 [node name="PauseMenu" type="Control"]
 layout_mode = 3
