@@ -186,25 +186,44 @@ func _setup_upgrades_screen(screen: Control) -> void:
 
 func _connect_screen_signals(screen: Node, screen_name: String) -> void:
 	"""Conectar señales de la pantalla con el sistema principal"""
+	print("[CentralHost] DEBUG: Conectando señales para screen: %s" % screen_name)
+
 	# Obtener referencia a Main para conectar señales
 	var main = get_parent().get_parent() # Main -> VBoxContainer -> CentralHost
+	print("[CentralHost] DEBUG: Main obtenido: %s" % (main != null))
 
-	if not main or not main.has_method("_on_screen_signal"):
-		return
-
+	# Remover verificación errónea de _on_screen_signal que no existe
+	print("[CentralHost] DEBUG: ✅ Procediendo a conectar señales...")
 	match screen_name:
 		"FishingScreen":
 			if screen.has_signal("fish_caught"):
 				screen.fish_caught.connect(main._on_fish_caught)
 		"MapScreen":
+			print("[CentralHost] DEBUG: Procesando MapScreen...")
 			if screen.has_signal("zone_selected"):
 				screen.zone_selected.connect(main._on_zone_changed)
+				print("[CentralHost] DEBUG: ✅ Conectada señal zone_selected")
+			else:
+				print("[CentralHost] DEBUG: ❌ MapScreen NO tiene señal zone_selected")
+
 			if screen.has_signal("fishing_requested"):
 				screen.fishing_requested.connect(_on_fishing_requested)
+				print("[CentralHost] DEBUG: ✅ Conectada señal fishing_requested")
+			else:
+				print("[CentralHost] DEBUG: ❌ MapScreen NO tiene señal fishing_requested")
+
 			if screen.has_signal("zone_preview_requested"):
 				screen.zone_preview_requested.connect(_on_zone_preview_requested)
+				print("[CentralHost] DEBUG: ✅ Conectada señal zone_preview_requested")
+			else:
+				print("[CentralHost] DEBUG: ❌ MapScreen NO tiene señal zone_preview_requested")
+
 			if screen.has_signal("zone_unlock_requested"):
 				screen.zone_unlock_requested.connect(_on_zone_unlock_requested)
+				print("[CentralHost] DEBUG: ✅ Conectada señal zone_unlock_requested → _on_zone_unlock_requested")
+			else:
+				print("[CentralHost] DEBUG: ❌ MapScreen NO tiene señal zone_unlock_requested")
+			print("[CentralHost] DEBUG: MapScreen procesado completamente")
 		"MarketScreen":
 			if screen.has_signal("item_bought"):
 				screen.item_bought.connect(main._on_item_bought)
@@ -272,35 +291,45 @@ func _on_zone_preview_requested(zone_id: String) -> void:
 
 func _on_zone_unlock_requested(zone_id: String, cost: int) -> void:
 	"""Manejar solicitud de desbloqueo de zona"""
+	print("[CentralHost] 🔓 DESBLOQUEO SOLICITADO: zona=%s, costo=%d" % [zone_id, cost])
+
 	if not Save:
-		print("Sistema de guardado no disponible")
+		print("[CentralHost] ❌ Sistema de guardado no disponible")
 		return
 
 	if Save.get_coins() < cost:
-		print("Fondos insuficientes para desbloquear zona: %s" % zone_id)
+		print("[CentralHost] ❌ Fondos insuficientes para desbloquear zona: %s (necesario: %d, actual: %d)" % [zone_id, cost, Save.get_coins()])
 		if SFX and SFX.has_method("play_event"):
 			SFX.play_event("ui_error")
 		return
 
+	print("[CentralHost] 💰 Procesando desbloqueo...")
 	# Procesar desbloqueo
 	if Save.spend_coins(cost):
+		print("[CentralHost] ✅ Monedas gastadas exitosamente")
 		# Añadir zona a las desbloqueadas
 		var unlocked_zones = Save.game_data.get("unlocked_zones", ["lago_montana_alpes"])
 		if not unlocked_zones.has(zone_id):
 			unlocked_zones.append(zone_id)
 			Save.game_data.unlocked_zones = unlocked_zones
 			Save.save_game()
+			print("[CentralHost] 📝 Zona añadida a lista de desbloqueadas: %s" % str(unlocked_zones))
 
 		# Notificar al MapScreen del éxito
 		if current_screen and current_screen.has_method("unlock_zone_success"):
+			print("[CentralHost] 📤 Notificando éxito al MapScreen...")
 			current_screen.unlock_zone_success(zone_id)
+		else:
+			print("[CentralHost] ⚠️ No se puede notificar al MapScreen (no encontrado o sin método unlock_zone_success)")
 
 		# Actualizar TopBar si es necesario
 		var main = get_parent().get_parent()
 		if main and main.has_method("update_topbar"):
 			main.update_topbar()
 
-		print("Zona %s desbloqueada exitosamente por %d monedas" % [zone_id, cost])
+		print("[CentralHost] 🎉 Zona %s desbloqueada exitosamente por %d monedas" % [zone_id, cost])
+	else:
+		print("[CentralHost] ❌ Error al gastar monedas")
 
 func _on_store_screen_closed() -> void:
 	"""Cerrar pantalla de tienda y volver al juego"""

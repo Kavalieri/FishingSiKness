@@ -65,24 +65,23 @@ func _setup_background() -> void:
 	"""Configurar fondo inicial del juego"""
 	if background:
 		print("[Main] Configurando fondo inicial...")
-		# Cargar fondo por defecto basado en zona actual
-		var current_zone = "main" # Por defecto
+		# Cargar fondo basado en zona actual guardada
+		var current_zone_id = ""
 		if Save and Save.game_data.has("current_zone"):
-			current_zone = Save.game_data.current_zone
+			current_zone_id = Save.game_data.current_zone
 
-		# Si la zona es una de las nuevas, usar el fondo correcto
-		if current_zone == "lago_montana_alpes":
-			current_zone = "snow" # Usar fondo de nieve para los Alpes
-		elif current_zone == "grandes_lagos_norteamerica":
-			current_zone = "forest" # Usar fondo de bosque para los grandes lagos
-		elif current_zone == "costas_atlanticas":
-			current_zone = "beach" # Usar fondo de playa para las costas
-		elif current_zone == "rios_amazonicos":
-			current_zone = "forest" # Usar fondo de bosque para el Amazonas
-		elif current_zone == "oceanos_profundos":
-			current_zone = "nether" # Usar fondo profundo para océanos
+		if current_zone_id != "" and Content:
+			# Usar el sistema de zonas nuevo
+			var zone_def = Content.get_zone_by_id(current_zone_id)
+			if zone_def and zone_def.background != "":
+				var bg_name = zone_def.background.get_file().get_basename()
+				print("[Main] Fondo inicial basado en zona guardada: %s → %s" % [current_zone_id, bg_name])
+				set_background(bg_name)
+				return
 
-		set_background(current_zone)
+		# Fallback: usar fondo por defecto
+		print("[Main] Usando fondo por defecto: main")
+		set_background("main")
 	else:
 		print("[Main] ❌ No se pudo configurar fondo - nodo Background no encontrado")
 
@@ -168,10 +167,43 @@ func _on_tab_selected(tab_name: String) -> void:
 		print("[Main] → Cambiando a pantalla: %s" % screen_path)
 		central_host.show_screen(screen_path)
 
+		# Conectar señal de selección de zona si es MapScreen
+		if tab_name == "map":
+			_connect_map_screen_signals()
+
 		# Cambiar fondo si es necesario
 		_update_background_for_screen(tab_name)
 	else:
 		print("[Main] ❌ Tab desconocido: %s" % tab_name)
+
+func _connect_map_screen_signals() -> void:
+	"""Conectar señales específicas del MapScreen cuando se carga"""
+	print("[Main] DEBUG: Conectando señales de MapScreen...")
+
+	# Esperar un frame para que la pantalla se haya cargado completamente
+	await get_tree().process_frame
+
+	# Buscar el MapScreen en el CentralHost
+	var map_screen = central_host.get_current_screen()
+	print("[Main] DEBUG: MapScreen obtenido: %s" % (map_screen != null))
+
+	if map_screen:
+		print("[Main] DEBUG: MapScreen clase: %s" % map_screen.get_class())
+		print("[Main] DEBUG: MapScreen tiene zone_selected: %s" % map_screen.has_signal("zone_selected"))
+
+		if map_screen.has_signal("zone_selected"):
+			# Desconectar señal previa si existe
+			if map_screen.zone_selected.is_connected(_on_zone_changed):
+				map_screen.zone_selected.disconnect(_on_zone_changed)
+				print("[Main] DEBUG: Señal previa desconectada")
+
+			# Conectar señal de zona seleccionada
+			map_screen.zone_selected.connect(_on_zone_changed)
+			print("[Main] ✅ MapScreen.zone_selected conectado → Main._on_zone_changed")
+		else:
+			print("[Main] ❌ MapScreen sin señal zone_selected")
+	else:
+		print("[Main] ❌ MapScreen no encontrado")
 
 func _on_topbar_button_pressed(button_type: String) -> void:
 	"""Manejar botones de TopBar"""
@@ -197,16 +229,25 @@ func _update_background_for_screen(screen_name: String) -> void:
 	"""Actualizar fondo según la pantalla activa"""
 	match screen_name:
 		"fishing":
-			# Mantener fondo de zona actual
+			# Mantener fondo de zona actual (no cambiar)
+			print("[Main] Pantalla fishing: manteniendo fondo de zona actual")
 			pass
 		"map":
-			set_background("main") # Vista general del mapa
+			# Mantener fondo de zona actual (el usuario seleccionará zona aquí)
+			print("[Main] Pantalla map: manteniendo fondo de zona actual")
+			pass
 		"market":
-			set_background("city") # Mercado en la ciudad
+			# NO cambiar fondo - mantener el de la zona actual
+			print("[Main] Pantalla market: manteniendo fondo de zona actual")
+			pass
 		"upgrades":
-			set_background("industrial") # Taller de mejoras
+			# NO cambiar fondo - mantener el de la zona actual
+			print("[Main] Pantalla upgrades: manteniendo fondo de zona actual")
+			pass
 		"prestige":
-			set_background("space") # Prestige cósmico
+			# NO cambiar fondo - mantener el de la zona actual
+			print("[Main] Pantalla prestige: manteniendo fondo de zona actual")
+			pass
 
 # Métodos auxiliares para TopBar
 func _show_economy_popup() -> void:
@@ -239,11 +280,32 @@ func _show_xp_details() -> void:
 # Métodos para eventos del juego (llamados por las pantallas)
 func _on_zone_changed(new_zone_id: String) -> void:
 	"""Llamado cuando se cambia de zona de pesca"""
-	set_background(new_zone_id)
+	print("[Main] 🎯 ZONA CAMBIADA: %s" % new_zone_id)
 
+	# Obtener la zona definición para obtener su background
+	if Content:
+		print("[Main] DEBUG: Buscando zona en Content...")
+		var zone_def = Content.get_zone_by_id(new_zone_id)
+		if zone_def and zone_def.background != "":
+			# Extraer solo el nombre del archivo del path completo
+			var bg_name = zone_def.background.get_file().get_basename()
+			print("[Main] 🎨 Cambiando fondo basado en zona: %s → %s" % [new_zone_id, bg_name])
+			set_background(bg_name)
+		else:
+			print("[Main] ⚠️ Zona sin fondo definido, usando main: %s" % new_zone_id)
+			set_background("main")
+	else:
+		print("[Main] ❌ Content no disponible, usando fallback")
+		# Fallback al sistema anterior si Content no está disponible
+		set_background(new_zone_id)
+
+	# Actualizar zona actual en el save
 	if Save:
 		Save.game_data.current_zone = new_zone_id
 		Save.save_game()
+		print("[Main] ✅ Zona guardada: %s" % new_zone_id)
+	else:
+		print("[Main] ⚠️ Save no disponible")
 
 func _on_fish_caught(fish_data: Dictionary) -> void:
 	"""Llamado cuando se captura un pez"""

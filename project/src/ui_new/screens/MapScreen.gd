@@ -276,11 +276,16 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 	# Conectar señales según estado
 	if is_unlocked and not is_current:
 		card.action_pressed.connect(_on_zone_card_selected_wrapper.bind(zone_data))
+		print("[MapScreen] DEBUG: Conectada señal de SELECCIÓN para zona: %s" % name)
 	elif not is_unlocked and Save and Save.get_coins() >= unlock_cost:
 		card.action_pressed.connect(_on_zone_unlock_pressed_wrapper.bind(zone_data))
+		print("[MapScreen] DEBUG: Conectada señal de DESBLOQUEO para zona: %s (costo: %d)" % [name, unlock_cost])
+	else:
+		print("[MapScreen] DEBUG: NO conectada señal para zona: %s (desbloqueada: %s, actual: %s, monedas: %s)" % [name, is_unlocked, is_current, Save.get_coins() if Save else "N/A"])
 
 	# Conectar siempre el botón de información
 	card.info_pressed.connect(_on_zone_info_pressed_wrapper.bind(zone_data))
+	print("[MapScreen] DEBUG: Conectada señal de información para zona: %s" % name)
 
 	return card
 
@@ -326,6 +331,7 @@ func _on_zone_card_selected_wrapper(_card_data: Dictionary, zone_data: Dictionar
 
 func _on_zone_unlock_pressed_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
 	"""Wrapper para manejar desbloqueo de zona - ignora card_data y usa zone_data"""
+	print("[MapScreen] 🎯 WRAPPER DESBLOQUEO LLAMADO para zona: %s" % zone_data.get("name", "?"))
 	_on_zone_unlock_pressed(zone_data)
 
 func _on_zone_card_selected(zone_data: Dictionary) -> void:
@@ -349,15 +355,25 @@ func _on_zone_unlock_pressed(zone_data: Dictionary) -> void:
 	"""Manejar intento de desbloqueo de zona"""
 	var zone_id = zone_data.get("id", "")
 	var unlock_cost = zone_data.get("unlock_cost", 0)
+	var zone_name = zone_data.get("name", "?")
 
-	if Save and Save.get_coins() >= unlock_cost:
+	print("[MapScreen] 🔓 BOTÓN DESBLOQUEO PRESIONADO: %s (ID: %s, Costo: %d)" % [zone_name, zone_id, unlock_cost])
+
+	if not Save:
+		print("[MapScreen] ❌ No hay sistema de guardado disponible")
+		return
+
+	var current_coins = Save.get_coins()
+	print("[MapScreen] 💰 Monedas actuales: %d, Costo requerido: %d" % [current_coins, unlock_cost])
+
+	if current_coins >= unlock_cost:
+		print("[MapScreen] ✅ Suficientes fondos, emitiendo señal zone_unlock_requested...")
 		zone_unlock_requested.emit(zone_id, unlock_cost)
 	else:
 		# No hay suficientes monedas - mostrar mensaje
+		print("[MapScreen] ❌ Fondos insuficientes para desbloquear zona: %s (costo: %d, disponible: %d)" % [zone_name, unlock_cost, current_coins])
 		if SFX and SFX.has_method("play_event"):
 			SFX.play_event("ui_error")
-
-		print("Fondos insuficientes para desbloquear zona: %s (costo: %d)" % [zone_id, unlock_cost])
 
 func unlock_zone_success(zone_id: String) -> void:
 	"""Llamado cuando se desbloquea exitosamente una zona"""
