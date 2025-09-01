@@ -285,7 +285,7 @@ func _on_zone_unlock_requested(zone_id: String, cost: int) -> void:
 	# Procesar desbloqueo
 	if Save.spend_coins(cost):
 		# Añadir zona a las desbloqueadas
-		var unlocked_zones = Save.game_data.get("unlocked_zones", ["orilla"])
+		var unlocked_zones = Save.game_data.get("unlocked_zones", ["lago_montana_alpes"])
 		if not unlocked_zones.has(zone_id):
 			unlocked_zones.append(zone_id)
 			Save.game_data.unlocked_zones = unlocked_zones

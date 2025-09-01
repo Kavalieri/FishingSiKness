@@ -106,7 +106,7 @@ func refresh_display():
 		return
 
 	# Mostrar zona actual con multiplicador
-	var current_zone = Save.game_data.get("current_zone", "orilla")
+	var current_zone = Save.game_data.get("current_zone", "lago_montana_alpes")
 	var zone_def = get_zone_definition(current_zone)
 	if zone_def:
 		current_zone_label.text = "Zona Actual: %s (x%.1f)" % [
@@ -185,7 +185,7 @@ func create_zone_button_from_def(zone_def: ZoneDef):
 	action_button.custom_minimum_size.y = 40
 	zone_vbox.add_child(action_button)
 
-	var current_zone = Save.game_data.get("current_zone", "orilla")
+	var current_zone = Save.game_data.get("current_zone", "lago_montana_alpes")
 	var is_current = current_zone == zone_def.id
 	var is_unlocked = is_zone_unlocked(zone_def.id)
 
@@ -310,7 +310,7 @@ func get_zone_definition(zone_id: String) -> ZoneDef:
 	return null
 
 func _on_zone_selected(zone_id: String):
-	var current_zone = Save.game_data.get("current_zone", "orilla")
+	var current_zone = Save.game_data.get("current_zone", "lago_montana_alpes")
 	if zone_id != current_zone:
 		Save.game_data.current_zone = zone_id
 
@@ -328,7 +328,7 @@ func _on_zone_unlock(zone_id: String, cost: int):
 	if Save.spend_coins(cost):
 		# Añadir zona a las desbloqueadas
 		if not Save.game_data.has("unlocked_zones"):
-			Save.game_data.unlocked_zones = ["orilla"]
+			Save.game_data.unlocked_zones = ["lago_montana_alpes"]
 
 		if not Save.game_data.unlocked_zones.has(zone_id):
 			Save.game_data.unlocked_zones.append(zone_id)
@@ -349,7 +349,7 @@ func is_zone_unlocked(zone_id: String) -> bool:
 	if zone_id == "orilla":
 		return true
 
-	var unlocked_zones = Save.game_data.get("unlocked_zones", ["orilla"])
+	var unlocked_zones = Save.game_data.get("unlocked_zones", ["lago_montana_alpes"])
 	return unlocked_zones.has(zone_id)
 
 func get_zone_unlock_cost(zone_id: String) -> int:

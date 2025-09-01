@@ -1,30 +1,12 @@
-[gd_resource type="LootTable" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="LootTable" load_steps=6 format=3]
 
-[ext_resource type="Resource" uid="uid://bm3k4n7p8rtvx" path="res://data/fish/fish_arapaima.tres" id="1"]
-[ext_resource type="Resource" uid="uid://d35d6gykdaprm" path="res://data/fish/fish_walleye.tres" id="2"]
-[ext_resource type="Resource" uid="uid://bxgk6w9v2lqcy" path="res://data/fish/fish_perca_europea.tres" id="3"]
-[ext_resource type="Resource" path="res://data/fish/fish_bagre_gigante_amazonico.tres" id="4"]
+[ext_resource type="Script" path="res://src/resources/LootTable.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_tucunare.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_pirana_vientre_rojo.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_arowana_plateada.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_bagre_gigante_amazonico.tres" id="5"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_arapaima.tres" id="6"]
 
 [resource]
-items = [
-	{
-		"item": ExtResource("4"),
-		"weight": 1,
-		"min_rarity": 80
-	},
-	{
-		"item": ExtResource("1"),
-		"weight": 4,
-		"min_rarity": 65
-	},
-	{
-		"item": ExtResource("2"),
-		"weight": 25,
-		"min_rarity": 15
-	},
-	{
-		"item": ExtResource("3"),
-		"weight": 70,
-		"min_rarity": 5
-	}
-]
+script = ExtResource("1")
+entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])

@@ -6,7 +6,7 @@ extends Control
 signal zone_selected(zone_id: String)
 signal zone_unlock_requested(zone_id: String, cost: int)
 
-var available_zones: Array[Dictionary] # Zonas disponibles
+var available_zones: Array[Dictionary]
 var current_zone: Dictionary = {}
 
 const ZONE_CARD_SCENE = preload("res://scenes/ui_new/components/Card.tscn")
@@ -14,11 +14,12 @@ const ZONE_CARD_SCENE = preload("res://scenes/ui_new/components/Card.tscn")
 # Costos de desbloqueo de zonas (solo zonas realistas basadas en CSV)
 const ZONE_UNLOCK_COSTS = {
 	# Orden por price_multiplier: 1.0 → 1.2 → 1.5 → 1.8 → 3.0
+	# Progresión suavizada para permitir más zonas futuras
 	"lago_montana_alpes": 0, # x1.0 - Zona inicial gratuita
 	"grandes_lagos_norteamerica": 1500, # x1.2 - Progresión suave
 	"costas_atlanticas": 5000, # x1.5 - Costo medio
-	"rios_amazonicos": 15000, # x1.8 - Costo alto
-	"oceanos_profundos": 100000, # x3.0 - Costo muy alto
+	"rios_amazonicos": 15000, # x1.8 - Costo medio-alto
+	"oceanos_profundos": 35000, # x3.0 - Costo alto (era 100K, ahora más suave)
 }
 
 @onready var zones_list: VBoxContainer = $VBoxContainer/MapContainer/ZonesScroll/ZonesList
@@ -68,12 +69,13 @@ func _enrich_zone_data_from_def(zone_def) -> Dictionary:
 	var enriched = {
 		"id": zone_def.id,
 		"name": zone_def.name,
+		"description": zone_def.description,
+		"difficulty": zone_def.difficulty,
+		"unlock_cost": zone_def.unlock_cost,
 		"price_multiplier": zone_def.price_multiplier,
 		"background_path": zone_def.background,
 		"unlocked": _is_zone_unlocked(zone_id),
-		"unlock_cost": ZONE_UNLOCK_COSTS.get(zone_id, 0),
-		"fish_species": _get_zone_fish_list(zone_def),
-		"description": _generate_zone_description(zone_def)
+		"fish_species": _get_zone_fish_list(zone_def)
 	}
 
 	return enriched
@@ -178,9 +180,9 @@ func _refresh_zones_list() -> void:
 	print("[MapScreen] DEBUG: Lista actualizada con %d tarjetas" % zones_list.get_child_count())
 
 func _compare_zones_by_difficulty(a: Dictionary, b: Dictionary) -> bool:
-	"""Comparar zonas por multiplicador de precio. Zonas desbloqueadas primero, luego por multiplicador"""
-	var multiplier_a = a.get("price_multiplier", 1.0)
-	var multiplier_b = b.get("price_multiplier", 1.0)
+	"""Comparar zonas por unlock_cost. Zonas desbloqueadas primero, luego por costo de desbloqueo"""
+	var unlock_cost_a = a.get("unlock_cost", 0)
+	var unlock_cost_b = b.get("unlock_cost", 0)
 	var unlocked_a = a.get("unlocked", false)
 	var unlocked_b = b.get("unlocked", false)
 
@@ -190,8 +192,8 @@ func _compare_zones_by_difficulty(a: Dictionary, b: Dictionary) -> bool:
 	if unlocked_b and not unlocked_a:
 		return false
 
-	# Si ambas tienen el mismo estado de desbloqueo, ordenar por multiplicador (menor a mayor)
-	return multiplier_a < multiplier_b
+	# Si ambas tienen el mismo estado de desbloqueo, ordenar por unlock_cost (menor a mayor)
+	return unlock_cost_a < unlock_cost_b
 
 func _create_zone_card(zone_data: Dictionary) -> Control:
 	"""Crear tarjeta de zona con información completa de desbloqueo"""
@@ -208,6 +210,7 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 	var is_current = zone_data.get("id", "") == current_zone.get("id", "")
 	var unlock_cost = zone_data.get("unlock_cost", 0)
 	var multiplier = zone_data.get("price_multiplier", 1.0)
+	var difficulty = zone_data.get("difficulty", 1)
 
 	# Texto de acción basado en estado
 	var action_text = ""
@@ -222,49 +225,32 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 		else:
 			action_text = "🔒 Bloqueada (%s)" % _format_number(unlock_cost)
 
-	# Preparar descripción enriquecida
-	var rich_description = description
-	# Siempre mostrar el multiplicador
-	rich_description += "\n� Multiplicador: x%.1f valor" % multiplier
-
-	# Preparar información de dificultad
-	var difficulty_text = ""
-	if unlock_cost == 0:
-		difficulty_text = "⭐ Muy Fácil"
-	elif unlock_cost <= 1000:
-		difficulty_text = "⭐⭐ Fácil"
-	elif unlock_cost <= 5000:
-		difficulty_text = "⭐⭐⭐ Medio"
-	elif unlock_cost <= 15000:
-		difficulty_text = "⭐⭐⭐⭐ Difícil"
-	else:
-		difficulty_text = "⭐⭐⭐⭐⭐ Muy Difícil"
-
 	# Contar especies de peces disponibles en la zona
 	var fish_count = Content.get_fish_for_zone(zone_data.get("id", "")).size()
 
-	# Preparar descripción enriquecida INCLUYENDO especies
-	var rich_description = description
-	rich_description += "\n🐟 %d especies disponibles" % fish_count
-	rich_description += "\n� Multiplicador: x%.1f valor" % multiplier
+	# Para las tarjetas, mostrar SOLO información básica
+	var card_description = "💎 Multiplicador: x%.1f valor\n🐟 %d especies disponibles" % [multiplier, fish_count]
 
-	# Preparar información de dificultad
+	# Preparar información de dificultad usando el campo difficulty del recurso
 	var difficulty_text = ""
-	if unlock_cost == 0:
-		difficulty_text = "⭐ Muy Fácil"
-	elif unlock_cost <= 1000:
-		difficulty_text = "⭐⭐ Fácil"
-	elif unlock_cost <= 5000:
-		difficulty_text = "⭐⭐⭐ Medio"
-	elif unlock_cost <= 15000:
-		difficulty_text = "⭐⭐⭐⭐ Difícil"
-	else:
-		difficulty_text = "⭐⭐⭐⭐⭐ Muy Difícil"
+	match difficulty:
+		1:
+			difficulty_text = "⭐ Muy Fácil"
+		2:
+			difficulty_text = "⭐⭐ Fácil"
+		3:
+			difficulty_text = "⭐⭐⭐ Medio"
+		4:
+			difficulty_text = "⭐⭐⭐⭐ Difícil"
+		5:
+			difficulty_text = "⭐⭐⭐⭐⭐ Muy Difícil"
+		_:
+			difficulty_text = "⭐ Muy Fácil"
 
-	# Configurar tarjeta (SIN fish_count separado)
+	# Configurar tarjeta con información básica
 	var card_data = {
 		"title": name,
-		"description": rich_description,
+		"description": card_description,
 		"icon_path": icon,
 		"action_text": action_text,
 		"difficulty": difficulty_text
@@ -298,6 +284,11 @@ func _create_zone_card(zone_data: Dictionary) -> Control:
 
 	return card
 
+func _on_zone_dialog_closed(dialog: Node) -> void:
+	"""Limpiar popup de zona cuando se cierra"""
+	if dialog:
+		dialog.queue_free()
+
 func _format_number(number: int) -> String:
 	"""Formatear números grandes de forma legible"""
 	if number >= 1000000:
@@ -309,24 +300,9 @@ func _format_number(number: int) -> String:
 
 func _add_zone_indicators(card: Control, zone_data: Dictionary) -> void:
 	"""Añadir indicadores visuales profesionales a la tarjeta"""
-	var multiplier = zone_data.get("price_multiplier", 1.0)
-
-	# Crear contenedor para indicadores adicionales
-	var indicators_container = VBoxContainer.new()
-	indicators_container.add_theme_constant_override("separation", 4)
-
-	var info_row = HBoxContainer.new()
-
-	# Mostrar multiplicador siempre (incluyendo 1.0)
-	var multiplier_indicator = Label.new()
-	multiplier_indicator.text = "💰 x%.1f precio" % multiplier
-	multiplier_indicator.add_theme_font_size_override("font_size", 11)
-	multiplier_indicator.add_theme_color_override("font_color", Color.YELLOW)
-	info_row.add_child(multiplier_indicator)
-
-	# Añadir la fila
-	indicators_container.add_child(info_row)
-	card.add_child(indicators_container)
+	# Este método ya no añade indicadores duplicados
+	# La información se muestra únicamente en la descripción de la tarjeta
+	pass
 
 func _on_zone_info_pressed_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
 	"""Wrapper para manejar información de zona - ignora card_data y usa zone_data"""
@@ -336,21 +312,13 @@ func _on_zone_info_pressed(zone_data: Dictionary) -> void:
 	"""Mostrar información detallada de la zona"""
 	print("[MapScreen] Mostrando información detallada de zona: %s" % zone_data.get("name", "?"))
 
-	# TODO: Implementar modal de información detallada
-	# Por ahora solo mostramos un print de debug
-	var zone_id = zone_data.get("id", "")
-	var fish_list = Content.get_fish_for_zone(zone_id)
+	# Crear y mostrar popup de información de zona
+	var zone_info_dialog = preload("res://scenes/ui/ZoneInfoDialog.tscn").instantiate()
+	get_tree().current_scene.add_child(zone_info_dialog)
+	zone_info_dialog.show_zone_info(zone_data)
 
-	print("=== INFORMACIÓN DE ZONA ===")
-	print("Nombre: %s" % zone_data.get("name", ""))
-	print("Descripción: %s" % zone_data.get("description", ""))
-	print("Dificultad: %s/5" % zone_data.get("difficulty", 1))
-	print("Especies disponibles: %d" % fish_list.size())
-
-	for fish in fish_list:
-		if fish:
-			print("  - %s (rareza: %s)" % [fish.name, fish.rarity])
-	print("========================")
+	# Conectar señal de cierre para limpieza
+	zone_info_dialog.close_requested.connect(_on_zone_dialog_closed.bind(zone_info_dialog))
 
 func _on_zone_card_selected_wrapper(_card_data: Dictionary, zone_data: Dictionary) -> void:
 	"""Wrapper para manejar selección de zona - ignora card_data y usa zone_data"""

@@ -335,7 +335,7 @@ func get_save_slot_info(slot: int) -> Dictionary:
 		"gems": data.get("gems", 0),
 		"level": level,
 		"experience": experience,
-		"zone": _get_zone_display_name(data.get("current_zone", "orilla")),
+		"zone": _get_zone_display_name(data.get("current_zone", "lago_montana_alpes")),
 		"playtime": estimated_playtime,
 		"last_played": data.get("last_played", 0),
 		"fish_count": fish_count,
@@ -354,6 +354,11 @@ func _calculate_playtime(level: int, experience: int) -> String:
 
 func _get_zone_display_name(zone_id: String) -> String:
 	var zone_names = {
+		"lago_montana_alpes": "Lagos de Montaña - Alpes",
+		"grandes_lagos_norteamerica": "Grandes Lagos de Norteamérica",
+		"costas_atlanticas": "Costas Atlánticas",
+		"rios_amazonicos": "Ríos Amazónicos",
+		"oceanos_profundos": "Océanos Profundos",
 		"orilla": "Orilla",
 		"lago": "Lago",
 		"rio": "Río",

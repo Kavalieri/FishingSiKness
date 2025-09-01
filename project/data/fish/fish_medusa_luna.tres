@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/mantaraya.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "medusa_luna"
+name = "Medusa Luna"
+description = "Cnidario translúcido de belleza hipnótica. Su captura requiere cuidado especial para evitar sus tentáculos."
+species_category = "Cnidario"
+rarity = 1
+base_market_value = 45
+size_min = 25.0
+size_max = 60.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["costas_atlanticas", "oceanos_profundos"])
+difficulty = 2

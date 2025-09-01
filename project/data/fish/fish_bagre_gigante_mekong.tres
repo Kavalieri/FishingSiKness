@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "bagre_gigante_mekong"
+name = "Bagre Gigante del Mekong"
+description = "El bagre de agua dulce más grande del mundo. Una captura excepcional que requiere técnica especializada."
+species_category = "Legendario"
+rarity = 4
+base_market_value = 850
+size_min = 200.0
+size_max = 350.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rios_asiaticos", "grandes_rios_europa"])
+difficulty = 9

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "salmon_chinook"
+name = "Salmón Chinook (Rey)"
+description = "El salmón más grande del Pacífico. Su migración épica y carne premium lo convierten en trofeo supremo."
+species_category = "Salmónido"
+rarity = 3
+base_market_value = 245
+size_min = 60.0
+size_max = 120.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rios_salmon_norte", "costas_atlanticas"])
+difficulty = 7

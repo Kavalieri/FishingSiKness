@@ -1,13 +1,18 @@
-[gd_resource type="FishDef" load_steps=2 format=3 uid="uid://fish_arapaima_gigas"]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
 
-[ext_resource type="Texture2D" uid="uid://bjq2ajjjbgbmy" path="res://art/fish/salmon.png" id="1_arapaima_icon"]
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
 
 [resource]
+script = ExtResource("1")
 id = "arapaima_gigas"
 name = "Arapaima (Pirarucú)"
+description = "Gigante de las aguas amazónicas. Requiere permisos especiales, salta poderosamente y necesita respirar aire superficial."
+species_category = "Legendario"
 rarity = 4
 base_market_value = 5605
 size_min = 30.0
 size_max = 200.0
-sprite = ExtResource("1_arapaima_icon")
-description = "Gigante de las aguas amazónicas. Requiere permisos especiales, salta poderosamente y necesita respirar aire superficial."
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rios_amazonicos"])
+difficulty = 5

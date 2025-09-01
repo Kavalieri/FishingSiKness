@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="LootTable" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://src/resources/LootTable.gd" id="1"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_sardina.tres" id="2"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_lubina.tres" id="3"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_salmon_atlantico.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_trucha_comun.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_perca_europea.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_black_bass.tres" id="4"]
 [ext_resource type="Resource" path="res://data/loot_tables/entry_salmon_atlantico.tres" id="5"]
 
 [resource]

@@ -10,6 +10,9 @@
 script = ExtResource("1")
 id = "costas_atlanticas"
 name = "Costas Atlánticas"
+description = "Rarezas: Raro Poco común"
+difficulty = 3
+unlock_cost = 5000
 price_multiplier = 1.5
 entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
 background = "res://art/env/beach.png"

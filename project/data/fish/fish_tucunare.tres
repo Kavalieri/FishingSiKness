@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/lubina.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "tucunare"
+name = "Tucunaré"
+description = "Cíclido amazónico de colores vibrantes. Conocido por su agresividad y técnica de combate espectacular."
+species_category = "Cíclido"
+rarity = 2
+base_market_value = 85
+size_min = 30.0
+size_max = 70.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rios_amazonicos"])
+difficulty = 4

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/lubina.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "black_bass"
+name = "Black Bass (Lubina Negra)"
+description = "Pez deportivo por excelencia. Su fuerza y astucia lo convierten en un adversario respetable."
+species_category = "Deportivo"
+rarity = 2
+base_market_value = 75
+size_min = 25.0
+size_max = 65.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["lago_montana_alpes", "grandes_lagos_norteamerica"])
+difficulty = 4

@@ -68,8 +68,12 @@ func _setup_card_deferred(data: Dictionary) -> void:
 
 	if data.has("fish_count"):
 		fish_count_label.text = str(data.fish_count)
+		fish_count_label.visible = true
+	else:
+		# Ocultar el indicador de especies si no se proporciona
+		fish_count_label.visible = false
 
-	if data.has("icon_path"):
+	if data.has("icon_path") and data.icon_path != null and data.icon_path != "":
 		var texture = load(str(data.icon_path))
 		if texture and icon:
 			icon.texture = texture

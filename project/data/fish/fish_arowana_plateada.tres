@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "arowana_plateada"
+name = "Arowana Plateada"
+description = "Pez dragón asiático de elegante forma. Su salto espectacular y colores metálicos lo hacen muy codiciado."
+species_category = "Exótico"
+rarity = 3
+base_market_value = 185
+size_min = 40.0
+size_max = 90.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["rios_amazonicos", "rios_asiaticos"])
+difficulty = 6

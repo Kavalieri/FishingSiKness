@@ -1,15 +1,19 @@
-[gd_resource type="Resource" script_class="ZoneDef" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_salmon.tres" id="2"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_lubina.tres" id="3"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_pulpo.tres" id="4"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_calamar.tres" id="5"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_tucunare.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_pirana_vientre_rojo.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_arowana_plateada.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_bagre_gigante_amazonico.tres" id="5"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_arapaima.tres" id="6"]
 
 [resource]
 script = ExtResource("1")
 id = "rios_amazonicos"
 name = "Ríos Amazónicos"
+description = "La selva tropical más biodiversa del planeta. Hogar del legendario Arapaima y especies únicas."
+difficulty = 4
+unlock_cost = 5000
 price_multiplier = 1.8
-entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
+entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
 background = "res://art/env/forest.png"

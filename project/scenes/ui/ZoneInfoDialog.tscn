@@ -1,0 +1,101 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/ZoneInfoDialog.gd" id="1"]
+
+[node name="ZoneInfoDialog" type="Window"]
+title = "Información de Zona"
+initial_position = 1
+size = Vector2i(650, 700)
+unresizable = false
+always_on_top = true
+script = ExtResource("1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ZoneIcon" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+texture_filter = 1
+stretch_mode = 5
+
+[node name="TitleContainer" type="VBoxContainer" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ZoneNameLabel" type="Label" parent="VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Nombre de la Zona"
+
+[node name="DifficultyContainer" type="HBoxContainer" parent="VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+
+[node name="DifficultyLabel" type="Label" parent="VBoxContainer/HeaderContainer/TitleContainer/DifficultyContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "⭐ Dificultad:"
+
+[node name="DifficultyValue" type="Label" parent="VBoxContainer/HeaderContainer/TitleContainer/DifficultyContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "1/5"
+
+[node name="MultiplierContainer" type="HBoxContainer" parent="VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+
+[node name="MultiplierLabel" type="Label" parent="VBoxContainer/HeaderContainer/TitleContainer/MultiplierContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "💎 Multiplicador:"
+
+[node name="MultiplierValue" type="Label" parent="VBoxContainer/HeaderContainer/TitleContainer/MultiplierContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "x1.0"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="DescriptionContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="DescriptionTitle" type="Label" parent="VBoxContainer/DescriptionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "📖 Descripción"
+
+[node name="DescriptionText" type="Label" parent="VBoxContainer/DescriptionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+text = "Descripción de la zona de pesca."
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SpeciesContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SpeciesTitle" type="Label" parent="VBoxContainer/SpeciesContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🐟 Especies Disponibles"
+
+[node name="SpeciesScroll" type="ScrollContainer" parent="VBoxContainer/SpeciesContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SpeciesList" type="VBoxContainer" parent="VBoxContainer/SpeciesContainer/SpeciesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3

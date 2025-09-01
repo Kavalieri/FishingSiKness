@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://src/ui_new/components/Card.gd" id="2_card_script"]
 
 [node name="Card" type="PanelContainer"]
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 155)
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("1_card_style")
 script = ExtResource("2_card_script")
@@ -35,15 +35,18 @@ layout_mode = 2
 text = "Título"
 theme_type_variation = &"HeaderLarge"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 18
-theme_override_constants/outline_size = 1
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_font_sizes/font_size = 22
+theme_override_constants/outline_size = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+autowrap_mode = 3
 
 [node name="Description" type="Label" parent="MarginContainer/HBoxContainer/ZoneInfo"]
 layout_mode = 2
 text = "Descripción"
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_constants/outline_size = 1
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.6)
 autowrap_mode = 3
 clip_contents = true
 
@@ -76,11 +79,17 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 text = "Acción"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
+theme_override_constants/outline_size = 1
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
 
 [node name="InfoButton" type="Button" parent="MarginContainer/HBoxContainer/ButtonsContainer"]
 layout_mode = 2
 text = "+ Info"
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_constants/outline_size = 1
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.6)
 theme_override_colors/font_color = Color(0.8, 0.9, 1, 1)
 theme_override_font_sizes/font_size = 12
 custom_minimum_size = Vector2(0, 30)

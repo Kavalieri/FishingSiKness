@@ -1,13 +1,18 @@
-[gd_resource type="FishDef" load_steps=2 format=3 uid="uid://fish_grayling_europeo"]
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
 
-[ext_resource type="Texture2D" uid="uid://bjq2ajjjbgbmy" path="res://art/fish/trucha.png" id="1_grayling_icon"]
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/trucha.png" id="2"]
 
 [resource]
+script = ExtResource("1")
 id = "grayling_europeo"
 name = "Grayling Europeo"
+description = "Pez de aletas vistosas que habita ríos claros y arroyos de montaña. Muy sensible a la manipulación."
+species_category = "Pez alpino"
 rarity = 1
 base_market_value = 10
 size_min = 0.3
 size_max = 2.0
-sprite = ExtResource("1_grayling_icon")
-description = "Pez de aletas vistosas que habita ríos claros y arroyos de montaña. Muy sensible a la manipulación."
+sprite = ExtResource("2")
+habitat_zones = Array[String](["lagos_montana", "rios_europa"])
+difficulty = 4

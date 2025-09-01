@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FishDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FishDef.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/fish/salmon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "siluro_europeo"
+name = "Siluro Europeo"
+description = "Gigante barbudo de ríos europeos. Su tamaño colosal y fuerza lo convierten en el monstruo de agua dulce."
+species_category = "Gigante"
+rarity = 4
+base_market_value = 320
+size_min = 100.0
+size_max = 250.0
+sprite = ExtResource("2")
+habitat_zones = Array[String](["grandes_rios_europa"])
+difficulty = 8

@@ -1,13 +1,19 @@
-[gd_resource type="Resource" script_class="ZoneDef" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_trucha.tres" id="2"]
-[ext_resource type="Resource" path="res://data/loot_tables/entry_sardina.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_trucha_comun.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_perca_europea.tres" id="3"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_trucha_arcoiris.tres" id="4"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_black_bass.tres" id="5"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_salmon_atlantico.tres" id="6"]
 
 [resource]
 script = ExtResource("1")
 id = "lago_montana_alpes"
 name = "Lagos de Montaña - Alpes"
+description = "Aguas cristalinas de montaña con especies alpinas típicas. Zona ideal para principiantes con aguas frías y transparentes."
+difficulty = 1
+unlock_cost = 0
 price_multiplier = 1.0
-entries = Array[Resource]([ExtResource("2"), ExtResource("3")])
+entries = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
 background = "res://art/env/snow.png"

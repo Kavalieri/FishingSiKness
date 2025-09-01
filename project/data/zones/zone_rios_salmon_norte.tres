@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ZoneDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ZoneDef.gd" id="1"]
+[ext_resource type="Resource" path="res://data/loot_tables/entry_salmon.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "rios_salmon_norte"
+name = "Ríos de Salmón del Norte"
+price_multiplier = 2.2
+entries = Array[Resource]([ExtResource("2")])
+background = "res://art/env/snow.png"
+unlock_cost = 12000
+difficulty = 4

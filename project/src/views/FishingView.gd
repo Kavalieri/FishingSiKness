@@ -801,7 +801,7 @@ func catch_successful():
 		add_history_entry("ERROR Sistema no disponible", "", 0, 0.0, false)
 		return
 
-	var current_zone_id = Save.game_data.get("current_zone", "orilla")
+	var current_zone_id = Save.game_data.get("current_zone", "lago_montana_alpes")
 	var zone_def = Content.get_zone_by_id(current_zone_id)
 	print("Fishing in zone: ", current_zone_id)
 
@@ -947,7 +947,7 @@ func update_zone_background():
 	if not background_node or not Save:
 		return
 
-	var current_zone_id = Save.game_data.get("current_zone", "orilla")
+	var current_zone_id = Save.game_data.get("current_zone", "lago_montana_alpes")
 
 	if BackgroundManager:
 		BackgroundManager.setup_zone_background(self, current_zone_id)
