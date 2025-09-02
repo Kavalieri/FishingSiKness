@@ -33,7 +33,7 @@ func load_all():
 			"entry_sardina.tres", "entry_trucha.tres", "entry_lubina.tres",
 			"entry_calamar.tres", "entry_cangrejo.tres", "entry_langosta.tres",
 			"entry_mantaraya.tres", "entry_pezglobo.tres", "entry_pulpo.tres",
-			"entry_salmon.tres", "entry_pulpo_dorado.tres", "zone_orilla_table.tres"
+			"entry_salmon.tres", "entry_pulpo_dorado.tres"
 		],
 		"equipment": [
 			"rod_basic.tres"
