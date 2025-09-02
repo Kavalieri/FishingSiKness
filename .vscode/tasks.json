@@ -7,11 +7,41 @@
             "command": "godot",
             "args": [
                 "--path",
-                "project/"
+                "project/",
+                "--verbose"
             ],
             "group": "build",
             "presentation": {
-                "reveal": "always"
+                "reveal": "always",
+                "clear": true,
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Godot: Debug con salida completa",
+            "type": "shell",
+            "command": "godot",
+            "args": [
+                "--path",
+                "project/",
+                "--verbose",
+                "--debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "clear": true,
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
             }
         },
         {

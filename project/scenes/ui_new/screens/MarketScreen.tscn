@@ -1,9 +1,9 @@
-[gd_scene load_steps=1 format=3 uid="uid://bqcxp1vsjqr6n"]
+[gd_scene load_steps=2 format=3 uid="uid://bqcxp1vsjqr6n"]
 
-
+[ext_resource type="Script" path="res://src/ui_new/screens/MarketScreen.gd" id="1_market_script"]
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_n5twb"]
 
-[node name="MarketScreen" type="Control"]
+[node name="MarketScreen" type="Control" script=ExtResource("1_market_script")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -202,9 +202,9 @@ func set_experience(xp: int, level: int, do_save: bool = true):
 # --- Sistema de Guardado y Carga ---
 
 func save_game():
-	# Antes de guardar, sincronizar el inventario desde InventorySystem
-	if InventorySystem:
-		game_data.inventory = InventorySystem.get_inventory_for_saving()
+	# Antes de guardar, sincronizar el inventario desde UnifiedInventorySystem
+	if UnifiedInventorySystem:
+		game_data.inventory = UnifiedInventorySystem.get_inventory_for_saving()
 
 	# Actualizar timestamp
 	game_data.last_played = Time.get_unix_time_from_system()
@@ -217,11 +217,18 @@ func load_game():
 		game_data = loaded_data
 		migrate_game_data()
 
-	# Después de cargar, poblar el inventario en InventorySystem
-	if InventorySystem:
-		InventorySystem.load_from_save(game_data.get("inventory", []))
+	# Cargar inventario de manera diferida para asegurar que UnifiedInventorySystem esté listo
+	call_deferred("_load_inventory_deferred")
 
 	print("Game loaded: ", game_data.coins, " coins, ", game_data.gems, " gems")
+
+func _load_inventory_deferred():
+	"""Cargar inventario de manera diferida para evitar problemas de timing"""
+	print("[Save] Cargando inventario de manera diferida...")
+	if UnifiedInventorySystem and UnifiedInventorySystem.has_method("load_from_save"):
+		UnifiedInventorySystem.load_from_save(game_data.get("inventory", []))
+	else:
+		print("[Save] ERROR: UnifiedInventorySystem no está disponible para carga diferida")
 
 func save(data: Dictionary):
 	var current_save_path = get_current_save_path()
@@ -415,8 +422,8 @@ func reset_to_default():
 	}
 
 	# Limpiar también el inventario del sistema
-	if InventorySystem:
-		InventorySystem._inventory.clear()
+	if UnifiedInventorySystem:
+		UnifiedInventorySystem.clear_all_containers()
 
 	# ELIMINADO: _ensure_initial_data() - ya no creamos peces automáticamente
 

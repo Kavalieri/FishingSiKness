@@ -1,183 +1,280 @@
-class_name MarketScreen
+# MarketScreen - Sistema completo de mercado integrado con UnifiedInventorySystem
 extends Control
 
-# Pantalla del mercado con inventario individualizado y rareza
+# Señales
+signal item_sold(fish_data: Dictionary, price: int)
+signal market_refreshed()
 
-signal market_closed
-signal item_sold(item_data: Dictionary, quantity: int)
-signal item_bought(item_data: Dictionary, quantity: int)
-signal auto_sell_toggled(enabled: bool)
+# Enums
+enum MarketMode {SELL, BUY}
 
-enum MarketMode {
-	SELL,
-	BUY
-}
+# Constants
+const SELL_MULTIPLIER = 0.8
 
-var current_mode: MarketMode = MarketMfunc_on_sell_all_pressed() -> void:
-	"""Vender todos los peces del inventario"""
-	if sellable_items.size() == 0:
-		print("No hay peces para vender")
+# Variables de estado
+var current_mode: MarketMode = MarketMode.SELL
+
+func _init() -> void:
+	print("[MarketScreen] _init() llamado - Script inicializado CORRECTAMENTE")
+
+func _ready() -> void:
+	print("[MarketScreen] _ready() llamado - INICIO SISTEMA COMPLETO")
+	print("[MarketScreen] UnifiedInventorySystem disponible: %s" % str(UnifiedInventorySystem != null))
+
+	# Configurar la interfaz paso a paso
+	await get_tree().process_frame # Esperar un frame para que todos los nodos estén listos
+
+	_setup_ui_system()
+
+	print("[MarketScreen] _ready() completado exitosamente")
+
+func _setup_ui_system():
+	"""Configurar el sistema de UI completo"""
+	print("[MarketScreen] === CONFIGURANDO SISTEMA UI ===")
+
+	# Paso 1: Verificar nodos críticos
+	_verify_critical_nodes()
+
+	# Paso 2: Probar sistema de inventario
+	_test_inventory_integration()
+
+	# Paso 3: Configurar interfaz
+	_setup_market_interface()
+
+func _verify_critical_nodes():
+	"""Verificar que todos los nodos críticos existan"""
+	print("[MarketScreen] Verificando nodos críticos...")
+
+	var critical_paths = [
+		"VBoxContainer",
+		"VBoxContainer/ResourcesPanel/ResourcesContainer/MoneyContainer/MoneyLabel",
+		"VBoxContainer/SellModeContainer/SellPanel/SellItemsContainer"
+	]
+
+	for path in critical_paths:
+		if has_node(path):
+			print("[MarketScreen] ✅ %s encontrado" % path)
+		else:
+			print("[MarketScreen] ❌ %s NO encontrado" % path)
+
+func _test_inventory_integration():
+	"""Probar la integración con el sistema de inventario"""
+	print("[MarketScreen] === PROBANDO INTEGRACIÓN INVENTARIO ===")
+
+	if not UnifiedInventorySystem:
+		print("[MarketScreen] ❌ UnifiedInventorySystem no disponible")
 		return
 
-	var total_value = 0
-	var fish_count = sellable_items.size()
-	var fish_indices: Array[int] = []
-
-	# Recopilar índices y calcular valor total
-	for fish in sellable_items:
-		var inventory_index = fish.get("inventory_index", -1)
-		if inventory_index >= 0:
-			fish_indices.append(inventory_index)
-			total_value += fish.get("value", 0)
-
-	if fish_indices.size() > 0:
-		# Usar InventorySystem para vender los peces
-		var earned = InventorySystem.sell_fishes(fish_indices)
-
-		# Actualizar dinero
-		player_money = Save.get_coins() if Save else player_money + earned
-		_update_resources_display()
-
-		# Añadir transacción
-		_add_transaction_to_summary("sell", "Venta masiva", fish_count, earned)
-
-		# Refrescar inventario
-		_refresh_sellable_items()
-
-		print("Vendidos %d peces por %d monedas" % [fish_count, earned])
-
-func _refresh_sellable_items() -> void:
-	"""Refrescar lista de peces vendibles"""
-	if InventorySystem:
-		var fish_inventory = InventorySystem.get_inventory()
-		sellable_items = _process_fish_inventory(fish_inventory)
-		_setup_sell_mode()
-
-func _on_item_sold_from_inventory(item_data: Dictionary) -> void:
-	"""Manejar venta de pez individual"""
-	var inventory_index = item_data.get("inventory_index", -1)
-	if inventory_index < 0:
-		print("Índice de inventario inválido")
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	if not fishing_container:
+		print("[MarketScreen] ❌ Contenedor de pesca no disponible")
 		return
 
-	var sell_price = item_data.get("value", 0)
-	var fish_name = item_data.get("name", "Pez desconocido")
+	print("[MarketScreen] ✅ Contenedor disponible con %d items" % fishing_container.items.size())
 
-	# Vender pez específico usando InventorySystem
-	var earned = InventorySystem.sell_fishes([inventory_index])
+	# Si está vacío, añadir items de prueba
+	if fishing_container.items.size() == 0:
+		_populate_test_inventory()
 
-	if earned > 0:
-		# Actualizar dinero
-		player_money = Save.get_coins() if Save else player_money + earned
-		_update_resources_display()
+	# Mostrar items en la UI
+	_display_inventory_items()
 
-		# Añadir transacción
-		_add_transaction_to_summary("sell", fish_name, 1, earned)
+func _populate_test_inventory():
+	"""Poblar el inventario con items de prueba"""
+	print("[MarketScreen] Añadiendo items de prueba al inventario...")
 
-		# Refrescar inventario
-		_refresh_sellable_items()
+	if not Content:
+		print("[MarketScreen] ❌ Content system no disponible")
+		return
 
-		# Emitir señal
-		item_sold.emit(item_data, 1)
+	# Añadir varios peces de prueba
+	var test_fish_ids = ["salmon", "trucha", "lubina"]
+	var added_count = 0
 
-		print("Vendido %s por %d monedas" % [fish_name, earned])
+	for fish_id in test_fish_ids:
+		var fish_data = Content.get_fish_by_id(fish_id)
+		if fish_data:
+			var item_instance = ItemInstance.new()
+			item_instance.from_fish_data({
+				"fish_id": fish_id,
+				"size": randf_range(15.0, 35.0),
+				"quality": randf_range(0.5, 1.0),
+				"timestamp": Time.get_unix_time_from_system()
+			})
+
+			if UnifiedInventorySystem.add_item(item_instance, "fishing"):
+				added_count += 1
+				print("[MarketScreen] ✅ Pez añadido: %s" % fish_data.display_name)
+
+	print("[MarketScreen] Total peces de prueba añadidos: %d" % added_count)
+
+func _display_inventory_items():
+	"""Mostrar los items del inventario en la UI"""
+	print("[MarketScreen] Mostrando items en la interfaz...")
+
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	if not fishing_container:
+		print("[MarketScreen] ❌ No hay contenedor para mostrar")
+		return
+
+	# Buscar el contenedor de la UI
+	if not has_node("VBoxContainer/SellModeContainer/SellPanel/SellItemsContainer"):
+		print("[MarketScreen] ❌ Contenedor UI no encontrado")
+		return
+
+	var ui_container = get_node("VBoxContainer/SellModeContainer/SellPanel/SellItemsContainer")
+
+	# Limpiar contenido anterior
+	for child in ui_container.get_children():
+		child.queue_free()
+
+	print("[MarketScreen] Creando UI para %d items..." % fishing_container.items.size())
+
+	# Crear elementos visuales para cada item
+	for item in fishing_container.items:
+		_create_item_display(ui_container, item)
+
+	if fishing_container.items.size() == 0:
+		var empty_label = Label.new()
+		empty_label.text = "🎣 No hay peces en el inventario"
+		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		ui_container.add_child(empty_label)
+
+func _create_item_display(container: Control, item: ItemInstance):
+	"""Crear la representación visual de un item"""
+	var item_panel = PanelContainer.new()
+	var hbox = HBoxContainer.new()
+
+	# Información del pez
+	var info_label = Label.new()
+	var fish_name = item.get_display_name()
+	var size = item.size
+	var quality_percent = int(item.quality * 100)
+
+	info_label.text = "🐟 %s | Tamaño: %.1fcm | Calidad: %d%%" % [fish_name, size, quality_percent]
+
+	# Botón de venta
+	var sell_button = Button.new()
+	var sell_price = _calculate_sell_price(item)
+	sell_button.text = "Vender ($%d)" % sell_price
+	sell_button.pressed.connect(_on_sell_item.bind(item))
+
+	hbox.add_child(info_label)
+	hbox.add_child(sell_button)
+	item_panel.add_child(hbox)
+	container.add_child(item_panel)
+
+	print("[MarketScreen] Item visual creado: %s" % fish_name)
+
+func _calculate_sell_price(item: ItemInstance) -> int:
+	"""Calcular el precio de venta de un item"""
+	if not Content:
+		return 10 # Precio por defecto
+
+	var fish_data = Content.get_fish_by_id(item.fish_id)
+	if not fish_data:
+		return 10
+
+	var base_price = fish_data.base_value
+	var size_multiplier = 1.0 + (item.size / 100.0) # Peces más grandes valen más
+	var quality_multiplier = item.quality
+
+	var final_price = int(base_price * size_multiplier * quality_multiplier * SELL_MULTIPLIER)
+	return max(final_price, 1) # Mínimo 1 moneda
+
+func _on_sell_item(item: ItemInstance):
+	"""Vender un item específico"""
+	print("[MarketScreen] Vendiendo item: %s" % item.get_display_name())
+
+	var sell_price = _calculate_sell_price(item)
+
+	# Remover item del inventario
+	if UnifiedInventorySystem.remove_item(item):
+		# Añadir dinero al jugador
+		if Save:
+			Save.game_data.coins += sell_price
+			print("[MarketScreen] ✅ Item vendido por $%d" % sell_price)
+
+			# Actualizar UI
+			_update_money_display()
+			_display_inventory_items() # Refrescar la lista
+		else:
+			print("[MarketScreen] ❌ Error: Save system no disponible")
 	else:
-		print("Error al vender pez")
+		print("[MarketScreen] ❌ Error removiendo item del inventario")
 
-# Funciones de filtrado y ordenamiento
-func set_rarity_filter(rarity: int) -> void:
-	"""Establecer filtro de rareza"""
-	rarity_filter = rarity
-	_refresh_sellable_items()
+func _setup_market_interface():
+	"""Configurar la interfaz del mercado"""
+	print("[MarketScreen] Configurando interfaz del mercado...")
 
-func set_zone_filter(zone: String) -> void:
-	"""Establecer filtro de zona"""
-	zone_filter = zone
-	_refresh_sellable_items()
+	_update_money_display()
 
-func set_sort_mode(mode: String) -> void:
-	"""Establecer modo de ordenamiento"""
-	sort_mode = mode
-	_refresh_sellable_items()
+	print("[MarketScreen] ✅ Interfaz configurada correctamente")
 
-func get_available_zones() -> Array[String]:
-	"""Obtener zonas disponibles en el inventario"""
-	var zones = []
-	for fish in sellable_items:
-		var zone = fish.get("zone_caught", "")
-		if zone != "" and not zones.has(zone):
-			zones.append(zone)
-	return zones
+func _update_money_display():
+	"""Actualizar la visualización de dinero y gemas"""
+	if has_node("VBoxContainer/ResourcesPanel/ResourcesContainer/MoneyContainer/MoneyLabel"):
+		var money_label = get_node("VBoxContainer/ResourcesPanel/ResourcesContainer/MoneyContainer/MoneyLabel")
+		if Save:
+			money_label.text = str(int(Save.game_data.coins))
 
-func get_available_rarities() -> Array[int]:
-	"""Obtener rarezas disponibles en el inventario"""
-	var rarities = []
-	for fish in sellable_items:
-		var rarity = fish.get("rarity", 0)
-		if not rarities.has(rarity):
-			rarities.append(rarity)
-	return raritiesr_money: int = 0
-var player_gems: int = 0
-var sellable_items: Array[Dictionary] = []
-var buyable_items: Array[Dictionary] = []
-var transaction_summary: Array[Dictionary] = []
-
-# Para filtrado y organización
-var rarity_filter: int = -1 # -1 = todos, 0-4 = rareza específica
-var zone_filter: String = "" # "" = todas, zone_id = zona específica
-var sort_mode: String = "value" # "value", "rarity", "size", "time"
-
-const INVENTORY_SCENE = preload("res://scenes/ui_new/components/FilteredInventory.tscn")
-const FISH_CARD_SCENE = preload("res://scenes/ui_new/components/Card.tscn")
-
-# Colores por rareza
-const RARITY_COLORS = {
-	0: Color.WHITE, # Común
-	1: Color.GREEN, # Poco común
-	2: Color.BLUE, # Raro
-	3: Color.PURPLE, # Épico
-	4: Color.GOLD # Legendario
-}
-
-const RARITY_NAMES = {
-	0: "Común",
-	1: "Poco común",
-	2: "Raro",
-	3: "Épico",
-	4: "Legendario"
-}
-
-@onready var sell_button: Button = $VBoxContainer/MarketTabs/SellButton
-@onready var buy_button: Button = $VBoxContainer/MarketTabs/BuyButton
-@onready var money_label: Label = $VBoxContainer/ResourcesPanel/ResourcesContainer / \
-	MoneyContainer / MoneyLabel
-@onready var gems_label: Label = $VBoxContainer/ResourcesPanel/ResourcesContainer / \
-	GemsContainer / GemsLabel
-@onready var sell_mode_container: Control = $VBoxContainer/SellModeContainer
-@onready var buy_mode_container: Control = $VBoxContainer/BuyModeContainer
-@onready var sell_all_button: Button = $VBoxContainer/SellModeContainer/SellPanel/SellFilters / \
-	SellAllButton
-@onready var auto_sell_toggle: CheckBox = $VBoxContainer/SellModeContainer/SellPanel / \
-	SellFilters / AutoSellToggle
-@onready var sell_items_container: Control = $VBoxContainer/SellModeContainer/SellPanel / \
-	SellItemsContainer
-@onready var category_option: OptionButton = $VBoxContainer/BuyModeContainer/BuyPanel / \
-	BuyFilters / CategoryOption
-@onready var refresh_button: Button = $VBoxContainer/BuyModeContainer/BuyPanel/BuyFilters / \
-	RefreshButton
-@onready var buy_items_container: Control = $VBoxContainer/BuyModeContainer/BuyPanel / \
-	BuyItemsContainer
-@onready var transaction_summary_panel: PanelContainer = $VBoxContainer/TransactionSummary
-@onready var summary_text: Label = $VBoxContainer/TransactionSummary/SummaryContainer/SummaryText
-@onready var clear_button: Button = $VBoxContainer/TransactionSummary/SummaryContainer / \
-	ClearButton
+	if has_node("VBoxContainer/ResourcesPanel/ResourcesContainer/GemsContainer/GemsLabel"):
+		var gems_label = get_node("VBoxContainer/ResourcesPanel/ResourcesContainer/GemsContainer/GemsLabel")
+		if Save:
+			gems_label.text = str(int(Save.game_data.gems))
 
 var sell_inventory: FilteredInventory
 var buy_inventory: FilteredInventory
 
+# Referencias a nodos
+@onready var sell_button: Button = $VBoxContainer/MarketTabs/SellButton
+@onready var buy_button: Button = $VBoxContainer/MarketTabs/BuyButton
+@onready var money_label: Label = $VBoxContainer/ResourcesPanel/ResourcesContainer/MoneyContainer/MoneyLabel
+@onready var gems_label: Label = $VBoxContainer/ResourcesPanel/ResourcesContainer/GemsContainer/GemsLabel
+@onready var sell_mode_container: Control = $VBoxContainer/SellModeContainer
+@onready var buy_mode_container: Control = $VBoxContainer/BuyModeContainer
+@onready var sell_all_button: Button = $VBoxContainer/SellModeContainer/SellPanel/SellFilters/SellAllButton
+@onready var auto_sell_toggle: CheckBox = $VBoxContainer/SellModeContainer/SellPanel/SellFilters/AutoSellToggle
+@onready var sell_items_container: Control = $VBoxContainer/SellModeContainer/SellPanel/SellItemsContainer
+@onready var category_option: OptionButton = $VBoxContainer/BuyModeContainer/BuyPanel/BuyFilters/CategoryOption
+@onready var refresh_button: Button = $VBoxContainer/BuyModeContainer/BuyPanel/BuyFilters/RefreshButton
+@onready var buy_items_container: Control = $VBoxContainer/BuyModeContainer/BuyPanel/BuyItemsContainer
+@onready var transaction_summary_panel: PanelContainer = $VBoxContainer/TransactionSummary
+@onready var summary_text: Label = $VBoxContainer/TransactionSummary/SummaryContainer/SummaryText
+@onready var clear_button: Button = $VBoxContainer/TransactionSummary/SummaryContainer/ClearButton
+
+# Funciones principales - VERSIÓN SIMPLIFICADA PARA DEBUG
+func _init() -> void:
+	print("[MarketScreen] _init() llamado - Script inicializado")
+
 func _ready() -> void:
-	_connect_signals()
-	_setup_inventories()
+	print("[MarketScreen] _ready() llamado - INICIO - VERSIÓN SIMPLIFICADA")
+	print("[MarketScreen] UnifiedInventorySystem disponible: %s" % str(UnifiedInventorySystem != null))
+
+	# Solo debug básico sin usar las variables @onready aún
+	var vbox = get_node("VBoxContainer")
+	print("[MarketScreen] VBoxContainer encontrado: %s" % str(vbox != null))
+
+	if UnifiedInventorySystem:
+		print("[MarketScreen] Sistema disponible, verificando contenedor...")
+		var fishing_container = UnifiedInventorySystem.get_fishing_container()
+		if fishing_container:
+			print("[MarketScreen] Contenedor encontrado con %d items" % fishing_container.items.size())
+		else:
+			print("[MarketScreen] ERROR: No se pudo obtener fishing_container")
+	else:
+		print("[MarketScreen] ERROR: UnifiedInventorySystem no disponible")
+
+	print("[MarketScreen] _ready() completado exitosamente")
+
+	# TEMPORALMENTE COMENTADO PARA DEBUG:
+	# if UnifiedInventorySystem:
+	#	print("[MarketScreen] Llamando _refresh_sellable_items...")
+	#	_refresh_sellable_items()
+	# else:
+	#	print("[MarketScreen] Esperando UnifiedInventorySystem...")
+
+	print("[MarketScreen] _ready() completado - sin errores")
 
 func _connect_signals() -> void:
 	sell_button.toggled.connect(_on_mode_toggled.bind(MarketMode.SELL))
@@ -201,17 +298,24 @@ func _setup_inventories() -> void:
 	buy_inventory.item_used.connect(_on_item_bought_from_inventory) # Reutilizar señal como "comprar"
 	buy_items_container.add_child(buy_inventory)
 
-func setup_market(money: int, gems: int, sell_items: Array[Dictionary],
-	buy_items: Array[Dictionary]) -> void:
+func setup_market(money: int, gems: int, sell_items: Array[Dictionary], buy_items: Array[Dictionary]) -> void:
 	"""Configurar mercado con datos y cargar inventario de peces"""
+	print("[MarketScreen] setup_market llamado")
 	player_money = money
 	player_gems = gems
 
-	# Cargar inventario real de peces del InventorySystem
-	if InventorySystem:
-		var fish_inventory = InventorySystem.get_inventory()
-		sellable_items = _process_fish_inventory(fish_inventory)
+	# Cargar inventario real de peces del UnifiedInventorySystem
+	if UnifiedInventorySystem:
+		print("[MarketScreen] UnifiedInventorySystem disponible")
+		var fishing_container = UnifiedInventorySystem.get_fishing_container()
+		if fishing_container:
+			print("[MarketScreen] Container encontrado con %d items" % fishing_container.items.size())
+			sellable_items = _process_fish_inventory(fishing_container.items)
+		else:
+			print("[MarketScreen] No se encontró fishing container")
+			sellable_items = sell_items
 	else:
+		print("[MarketScreen] UnifiedInventorySystem no disponible, usando sell_items")
 		sellable_items = sell_items
 
 	buyable_items = buy_items
@@ -219,124 +323,127 @@ func setup_market(money: int, gems: int, sell_items: Array[Dictionary],
 	_update_resources_display()
 	_refresh_current_mode()
 
-func _process_fish_inventory(fish_inventory: Array) -> Array[Dictionary]:
-	"""Procesar inventario de peces para el mercado"""
+# Funciones de procesamiento de inventario
+func _refresh_sellable_items() -> void:
+	"""Refrescar lista de peces vendibles"""
+	print("[MarketScreen] Refrescando items vendibles...")
+
+	if UnifiedInventorySystem:
+		var fishing_container = UnifiedInventorySystem.get_fishing_container()
+		if fishing_container:
+			print("[MarketScreen] Container encontrado con %d items" % fishing_container.items.size())
+
+			# Si el inventario está vacío, agregar algunos peces de prueba
+			if fishing_container.items.size() == 0:
+				print("[MarketScreen] Inventario vacío, añadiendo peces de prueba...")
+				_add_test_fish()
+				# Volver a verificar después de añadir peces
+				fishing_container = UnifiedInventorySystem.get_fishing_container()
+				print("[MarketScreen] Container después de prueba: %d items" % fishing_container.items.size())
+
+			sellable_items = _process_fish_inventory(fishing_container.items)
+			print("[MarketScreen] Items procesados: %d" % sellable_items.size())
+		else:
+			print("[MarketScreen] No se encontró fishing container")
+			sellable_items = []
+		_setup_sell_mode()
+	else:
+		print("[MarketScreen] UnifiedInventorySystem no disponible")
+		sellable_items = []
+
+func _process_fish_inventory(items: Array) -> Array[Dictionary]:
+	"""Procesar items del inventario para convertirlos a formato del mercado"""
+	print("[MarketScreen] Procesando %d items del inventario..." % items.size())
 	var processed_items: Array[Dictionary] = []
 
-	for i in range(fish_inventory.size()):
-		var fish_data = fish_inventory[i]
-		var processed_fish = _create_sellable_fish_data(fish_data, i)
-		processed_items.append(processed_fish)
+	for i in range(items.size()):
+		var item_instance = items[i]
+		print("[MarketScreen] Item %d: %s" % [i, str(item_instance)])
 
-	# Aplicar filtros y ordenamiento
-	processed_items = _apply_filters_and_sorting(processed_items)
+		var fish_data = item_instance.to_fish_data()
+		print("[MarketScreen] Fish data: %s" % str(fish_data))
 
+		# Añadir índice de inventario para referencia de venta
+		fish_data["inventory_index"] = i
+
+		processed_items.append(fish_data)
+
+	print("[MarketScreen] Items procesados final: %d" % processed_items.size())
 	return processed_items
 
-func _create_sellable_fish_data(fish_data: Dictionary, index: int) -> Dictionary:
-	"""Crear datos de pez para la venta con información completa"""
-	var sellable_fish = fish_data.duplicate()
+func _add_test_fish() -> void:
+	"""Añadir algunos peces de prueba al inventario si está vacío"""
+	print("[MarketScreen] Añadiendo peces de prueba...")
 
-	# Añadir información específica del mercado
-	sellable_fish["inventory_index"] = index
-	sellable_fish["sell_price"] = fish_data.get("value", 0)
-	sellable_fish["category"] = "fish"
+	if not Content:
+		print("[MarketScreen] Sistema Content no disponible")
+		return
 
-	# Información de rareza
-	var rarity = fish_data.get("rarity", 0)
-	sellable_fish["rarity_name"] = RARITY_NAMES.get(rarity, "Común")
-	sellable_fish["rarity_color"] = RARITY_COLORS.get(rarity, Color.WHITE)
+	# Buscar algunas definiciones de peces
+	var fish_definitions = Content.get_fish_definitions()
+	if fish_definitions.size() == 0:
+		print("[MarketScreen] No hay definiciones de peces disponibles")
+		return
 
-	# Descripción enriquecida
-	var description = "🐟 %s\n" % fish_data.get("name", "Pez desconocido")
-	description += "💰 Valor: %s monedas\n" % _format_number(fish_data.get("value", 0))
-	description += "📏 Tamaño: %.1f cm\n" % fish_data.get("size", 0.0)
-	description += "📍 Capturado en: %s\n" % fish_data.get("zone_caught", "Desconocida")
-	description += "✨ Rareza: %s" % sellable_fish["rarity_name"]
+	print("[MarketScreen] Encontradas %d definiciones de peces" % fish_definitions.size())
 
-	# Añadir timestamp si está disponible
-	if fish_data.has("timestamp"):
-		var timestamp = fish_data["timestamp"]
-		if timestamp is Dictionary:
-			description += "\n⏰ Capturado: %02d/%02d/%d" % [
-				timestamp.get("day", 1),
-				timestamp.get("month", 1),
-				timestamp.get("year", 2025)
-			]
+	# Añadir los primeros 3 peces encontrados
+	for i in range(min(3, fish_definitions.size())):
+		var fish_def = fish_definitions.values()[i]
+		print("[MarketScreen] Añadiendo pez de prueba: %s" % fish_def.display_name)
 
-	sellable_fish["description"] = description
+		# Crear ItemInstance del pez
+		var fish_item = ItemInstance.new()
+		fish_item.item_definition = fish_def
+		fish_item.quantity = 1
+		fish_item.metadata = {
+			"size": randf_range(fish_def.size_min, fish_def.size_max),
+			"zone_caught": "test_zone",
+			"timestamp": Time.get_unix_time_from_system()
+		}
 
-	return sellable_fish
+		# Añadir al inventario
+		if UnifiedInventorySystem.add_item(fish_item, "fishing"):
+			print("[MarketScreen] ✅ Pez %s añadido exitosamente" % fish_def.display_name)
+		else:
+			print("[MarketScreen] ❌ Error añadiendo pez %s" % fish_def.display_name)
 
-func _apply_filters_and_sorting(items: Array[Dictionary]) -> Array[Dictionary]:
-	"""Aplicar filtros y ordenamiento al inventario"""
-	var filtered_items = items
-
-	# Filtrar por rareza si está activo
-	if rarity_filter >= 0:
-		filtered_items = filtered_items.filter(func(item):
-			return item.get("rarity", 0) == rarity_filter
-		)
-
-	# Filtrar por zona si está activo
-	if zone_filter != "":
-		filtered_items = filtered_items.filter(func(item):
-			return item.get("zone_caught", "") == zone_filter
-		)
-
-	# Ordenar según modo seleccionado
-	match sort_mode:
-		"value":
-			filtered_items.sort_custom(func(a, b): return a.get("value", 0) > b.get("value", 0))
-		"rarity":
-			filtered_items.sort_custom(func(a, b): return a.get("rarity", 0) > b.get("rarity", 0))
-		"size":
-			filtered_items.sort_custom(func(a, b): return a.get("size", 0.0) > b.get("size", 0.0))
-		"time":
-			# Ordenar por timestamp (más reciente primero)
-			filtered_items.sort_custom(func(a, b):
-				var time_a = a.get("timestamp", {}).get("unix", 0) if a.has("timestamp") else 0
-				var time_b = b.get("timestamp", {}).get("unix", 0) if b.has("timestamp") else 0
-				return time_a > time_b
-			)
-
-	return filtered_items
-
+# Funciones de UI y display
 func _update_resources_display() -> void:
-	"""Actualizar visualización de recursos"""
 	money_label.text = _format_number(player_money)
-	gems_label.text = _format_number(player_gems)
+	gems_label.text = str(player_gems)
 
 func _format_number(number: int) -> String:
-	"""Formatear números grandes"""
 	if number >= 1000000:
 		return "%.1fM" % (number / 1000000.0)
 	elif number >= 1000:
 		return "%.1fK" % (number / 1000.0)
-	else:
-		return str(number)
+
+	return str(number)
 
 func _refresh_current_mode() -> void:
-	"""Actualizar modo actual del mercado"""
-	match current_mode:
-		MarketMode.SELL:
-			sell_mode_container.visible = true
-			buy_mode_container.visible = false
-			_setup_sell_mode()
-		MarketMode.BUY:
-			sell_mode_container.visible = false
-			buy_mode_container.visible = true
-			_setup_buy_mode()
+	"""Actualizar la vista actual según el modo seleccionado"""
+	sell_mode_container.visible = (current_mode == MarketMode.SELL)
+	buy_mode_container.visible = (current_mode == MarketMode.BUY)
+
+	if current_mode == MarketMode.SELL:
+		_setup_sell_mode()
+	else:
+		_setup_buy_mode()
 
 func _setup_sell_mode() -> void:
 	"""Configurar modo de venta con inventario de peces"""
+	print("[MarketScreen] Configurando modo venta con %d items" % sellable_items.size())
+
 	# Mostrar información del inventario
 	_update_inventory_display()
 
 	# Configurar inventario individual de peces
 	if sellable_items.size() > 0:
+		print("[MarketScreen] Configurando sell_inventory con items")
 		sell_inventory.setup_inventory(sellable_items, "Peces para Vender")
 	else:
+		print("[MarketScreen] Configurando sell_inventory vacío")
 		sell_inventory.setup_inventory([], "Inventario Vacío")
 
 func _update_inventory_display() -> void:
@@ -377,6 +484,7 @@ func _setup_buy_mode() -> void:
 	var buyables_with_prices = _add_buy_prices_to_items(filtered_buyables)
 	buy_inventory.setup_inventory(buyables_with_prices, "Tienda")
 
+# Funciones de procesamiento de items
 func _add_sell_prices_to_items(items: Array[Dictionary]) -> Array[Dictionary]:
 	"""Añadir precios de venta a los objetos"""
 	var items_with_prices: Array[Dictionary] = []
@@ -419,8 +527,67 @@ func _filter_buyables_by_category() -> Array[Dictionary]:
 		func(item): return item.get("category", "").to_lower() == selected_category.to_lower()
 	)
 
-func _add_transaction_to_summary(type: String, item_name: String, quantity: int,
-	total_value: int) -> void:
+func _create_sellable_fish_data(fish_data: Dictionary, index: int) -> Dictionary:
+	"""Crear datos de pez para la venta con información completa"""
+	var sellable_fish = fish_data.duplicate()
+
+	# Añadir información específica del mercado
+	sellable_fish["inventory_index"] = index
+	sellable_fish["sell_price"] = fish_data.get("value", 0)
+	sellable_fish["category"] = "fish"
+
+	# Información de rareza
+	var rarity = fish_data.get("rarity", 0)
+	sellable_fish["rarity_name"] = RARITY_NAMES.get(rarity, "Común")
+	sellable_fish["rarity_color"] = RARITY_COLORS.get(rarity, Color.WHITE)
+
+	# Descripción enriquecida
+	var description = "🐟 %s\n" % fish_data.get("name", "Pez desconocido")
+	description += "💰 Valor: %s monedas\n" % _format_number(fish_data.get("value", 0))
+	description += "📏 Tamaño: %.1f cm\n" % fish_data.get("size", 0.0)
+	description += "📍 Capturado en: %s\n" % fish_data.get("zone_caught", "Desconocida")
+	description += "✨ Rareza: %s" % sellable_fish["rarity_name"]
+
+	# Añadir timestamp si está disponible
+	if fish_data.has("timestamp"):
+		var time_str = Time.get_datetime_string_from_unix_time(fish_data["timestamp"])
+		description += "\n🕐 Capturado: %s" % time_str
+
+	sellable_fish["description"] = description
+
+	return sellable_fish
+
+func _apply_filters_and_sorting(items: Array[Dictionary]) -> Array[Dictionary]:
+	"""Aplicar filtros y ordenamiento a los items"""
+	var filtered_items = items
+
+	# Aplicar filtro de rareza
+	if rarity_filter >= 0:
+		filtered_items = filtered_items.filter(
+			func(item): return item.get("rarity", 0) == rarity_filter
+		)
+
+	# Aplicar filtro de zona
+	if zone_filter != "":
+		filtered_items = filtered_items.filter(
+			func(item): return item.get("zone_caught", "").to_lower() == zone_filter.to_lower()
+		)
+
+	# Aplicar ordenamiento
+	match sort_mode:
+		"value":
+			filtered_items.sort_custom(func(a, b): return a.get("value", 0) > b.get("value", 0))
+		"rarity":
+			filtered_items.sort_custom(func(a, b): return a.get("rarity", 0) > b.get("rarity", 0))
+		"size":
+			filtered_items.sort_custom(func(a, b): return a.get("size", 0.0) > b.get("size", 0.0))
+		"time":
+			filtered_items.sort_custom(func(a, b): return a.get("timestamp", 0) > b.get("timestamp", 0))
+
+	return filtered_items
+
+# Funciones de transacciones
+func _add_transaction_to_summary(type: String, item_name: String, quantity: int, total_value: int) -> void:
 	"""Añadir transacción al resumen"""
 	var transaction = {
 		"type": type,
@@ -458,32 +625,103 @@ func _update_summary_display() -> void:
 
 	summary_text.text = summary
 
+# Funciones de filtros públicas
+func set_rarity_filter(rarity: int) -> void:
+	rarity_filter = rarity
+	_refresh_sellable_items()
+
+func set_zone_filter(zone: String) -> void:
+	zone_filter = zone
+	_refresh_sellable_items()
+
+func set_sort_mode(mode: String) -> void:
+	sort_mode = mode
+	_refresh_sellable_items()
+
+func get_available_zones() -> Array[String]:
+	var zones: Array[String] = []
+	for item in sellable_items:
+		var zone = item.get("zone_caught", "")
+		if zone != "" and not zones.has(zone):
+			zones.append(zone)
+	return zones
+
+func get_available_rarities() -> Array[int]:
+	var rarities: Array[int] = []
+	for item in sellable_items:
+		var rarity = item.get("rarity", 0)
+		if not rarities.has(rarity):
+			rarities.append(rarity)
+	return rarities
+
+# Event handlers
+func _on_sell_all_pressed() -> void:
+	"""Vender todos los peces del inventario"""
+	if sellable_items.size() == 0:
+		print("No hay peces para vender")
+		return
+
+	var total_value = 0
+	var fish_count = sellable_items.size()
+	var fish_indices: Array[int] = []
+
+	# Recopilar índices y calcular valor total
+	for fish in sellable_items:
+		var inventory_index = fish.get("inventory_index", -1)
+		if inventory_index >= 0:
+			fish_indices.append(inventory_index)
+			total_value += fish.get("value", 0)
+
+	if fish_indices.size() > 0:
+		# Usar UnifiedInventorySystem para vender todos los peces
+		var earned = UnifiedInventorySystem.sell_items_by_indices(fish_indices)
+
+		if earned > 0:
+			# Actualizar dinero
+			player_money += earned
+			_update_resources_display()
+			_add_transaction_to_summary("sell", "Venta masiva", fish_count, earned)
+
+			# Refrescar inventario
+			_refresh_sellable_items()
+
+			print("Vendidos %d peces por %d monedas" % [fish_count, earned])
+
+func _on_item_sold_from_inventory(item_data: Dictionary) -> void:
+	"""Manejar venta de pez individual"""
+	var inventory_index = item_data.get("inventory_index", -1)
+	if inventory_index < 0:
+		print("Índice de inventario inválido")
+		return
+
+	var sell_price = item_data.get("value", 0)
+	var fish_name = item_data.get("name", "Pez desconocido")
+
+	# Vender pez específico usando UnifiedInventorySystem
+	var earned = UnifiedInventorySystem.sell_items_by_indices([inventory_index])
+
+	if earned > 0:
+		# Actualizar dinero
+		player_money += earned
+		_update_resources_display()
+		_add_transaction_to_summary("sell", fish_name, 1, earned)
+
+		# Refrescar inventario
+		_refresh_sellable_items()
+
+		# Emitir señal
+		item_sold.emit(item_data, 1)
+
+		print("Vendido %s por %d monedas" % [fish_name, earned])
+	else:
+		print("Error al vender el pez")
+
 func _on_mode_toggled(mode: MarketMode, pressed: bool) -> void:
 	if not pressed:
 		return
 
 	current_mode = mode
 	_refresh_current_mode()
-
-func _on_sell_all_pressed() -> void:
-	"""Vender todos los objetos vendibles"""
-	var total_value = 0
-	var total_items = 0
-
-	for item in sellable_items:
-		var quantity = item.get("quantity", 1)
-		var value = item.get("value", 0) * quantity
-		total_value += value
-		total_items += quantity
-
-	if total_value > 0:
-		player_money += total_value
-		_update_resources_display()
-		_add_transaction_to_summary("sell", "Venta masiva", total_items, total_value)
-
-		# Limpiar inventario vendible
-		sellable_items.clear()
-		_setup_sell_mode()
 
 func _on_auto_sell_toggled(enabled: bool) -> void:
 	auto_sell_toggled.emit(enabled)
@@ -500,17 +738,6 @@ func _on_clear_summary_pressed() -> void:
 func _on_inventory_closed() -> void:
 	# No hacer nada, los inventarios están embebidos
 	pass
-
-func _on_item_sold_from_inventory(item_data: Dictionary) -> void:
-	"""Manejar venta desde inventario"""
-	var sell_price = item_data.get("sell_price", item_data.get("value", 0))
-	var quantity = 1 # Por ahora cantidad fija
-
-	player_money += sell_price
-	_update_resources_display()
-	_add_transaction_to_summary("sell", item_data.get("name", ""), quantity, sell_price)
-
-	item_sold.emit(item_data, quantity)
 
 func _on_item_bought_from_inventory(item_data: Dictionary) -> void:
 	"""Manejar compra desde inventario (reutilizando señal item_used)"""

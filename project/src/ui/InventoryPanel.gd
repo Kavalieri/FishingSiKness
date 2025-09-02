@@ -106,7 +106,7 @@ func _on_deselect_all_pressed():
 
 func _on_sell_selected_pressed():
 	if selected_fish_indices.is_empty(): return
-	InventorySystem.sell_fishes(selected_fish_indices)
+	UnifiedInventorySystem.sell_items_by_indices(selected_fish_indices)
 	refresh_display()
 
 func _on_sell_all_pressed():
@@ -118,7 +118,7 @@ func _on_sell_all_pressed():
 
 func _on_discard_selected_pressed():
 	if selected_fish_indices.is_empty(): return
-	InventorySystem.discard_fishes(selected_fish_indices)
+	UnifiedInventorySystem.remove_items_by_indices(selected_fish_indices)
 	refresh_display()
 
 func _on_discard_all_pressed():
@@ -149,10 +149,16 @@ func _show_confirmation_dialog(action: String, title: String, text: String):
 func _on_confirmation_confirmed():
 	match _pending_confirmation_action:
 		"sell_all":
-			InventorySystem.sell_all_fish()
+			# Obtener todos los índices del inventario de pesca
+			var fishing_container = UnifiedInventorySystem.get_fishing_container()
+			if fishing_container:
+				var all_indices: Array[int] = []
+				for i in range(fishing_container.items.size()):
+					all_indices.append(i)
+				UnifiedInventorySystem.sell_items_by_indices(all_indices)
 			refresh_display()
 		"discard_all":
-			InventorySystem.discard_all_fish()
+			UnifiedInventorySystem.clear_fishing_container()
 			refresh_display()
 	_pending_confirmation_action = ""
 
@@ -171,9 +177,13 @@ func _clear_cards():
 	selected_fish_indices.clear()
 
 func _load_fish_cards():
-	var inventory = InventorySystem.get_inventory()
-	for i in range(inventory.size()):
-		var fish_data = inventory[i]
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	if not fishing_container:
+		return
+
+	for i in range(fishing_container.items.size()):
+		var item_instance = fishing_container.items[i]
+		var fish_data = item_instance.to_fish_data()
 		if _current_rarity_filter == "All" or fish_data.get("rarity") == _current_rarity_filter:
 			_create_individual_fish_card(fish_data, i)
 
@@ -208,7 +218,8 @@ func _on_individual_fish_card_selection_changed(card: Control, is_selected: bool
 
 func _update_buttons_state():
 	var has_selection = not selected_fish_indices.is_empty()
-	var has_inventory = not InventorySystem.get_inventory().is_empty()
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	var has_inventory = fishing_container != null and not fishing_container.items.is_empty()
 
 	if sell_selected_button:
 		sell_selected_button.disabled = not has_selection

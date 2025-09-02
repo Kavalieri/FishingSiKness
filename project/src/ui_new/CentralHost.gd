@@ -117,12 +117,12 @@ func _setup_market_screen(screen: Control) -> void:
 			money = Save.get_coins()
 			gems = Save.get_gems()
 
-		# Obtener inventario real de peces desde InventorySystem
-		if InventorySystem:
-			var fish_inventory = InventorySystem.get_inventory()
+		# Obtener inventario real de peces desde UnifiedInventorySystem
+		if UnifiedInventorySystem:
+			var fish_inventory = UnifiedInventorySystem.get_fishing_container().get_all_items()
 			print("[CentralHost] Cargando inventario con %d peces" % fish_inventory.size())
 		else:
-			print("[CentralHost] InventorySystem no disponible")
+			print("[CentralHost] UnifiedInventorySystem no disponible")
 
 		# Obtener items disponibles para compra desde Content
 		if Content:

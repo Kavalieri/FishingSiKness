@@ -277,7 +277,28 @@ func catch_successful():
 		var random_size = randf_range(random_fish.size_min, random_fish.size_max)
 		var fish_instance = FishInstance.new(random_fish, random_size)
 
-		Save.add_fish(fish_instance)
+		# Crear ItemInstance desde FishInstance para UnifiedInventorySystem
+		var item_instance = ItemInstance.new()
+		item_instance.from_fish_data({
+			"id": fish_instance.fish_def.id,
+			"name": fish_instance.fish_def.name,
+			"size": fish_instance.size,
+			"value": int(fish_instance.value),
+			"zone_caught": "unknown",
+			"timestamp": Time.get_unix_time_from_system()
+		})
+
+		# Añadir al contenedor de pesca
+		if UnifiedInventorySystem.add_item(item_instance, "fishing"):
+			print("✅ Pez añadido exitosamente al inventario: %s" % fish_instance.fish_def.name)
+
+			# Guardar el juego después de añadir el pez
+			if Save:
+				Save.save_game()
+				print("💾 Juego guardado después de capturar pez")
+		else:
+			print("🚨 Error: No se pudo añadir el pez al inventario")
+
 		show_catch_message(fish_instance, true)
 		emit_signal("fish_caught", fish_instance.fish_def.name, fish_instance.value)
 

@@ -541,7 +541,31 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 
 func _confirm_store_fish(fish_instance: FishInstance, rarity: String, rarity_multiplier: float):
 	"""Confirmar almacenamiento del pez capturado"""
-	InventorySystem.add_fish(fish_instance)
+	# Crear ItemInstance desde FishInstance
+	var item_instance = ItemInstance.new()
+	item_instance.from_fish_data({
+		"id": fish_instance.fish_def.id,
+		"name": fish_instance.fish_def.name,
+		"size": fish_instance.size,
+		"value": int(fish_instance.value),
+		"rarity": rarity,
+		"zone_caught": fish_instance.zone_caught,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+
+	# Añadir al contenedor de pesca específicamente
+	var added_successfully = UnifiedInventorySystem.add_item(item_instance, "fishing")
+
+	if not added_successfully:
+		print("🚨 Error: No se pudo añadir el pez al inventario")
+		return
+
+	print("✅ Pez añadido exitosamente al inventario: %s" % fish_instance.fish_def.name)
+
+	# Guardar el juego después de añadir el pez
+	if Save:
+		Save.save_game()
+		print("💾 Juego guardado después de capturar pez")
 
 	# Añadir al historial con información de rareza
 	var rarity_emoji = get_rarity_emoji(rarity)
@@ -748,7 +772,7 @@ func start_fishing():
 	print("Starting fishing...")
 
 	# Verificar espacio en el inventario
-	var inventory = InventorySystem.get_inventory()
+	var inventory = UnifiedInventorySystem.get_fishing_container().get_all_items()
 	var max_inventory = Save.get_total_inventory_capacity()
 
 	if inventory.size() >= max_inventory:

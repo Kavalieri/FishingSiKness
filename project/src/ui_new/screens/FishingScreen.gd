@@ -28,6 +28,9 @@ func _ready() -> void:
 	_sync_with_fishing_manager()
 	_setup_capture_window()
 
+	# ÚNICA FUENTE DE VERDAD: Cargar estadísticas desde UnifiedInventorySystem
+	call_deferred("_update_fishing_stats_from_inventory")
+
 func _connect_signals() -> void:
 	cast_button.pressed.connect(_on_cast_button_pressed)
 	auto_cast_button.pressed.connect(_on_auto_cast_toggled)
@@ -78,6 +81,49 @@ func _setup_capture_window() -> void:
 		print("SFX system disponible para efectos de sonido")
 
 	# TODO: Integrar con FishingSystem cuando esté disponible como autoload
+
+func _update_fishing_stats_from_inventory() -> void:
+	"""ÚNICA FUENTE DE VERDAD: Actualizar estadísticas desde UnifiedInventorySystem"""
+	print("📊 [DEBUG] Actualizando estadísticas desde UnifiedInventorySystem...")
+
+	# Leer SOLO desde UnifiedInventorySystem
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	if not fishing_container:
+		print("📊 [DEBUG] No se pudo obtener contenedor de pesca")
+		return
+
+	# Calcular estadísticas desde los peces en el inventario
+	var total_fish = fishing_container.items.size()
+	var total_value = 0
+	var fish_by_species = {}
+
+	for item in fishing_container.items:
+		var fish_data = item.to_fish_data()
+		total_value += fish_data.get("value", 0)
+
+		var species = fish_data.get("name", "Desconocido")
+		fish_by_species[species] = fish_by_species.get(species, 0) + 1
+
+	# Actualizar estadísticas locales
+	fishing_stats = {
+		"total_fish_caught": total_fish,
+		"total_value": total_value,
+		"species_caught": fish_by_species,
+		"inventory_count": total_fish
+	}
+
+	print("📊 [DEBUG] Estadísticas actualizadas: %d peces, valor total: %d" % [total_fish, total_value])
+
+	# Si hay ventana de estadísticas abierta, actualizarla
+	if stats_window and stats_window.visible:
+		_update_stats_window_display()
+
+func _update_stats_window_display() -> void:
+	"""Actualizar el display de la ventana de estadísticas"""
+	if not stats_window or not stats_window.has_method("update_stats"):
+		return
+
+	stats_window.update_stats(fishing_stats)
 
 func setup_fishing_screen(zone_def, stats: Dictionary) -> void:
 	"""Configurar pantalla de pesca con zona y estadísticas"""
@@ -344,8 +390,14 @@ func _on_auto_cast_toggled() -> void:
 
 func _on_stats_button_pressed() -> void:
 	"""Mostrar estadísticas/historial de capturas"""
+	print("📊 [DEBUG] Botón de estadísticas presionado")
+
+	# ÚNICA FUENTE DE VERDAD: Actualizar desde UnifiedInventorySystem antes de mostrar
+	_update_fishing_stats_from_inventory()
+
 	if stats_window:
 		stats_window.show_catch_stats()
+		print("📊 [DEBUG] Ventana de estadísticas mostrada")
 	else:
 		print("⚠️ Ventana de estadísticas no disponible")
 	stats_requested.emit()
@@ -383,16 +435,53 @@ func _on_capture_window_closed() -> void:
 	pass
 
 func _process_caught_fish(fish_data: Dictionary) -> void:
-	"""Procesar pez capturado (añadir al inventario y historial)"""
-	if Save and Save.has_method("add_fish"):
-		Save.add_fish(fish_data.name, 1)
+	"""Procesar pez capturado - ÚNICA FUENTE DE VERDAD: UnifiedInventorySystem"""
+	print("🐟 [DEBUG] INICIANDO PROCESO DE CAPTURA")
+	print("🐟 [DEBUG] Fish data recibido: %s" % str(fish_data))
+	print("🐟 [DEBUG] UnifiedInventorySystem disponible: %s" % (UnifiedInventorySystem != null))
 
-	# Agregar al historial de capturas
+	# FUENTE DE VERDAD: Solo UnifiedInventorySystem maneja el inventario real
+	var item_instance = ItemInstance.new()
+	item_instance.from_fish_data({
+		"id": fish_data.get("id", "unknown_fish"),
+		"name": fish_data.get("name", "Pez desconocido"),
+		"size": fish_data.get("size", 10.0),
+		"value": int(fish_data.get("value", 10)),
+		"zone_caught": fish_data.get("zone", "unknown"),
+		"timestamp": Time.get_unix_time_from_system()
+	})
+
+	print("🐟 [DEBUG] ItemInstance creado: %s" % str(item_instance))
+	print("🐟 [DEBUG] Intentando añadir al contenedor 'fishing'...")
+
+	# ÚNICA FUENTE DE VERDAD: Añadir solo al UnifiedInventorySystem
+	if UnifiedInventorySystem.add_item(item_instance, "fishing"):
+		print("✅ [DEBUG] Pez añadido al UnifiedInventorySystem: %s" % fish_data.get("name", "Pez"))
+
+		# Guardar el juego después de añadir el pez
+		if Save:
+			Save.save_game()
+			print("💾 [DEBUG] Juego guardado después de capturar pez")
+		else:
+			print("🚨 [DEBUG] Save no disponible")
+
+		# Actualizar estadísticas locales desde UnifiedInventorySystem
+		_update_fishing_stats_from_inventory()
+		print("📊 [DEBUG] Estadísticas actualizadas desde inventario")
+	else:
+		print("🚨 [DEBUG] Error: No se pudo añadir el pez al inventario")
+		return # No continuar si falla
+
+	# Solo para historial visual (NO para lógica de inventario)
+	print("🐟 [DEBUG] Añadiendo al historial visual...")
 	if Save and Save.has_method("add_catch_to_history"):
 		Save.add_catch_to_history(fish_data)
+		print("✅ [DEBUG] Añadido al historial visual")
 
+	print("🐟 [DEBUG] Mostrando pez capturado y emitiendo señal...")
 	show_caught_fish(fish_data)
 	fish_caught.emit(fish_data)
+	print("🐟 [DEBUG] PROCESO DE CAPTURA COMPLETADO")
 
 func _show_sale_message(fish_data: Dictionary, value: int) -> void:
 	"""Mostrar mensaje de venta"""

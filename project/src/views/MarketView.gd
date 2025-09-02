@@ -126,8 +126,8 @@ func refresh_display():
 
 	selected_fish_indices.clear()
 
-	# Obtener inventario del InventorySystem
-	var inventory = InventorySystem.get_inventory()
+	# Obtener inventario del UnifiedInventorySystem
+	var inventory = UnifiedInventorySystem.get_fishing_container().get_all_items()
 	var current_count = inventory.size()
 	# Obtener capacidad real del sistema de mejoras
 	var max_count = Save.game_data.get("max_inventory", 12)
@@ -298,7 +298,7 @@ func _on_sell_selected_pressed():
 		return
 
 	print("MarketView: Selling %d selected fish" % selected_fish_indices.size())
-	var total_earned = InventorySystem.sell_fishes(selected_fish_indices)
+	var total_earned = UnifiedInventorySystem.sell_items_by_indices(selected_fish_indices)
 	print("MarketView: Earned %d coins from sale" % total_earned)
 	print("MarketView: Current coins after sale: %d" % Save.get_coins())
 
@@ -321,7 +321,7 @@ func _on_sell_selected_pressed():
 	refresh_display()
 
 func _on_sell_all_pressed():
-	var inventory = InventorySystem.get_inventory()
+	var inventory = UnifiedInventorySystem.get_fishing_container().get_all_items()
 	if inventory.size() == 0:
 		return
 
@@ -331,7 +331,7 @@ func _on_sell_all_pressed():
 	for i in range(inventory.size()):
 		all_indices.append(i)
 
-	var total_earned = InventorySystem.sell_fishes(all_indices)
+	var total_earned = UnifiedInventorySystem.sell_items_by_indices(all_indices)
 	print("MarketView: Earned %d coins from selling all fish" % total_earned)
 	print("MarketView: Current coins after sale: %d" % Save.get_coins())
 

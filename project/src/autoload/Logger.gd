@@ -35,3 +35,9 @@ func info(msg: String):
 
 func warn(msg: String):
 	log_message(msg, Level.WARN)
+
+func error(msg: String):
+	log_message(msg, Level.WARN) # Usamos WARN como nivel más alto disponible
+
+func log(msg: String):
+	log_message(msg, Level.INFO) # Compatibilidad con código existente
