@@ -1,12 +1,12 @@
 [gd_scene load_steps=8 format=3 uid="uid://c1d2e3f4g5h6i"]
 
 [ext_resource type="Script" path="res://src/ui_new/TopBar.gd" id="1_topbar"]
-[ext_resource type="Texture2D" uid="uid://by8iw7v33kvey" path="res://art/ui/assets/coins.png" id="2_coins"]
-[ext_resource type="Texture2D" uid="uid://cl5r0xsojy5sy" path="res://art/ui/assets/diamonds.png" id="3_diamonds"]
-[ext_resource type="Texture2D" uid="uid://bogjmnpfvqpxn" path="res://art/ui/assets/zones-map.png" id="4_zones"]
-[ext_resource type="Texture2D" uid="uid://cbiphhgvmjy1l" path="res://art/ui/buttons/button_social.png" id="5_social"]
-[ext_resource type="Texture2D" uid="uid://cjjydjhj6u4qr" path="res://art/ui/buttons/button_pause_options.png" id="6_options"]
-[ext_resource type="Texture2D" uid="uid://b8gfp8xj30wy0" path="res://art/ui/assets/xp.png" id="7_xp"]
+[ext_resource type="Texture2D" uid="uid://yj0u1tpuq6yo" path="res://art/ui/assets/coins.png" id="2_coins"]
+[ext_resource type="Texture2D" uid="uid://lxx6eh12mjba" path="res://art/ui/assets/diamonds.png" id="3_diamonds"]
+[ext_resource type="Texture2D" uid="uid://d0pcios0ijnow" path="res://art/ui/assets/zones-map.png" id="4_zones"]
+[ext_resource type="Texture2D" uid="uid://dmcod44mql6oq" path="res://art/ui/buttons/button_social.png" id="5_social"]
+[ext_resource type="Texture2D" uid="uid://dmkg6rhu3prq1" path="res://art/ui/buttons/button_pause_options.png" id="6_options"]
+[ext_resource type="Texture2D" uid="uid://8n6bgswucw7l" path="res://art/ui/assets/xp.png" id="7_xp"]
 
 [node name="TopBar" type="Control"]
 layout_mode = 3

@@ -14,19 +14,20 @@ var store_items = [
 	{"id": "coins_1000", "name": "1000 Monedas", "price": 10, "currency": "gems", "icon": "coin"}
 ]
 
-func _ready():
-	super._ready()
+func _ready() -> void:
+	# Inicialización mínima
+	pass
 
 func setup_content():
 	"""Configurar el contenido específico de la tienda - llamado automáticamente"""
 	setup_store_content()
 	update_currency_display()
 
-func setup_store_content():
+func setup_store_content() -> void:
 	"""Configurar el contenido específico de la tienda"""
-	if not content_container:
-		print("ERROR content_container no encontrado en StoreWindow")
-		return
+	# if not content_container:
+	# 	print("ERROR content_container no encontrado en StoreWindow")
+	# 	return
 
 	# Crear título
 	var title = Label.new()
@@ -34,31 +35,31 @@ func setup_store_content():
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 28)
 	title.add_theme_color_override("font_color", Color.WHITE)
-	content_container.add_child(title)
+	add_child(title)
 
 	# Separador
 	var separator = HSeparator.new()
 	separator.custom_minimum_size.y = 10
-	content_container.add_child(separator)
+	add_child(separator)
 
 	# Crear display de moneda
 	currency_label = Label.new()
 	currency_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	currency_label.add_theme_font_size_override("font_size", 18)
 	currency_label.add_theme_color_override("font_color", Color.YELLOW)
-	content_container.add_child(currency_label)
+	add_child(currency_label)
 
 	# Otro separador
 	var separator2 = HSeparator.new()
 	separator2.custom_minimum_size.y = 15
-	content_container.add_child(separator2)
+	add_child(separator2)
 
 	# Crear contenedor con scroll para ítems
 	items_scroll = ScrollContainer.new()
 	items_scroll.custom_minimum_size = Vector2(450, 350)
 	items_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	items_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content_container.add_child(items_scroll)
+	add_child(items_scroll)
 
 	# Grid para los ítems - cambiar a 2 columnas para mejor layout
 	items_grid = GridContainer.new()

@@ -139,14 +139,14 @@ func _find_main_node() -> void:
 	if not root:
 		return
 
-	# Buscar por nombre de clase o nombre de nodo
-	if root.get_class() == "MainUI" or root.name == "Main":
+	# Buscar por nombre de nodo (evitar dependencia de class_name)
+	if root.name == "Main":
 		main_node = root
 		return
 
 	# Buscar en hijos
 	for child in root.get_children():
-		if child.get_class() == "MainUI" or child.name == "Main":
+		if child.name == "Main":
 			main_node = child
 			return
 

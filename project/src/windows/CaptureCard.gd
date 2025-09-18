@@ -2,46 +2,43 @@ extends Control
 # CaptureCard.gd - Tarjeta flotante para mostrar resultados de captura
 # Se muestra en esquina y desaparece automáticamente
 
-@onready var fish_icon: TextureRect
-@onready var fish_name_label: Label
-@onready var xp_label: Label
-@onready var coins_label: Label
-
+var fish_icon: TextureRect
+var fish_name_label: Label
+var xp_label: Label
+var coins_label: Label
 var auto_close_timer: Timer
 var fish_data: Dictionary
 var capture_result: Dictionary
 
 # Método estático para crear y mostrar una tarjeta de captura
-static func show_capture_in_corner(fish, result: Dictionary, duration: float = 3.0):
+static func show_capture_in_corner(fish, result: Dictionary, duration: float = 3.0) -> void:
 	"""Crear y mostrar una tarjeta de captura en la esquina de la pantalla"""
 	var capture_card = load("res://src/windows/CaptureCard.gd").new()
 	capture_card.fish_data = fish if fish else {"name": "Pez de Prueba", "icon": null}
 	capture_card.capture_result = result
 
 	if FloatingWindowManager:
-		FloatingWindowManager.open_window(capture_card, FloatingWindowManager.WindowType.CARD)
+		# Abrir ventana con datos en un diccionario (ajuste de API)
+		var params: Dictionary = {"window_type": FloatingWindowManager.WindowType.CARD}
+		FloatingWindowManager.open_window(capture_card, params)
 
 		# Auto-cerrar después del tiempo especificado
 		capture_card.setup_auto_close(duration)
 	else:
 		print("ERROR FloatingWindowManager no disponible para mostrar CaptureCard")
 
-func _ready():
-	super._ready()
+func _ready() -> void:
+	# Inicialización mínima
+	pass
 
-func setup_content():
+func setup_content() -> void:
 	"""Configurar el contenido específico de la tarjeta - llamado automáticamente"""
 	setup_capture_content()
 
-func setup_capture_content():
-	"""Configurar el contenido de la tarjeta de captura"""
-	if not content_container:
-		print("ERROR content_container no encontrado en CaptureCard")
-		return
-
-	# Crear estructura de contenido
+func setup_capture_content() -> void:
+	# Crear estructura de contenido simple en self
 	var vbox = VBoxContainer.new()
-	content_container.add_child(vbox)
+	add_child(vbox)
 
 	# Título "¡Captura!"
 	var title = Label.new()
@@ -103,7 +100,7 @@ func setup_capture_content():
 			reward_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			vbox.add_child(reward_label)
 
-func setup_auto_close(duration: float):
+func setup_auto_close(duration: float) -> void:
 	"""Configurar el timer para auto-cerrar la tarjeta"""
 	auto_close_timer = Timer.new()
 	auto_close_timer.wait_time = duration
@@ -112,19 +109,17 @@ func setup_auto_close(duration: float):
 	add_child(auto_close_timer)
 	auto_close_timer.start()
 
-func _on_auto_close_timeout():
+func _on_auto_close_timeout() -> void:
 	"""Cerrar automáticamente la tarjeta"""
 	if FloatingWindowManager:
 		FloatingWindowManager.close_window(self)
 
-func get_window_type() -> FloatingWindowManager.WindowType:
-	"""Especificar que esta es una tarjeta flotante"""
-	return FloatingWindowManager.WindowType.CARD
+func get_window_type() -> int:
+	# Valor simbólico, evitar dependencia fuerte
+	return 0
 
-func on_window_opened():
-	"""Animación de entrada al abrir"""
-	super.on_window_opened()
-
+func on_window_opened() -> void:
+	# Animación de entrada (opcional)
 	# Animación simple de escala
 	scale = Vector2(0.8, 0.8)
 	modulate.a = 0.0
@@ -134,17 +129,15 @@ func on_window_opened():
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	tween.tween_property(self, "modulate:a", 1.0, 0.2)
 
-func on_window_closed():
-	"""Animación de salida al cerrar"""
-	super.on_window_closed()
-
+func on_window_closed() -> void:
+	# Animación de salida (opcional)
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.2).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUART)
 	tween.tween_property(self, "modulate:a", 0.0, 0.2)
 
 # Sobreescribir input para permitir click para cerrar rápidamente
-func _gui_input(event):
+func _gui_input(event) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if auto_close_timer:
 			auto_close_timer.stop()

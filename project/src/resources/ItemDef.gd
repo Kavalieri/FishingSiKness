@@ -75,6 +75,6 @@ func can_stack_with(other: ItemDef) -> bool:
 	return id == other.id
 
 # Método de utilidad para debugging
-func to_string() -> String:
+func as_text() -> String:
 	var type_name = ItemType.keys()[item_type]
 	return "ItemDef(id=%s, name=%s, type=%s, rarity=%d)" % [id, name, type_name, rarity]

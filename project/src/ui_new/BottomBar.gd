@@ -31,21 +31,35 @@ func _set_dynamic_tooltips() -> void:
 
 func _connect_buttons() -> void:
 	"""Conectar señales de botones"""
-	btn_fishing.pressed.connect(func(): _select_tab("fishing"))
-	btn_map.pressed.connect(func(): _select_tab("map"))
-	btn_market.pressed.connect(func(): _select_tab("market"))
-	btn_upgrades.pressed.connect(func(): _select_tab("upgrades"))
-	btn_prestige.pressed.connect(func(): _select_tab("prestige"))
+	print("[BottomBar] Connecting button signals...")
+	if btn_fishing:
+		btn_fishing.pressed.connect(func(): _select_tab("fishing"))
+		print("[BottomBar] - fishing connected")
+	if btn_map:
+		btn_map.pressed.connect(func(): _select_tab("map"))
+		print("[BottomBar] - map connected")
+	if btn_market:
+		btn_market.pressed.connect(func(): _select_tab("market"))
+		print("[BottomBar] - market connected")
+	if btn_upgrades:
+		btn_upgrades.pressed.connect(func(): _select_tab("upgrades"))
+		print("[BottomBar] - upgrades connected")
+	if btn_prestige:
+		btn_prestige.pressed.connect(func(): _select_tab("prestige"))
+		print("[BottomBar] - prestige connected")
 
 func _select_tab(tab_name: String) -> void:
 	"""Seleccionar tab y actualizar estado visual"""
+	print("🔥 [BOTTOMBAR] ========== TAB CLICKED: %s ==========" % tab_name)
 	if current_tab == tab_name:
+		print("🔥 [BOTTOMBAR] Tab ya seleccionado, ignorando: %s" % tab_name)
 		return # Ya está seleccionado
 
 	current_tab = tab_name
 	_update_visual_state()
-	print("[BottomBar] Emitiendo señal tab_selected: ", tab_name)
+	print("🔥 [BOTTOMBAR] Emitiendo señal tab_selected: %s" % tab_name)
 	tab_selected.emit(tab_name)
+	print("🔥 [BOTTOMBAR] Señal emitida correctamente para: %s" % tab_name)
 
 func _set_initial_tab() -> void:
 	"""Establecer tab inicial"""

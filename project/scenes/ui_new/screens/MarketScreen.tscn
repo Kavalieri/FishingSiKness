@@ -1,9 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://bqcxp1vsjqr6n"]
 
-[ext_resource type="Script" path="res://src/ui_new/screens/MarketScreen.gd" id="1_market_script"]
-[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_n5twb"]
+[ext_resource type="Script" path="res://src/ui_new/screens/MarketScreen.gd" id="1"]
+[ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2"]
 
-[node name="MarketScreen" type="Control" script=ExtResource("1_market_script")]
+[node name="MarketScreen" type="Control"]
+script = ExtResource("1")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -36,7 +37,7 @@ text = "Comprar"
 [node name="ResourcesPanel" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = ExtResource("2_n5twb")
+theme_override_styles/panel = ExtResource("2")
 
 [node name="ResourcesContainer" type="HBoxContainer" parent="VBoxContainer/ResourcesPanel"]
 layout_mode = 2
@@ -47,7 +48,7 @@ size_flags_horizontal = 3
 
 [node name="MoneyIcon" type="Label" parent="VBoxContainer/ResourcesPanel/ResourcesContainer/MoneyContainer"]
 layout_mode = 2
-text = "💰"
+text = "Coins"
 
 [node name="MoneyLabel" type="Label" parent="VBoxContainer/ResourcesPanel/ResourcesContainer/MoneyContainer"]
 layout_mode = 2
@@ -59,7 +60,7 @@ size_flags_horizontal = 3
 
 [node name="GemsIcon" type="Label" parent="VBoxContainer/ResourcesPanel/ResourcesContainer/GemsContainer"]
 layout_mode = 2
-text = "💎"
+text = "Gems"
 
 [node name="GemsLabel" type="Label" parent="VBoxContainer/ResourcesPanel/ResourcesContainer/GemsContainer"]
 layout_mode = 2
@@ -92,10 +93,14 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Auto-Venta"
 
-[node name="SellItemsContainer" type="Control" parent="VBoxContainer/SellModeContainer/SellPanel"]
+[node name="SellItemsContainer" type="ScrollContainer" parent="VBoxContainer/SellModeContainer/SellPanel"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="ItemsList" type="VBoxContainer" parent="VBoxContainer/SellModeContainer/SellPanel/SellItemsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="BuyModeContainer" type="Control" parent="VBoxContainer"]
 layout_mode = 2
@@ -134,7 +139,7 @@ size_flags_horizontal = 3
 
 [node name="RefreshButton" type="Button" parent="VBoxContainer/BuyModeContainer/BuyPanel/BuyFilters"]
 layout_mode = 2
-text = "🔄 Actualizar"
+text = "Actualizar"
 
 [node name="BuyItemsContainer" type="Control" parent="VBoxContainer/BuyModeContainer/BuyPanel"]
 layout_mode = 2
@@ -144,7 +149,7 @@ size_flags_vertical = 3
 [node name="TransactionSummary" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = ExtResource("2_n5twb")
+theme_override_styles/panel = ExtResource("2")
 visible = false
 
 [node name="SummaryContainer" type="HBoxContainer" parent="VBoxContainer/TransactionSummary"]
@@ -153,7 +158,7 @@ layout_mode = 2
 [node name="SummaryText" type="Label" parent="VBoxContainer/TransactionSummary/SummaryContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Últimas ventas: +1,250 💰"
+text = "Últimas ventas: +1,250 coins"
 
 [node name="ClearButton" type="Button" parent="VBoxContainer/TransactionSummary/SummaryContainer"]
 layout_mode = 2

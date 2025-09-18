@@ -4,6 +4,8 @@ extends Node
 ## Sistema unificado que maneja todos los items del juego con contenedores especializados
 ## Reemplaza completamente a InventorySystem.gd
 
+signal inventory_updated(container_name: String)
+
 # Contenedores de inventario organizados por categoría
 var containers := {}
 
@@ -71,13 +73,13 @@ func _initialize_system():
 	print("[UnifiedInventorySystem] ✅ Sistema unificado activo con %d contenedores" % containers.size())
 	print("[UnifiedInventorySystem] Migración completada exitosamente")
 
-	# Configurar timer para peces de prueba después de que todos los sistemas estén listos
-	call_deferred("_setup_test_fish_timer")
+	# Comentado: Se ejecutará después de cargar el save
+	call_deferred("_add_test_fish_if_empty")
 
-func _create_container(name: String, config: Dictionary):
+func _create_container(container_id: String, config: Dictionary):
 	"""Crear un nuevo contenedor de inventario"""
-	containers[name] = {
-		"display_name": config.get("name", name.capitalize()),
+	containers[container_id] = {
+		"display_name": config.get("name", container_id.capitalize()),
 		"items": [],
 		"capacity": config.get("capacity", 100),
 		"item_types": config.get("item_types", []),
@@ -85,7 +87,7 @@ func _create_container(name: String, config: Dictionary):
 	}
 
 	var capacity = config.get("capacity", 100)
-	Logger.info("[UnifiedInventorySystem] ✓ Contenedor %s creado (capacidad: %d)" % [name, capacity])
+	Logger.info("[UnifiedInventorySystem] ✓ Contenedor %s creado (capacidad: %d)" % [container_id, capacity])
 
 # ============================================================================
 # API PÚBLICA - Interfaz principal
@@ -127,8 +129,10 @@ func add_item(item_instance: ItemInstance, container_name: String = "") -> bool:
 		return false
 
 	# Añadir como nuevo item
+	# Añadir como nuevo item
 	container.items.append(item_instance)
 	print("[UnifiedInventorySystem] Nuevo item añadido a %s: %s" % [container_name, item_instance.get_display_name()])
+	inventory_updated.emit(container_name)
 	return true
 
 func remove_item(item_instance: ItemInstance, container_name: String = "") -> bool:
@@ -148,6 +152,7 @@ func remove_item(item_instance: ItemInstance, container_name: String = "") -> bo
 		if index >= 0:
 			container.items.remove_at(index)
 			print("[UnifiedInventorySystem] Item removido de %s: %s" % [container_key, item_instance.get_display_name()])
+			inventory_updated.emit(container_key)
 			return true
 
 	return false
@@ -299,8 +304,8 @@ func _can_stack_items(item1: ItemInstance, item2: ItemInstance) -> bool:
 	if not item1 or not item2:
 		return false
 
-	# Deben tener el mismo item_def_id para poder apilarse
-	return item1.item_def_id == item2.item_def_id
+	# Deben tener el mismo item_def_path para poder apilarse
+	return item1.item_def_path == item2.item_def_path
 
 # ============================================================================
 # API DE COMPATIBILIDAD CON SISTEMA ANTERIOR
@@ -368,7 +373,7 @@ func get_inventory_for_saving() -> Array:
 		print("[UnifiedInventorySystem] ADVERTENCIA: Contenedor de pesca no disponible para guardado")
 		return save_data
 
-	for item_instance in fishing_container.items:
+	for item_instance in fishing_container["items"]:
 		var fish_data = item_instance.to_fish_data()
 		if not fish_data.is_empty():
 			save_data.append(fish_data)
@@ -397,7 +402,7 @@ func load_from_save(inventory_data: Array):
 			return
 
 	# Limpiar contenedor actual
-	fishing_container.items.clear()
+	fishing_container["items"].clear()
 
 	# Cargar items
 	var loaded_count = 0
@@ -409,11 +414,17 @@ func load_from_save(inventory_data: Array):
 			loaded_count += 1
 
 	print("[UnifiedInventorySystem] Cargados %d items del save" % loaded_count)
+	inventory_updated.emit("fishing")
+
+	# Si no hay items cargados, añadir peces de prueba
+	if loaded_count == 0:
+		print("[UnifiedInventorySystem] Save vacío - añadiendo peces de prueba...")
+		call_deferred("_add_test_fish_if_empty")
 
 func clear_all_containers():
 	"""Limpiar todos los contenedores"""
 	for container_name in containers:
-		containers[container_name].items.clear()
+		containers[container_name]["items"].clear()
 	print("[UnifiedInventorySystem] Todos los contenedores limpiados")
 
 # === MÉTODOS DE COMPATIBILIDAD CON SISTEMA ANTERIOR ===
@@ -447,6 +458,7 @@ func sell_items_by_indices(indices: Array) -> int:
 		Save.add_coins(total_earned)
 		print("[UnifiedInventorySystem] Total ganado: %d monedas" % total_earned)
 
+	inventory_updated.emit("fishing")
 	return total_earned
 
 func remove_items_by_indices(indices: Array) -> bool:
@@ -482,6 +494,7 @@ func clear_fishing_container():
 	var cleared_count = fishing_container.items.size()
 	fishing_container.items.clear()
 	print("[UnifiedInventorySystem] Contenedor de pesca limpiado: %d items eliminados" % cleared_count)
+	inventory_updated.emit("fishing")
 
 func _add_test_fish_if_empty():
 	"""Añadir peces de prueba si el inventario está vacío (solo para testing)"""
@@ -513,7 +526,7 @@ func _add_test_fish_if_empty():
 		if fish_data:
 			var item_instance = ItemInstance.new()
 			item_instance.from_fish_data({
-				"fish_id": fish_id,
+				"id": fish_id, # Corregido: usar "id" en lugar de "fish_id"
 				"size": randf_range(15.0, 35.0),
 				"quality": randf_range(0.6, 1.0),
 				"timestamp": Time.get_unix_time_from_system()
@@ -521,7 +534,7 @@ func _add_test_fish_if_empty():
 
 			if add_item(item_instance, "fishing"):
 				added_count += 1
-				print("[UnifiedInventorySystem] ✅ Pez de prueba añadido: %s" % fish_data.display_name)
+				print("[UnifiedInventorySystem] ✅ Pez de prueba añadido: %s" % fish_data.name)
 		else:
 			print("[UnifiedInventorySystem] ❌ Pez no encontrado: %s" % fish_id)
 
@@ -539,3 +552,42 @@ func _setup_test_fish_timer():
 	timer.start()
 
 	print("[UnifiedInventorySystem] ⏰ Timer iniciado - peces de prueba en 3 segundos")
+
+# === MÉTODOS PARA MARKETSCREEN ===
+
+func sell_item(item_instance: ItemInstance) -> bool:
+	"""Vender un item específico"""
+	if not item_instance:
+		return false
+
+	var value = item_instance.get_market_value()
+	if remove_item(item_instance, "fishing"):
+		if Save:
+			Save.add_coins(value)
+			print("[UnifiedInventorySystem] Vendido: %s por %d monedas" % [item_instance.get_display_name(), value])
+		return true
+	return false
+
+func sell_all_fish() -> int:
+	"""Vender todos los peces del inventario"""
+	var fishing_container = get_fishing_container()
+	if not fishing_container:
+		return 0
+
+	var total_earned = 0
+	var items_to_sell = fishing_container.items.duplicate()
+
+	for item in items_to_sell:
+		var value = item.get_market_value()
+		total_earned += value
+
+	# Limpiar el contenedor
+	fishing_container.items.clear()
+
+	# Actualizar dinero
+	if Save:
+		Save.add_coins(total_earned)
+
+	print("[UnifiedInventorySystem] Vendidos todos los peces por %d monedas" % total_earned)
+	inventory_updated.emit("fishing")
+	return total_earned

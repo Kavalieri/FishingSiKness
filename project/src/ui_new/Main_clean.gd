@@ -1,5 +1,4 @@
 extends Control
-class_name MainUI
 ## Controlador principal de la interfaz de usuario
 ##
 ## Implementa la arquitectura UI-BG-GLOBAL donde:

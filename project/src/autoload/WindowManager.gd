@@ -5,7 +5,7 @@ extends Node
 
 # Define a mapping from aliases to scene paths - adapted to existing project scenes
 const WINDOW_SCENE_PATHS = {
-	"money": "res://scenes/views/Market.tscn",
+	"money": "res://scenes/ui_new/screens/MarketScreen.tscn",
 	"diamonds": "res://scenes/views/StoreView.tscn",
 	"zone": "res://scenes/views/Map.tscn",
 	"level": "res://scenes/views/MilestonesPanel.tscn",
