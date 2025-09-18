@@ -18,7 +18,7 @@ func _ready() -> void:
 
 func show_screen(scene_path: String, setup_data: Dictionary = {}) -> void:
 	"""Mostrar nueva pantalla, eliminando la anterior"""
-	print("🔥 [CENTRALHOST] Cargando pantalla: ", scene_path)
+	print("[CENTRALHOST] Cargando pantalla: ", scene_path)
 	_clear_current_screen()
 	_load_new_screen(scene_path, setup_data)
 
@@ -56,7 +56,7 @@ func _setup_screen_with_data(screen: Node, scene_path: String, _setup_data: Dict
 			print("[CentralHost] DEBUG: Llamando _setup_map_screen")
 			_setup_map_screen(screen)
 		"MarketScreen":
-			print("🔥 [CENTRALHOST] Procesando MarketScreen...")
+			print("[CENTRALHOST] Procesando MarketScreen...")
 			_setup_market_screen(screen)
 		"UpgradesScreen":
 			_setup_upgrades_screen(screen)
@@ -108,12 +108,12 @@ func _setup_map_screen(screen: Control) -> void:
 
 func _setup_market_screen(screen: Control) -> void:
 	"""Configurar pantalla de mercado con inventario real del jugador"""
-	print("🔥 [CENTRALHOST] Configurando MarketScreen...")
+	print("[CENTRALHOST] Configurando MarketScreen...")
 	if screen.has_method("setup_market_screen"):
-		print("🔥 [CENTRALHOST] Llamando setup_market_screen()")
+		print("[CENTRALHOST] Llamando setup_market_screen()")
 		screen.setup_market_screen()
 	elif screen.has_method("setup_market"):
-		print("🔥 [CENTRALHOST] Usando setup_market() como fallback")
+		print("[CENTRALHOST] Usando setup_market() como fallback")
 		var money = 0
 		var gems = 0
 		var sell_items = []
@@ -137,7 +137,7 @@ func _setup_market_screen(screen: Control) -> void:
 
 		screen.setup_market(money, gems, sell_items, buy_items)
 	else:
-		print("🔥 [CENTRALHOST] ERROR: MarketScreen no tiene método setup_market_screen() ni setup_market()")
+		print("[CENTRALHOST] ERROR: MarketScreen no tiene método setup_market_screen() ni setup_market()")
 
 func _get_buyable_items() -> Array[Dictionary]:
 	"""Obtener items comprables del Content system"""
@@ -149,7 +149,7 @@ func _get_buyable_items() -> Array[Dictionary]:
 		items.append({
 			"id": "gems_120",
 			"name": "Paquete Pequeño de Gemas",
-			"description": "💎 120 gemas\nPerfecto para empezar",
+			"description": "120 gemas\nPerfecto para empezar",
 			"category": "gems",
 			"price": 100, # Precio en dinero real (ficticio)
 			"currency": "real_money",
@@ -161,7 +161,7 @@ func _get_buyable_items() -> Array[Dictionary]:
 		items.append({
 			"id": "bait_basic",
 			"name": "Cebo Básico",
-			"description": "🎣 Mejora las posibilidades de captura\n+10% probabilidad de pez raro",
+			"description": "Mejora las posibilidades de captura\n+10% probabilidad de pez raro",
 			"category": "consumable",
 			"price": 50,
 			"currency": "coins",
@@ -233,13 +233,13 @@ func _connect_screen_signals(screen: Node, screen_name: String) -> void:
 				print("[CentralHost] DEBUG: ❌ MapScreen NO tiene señal zone_unlock_requested")
 			print("[CentralHost] DEBUG: MapScreen procesado completamente")
 		"MarketScreen":
-			print("🔥 [CENTRALHOST] Conectando señales de MarketScreen...")
+			print("[CENTRALHOST] Conectando señales de MarketScreen...")
 			if screen.has_signal("item_bought"):
 				screen.item_bought.connect(main._on_item_bought)
-				print("🔥 [CENTRALHOST] - item_bought conectada")
+				print("[CENTRALHOST] - item_bought conectada")
 			if screen.has_signal("item_sold"):
 				screen.item_sold.connect(main._on_item_sold)
-				print("🔥 [CENTRALHOST] - item_sold conectada")
+				print("[CENTRALHOST] - item_sold conectada")
 		"UpgradesScreen":
 			if screen.has_signal("upgrade_purchased"):
 				screen.upgrade_purchased.connect(main._on_upgrade_purchased)

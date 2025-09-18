@@ -50,16 +50,16 @@ func _connect_buttons() -> void:
 
 func _select_tab(tab_name: String) -> void:
 	"""Seleccionar tab y actualizar estado visual"""
-	print("🔥 [BOTTOMBAR] ========== TAB CLICKED: %s ==========" % tab_name)
+	print("[BOTTOMBAR] ========== TAB CLICKED: %s ==========" % tab_name)
 	if current_tab == tab_name:
-		print("🔥 [BOTTOMBAR] Tab ya seleccionado, ignorando: %s" % tab_name)
+		print("[BOTTOMBAR] Tab ya seleccionado, ignorando: %s" % tab_name)
 		return # Ya está seleccionado
 
 	current_tab = tab_name
 	_update_visual_state()
-	print("🔥 [BOTTOMBAR] Emitiendo señal tab_selected: %s" % tab_name)
+	print("[BOTTOMBAR] Emitiendo señal tab_selected: %s" % tab_name)
 	tab_selected.emit(tab_name)
-	print("🔥 [BOTTOMBAR] Señal emitida correctamente para: %s" % tab_name)
+	print("[BOTTOMBAR] Señal emitida correctamente para: %s" % tab_name)
 
 func _set_initial_tab() -> void:
 	"""Establecer tab inicial"""

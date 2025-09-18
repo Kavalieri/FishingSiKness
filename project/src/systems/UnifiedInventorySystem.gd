@@ -59,7 +59,7 @@ func _initialize_system():
 	if _initialized:
 		return
 
-	print("[UnifiedInventorySystem] 🚀 INICIALIZANDO SISTEMA COMPLETO v3.0")
+	print("[UnifiedInventorySystem] INICIALIZANDO SISTEMA COMPLETO v3.0")
 	print("[UnifiedInventorySystem] Reemplazando sistema anterior...")
 
 	# Inicializar todos los contenedores
@@ -70,7 +70,7 @@ func _initialize_system():
 	_migrate_from_legacy()
 
 	_initialized = true
-	print("[UnifiedInventorySystem] ✅ Sistema unificado activo con %d contenedores" % containers.size())
+	print("[UnifiedInventorySystem] OK: Sistema unificado activo con %d contenedores" % containers.size())
 	print("[UnifiedInventorySystem] Migración completada exitosamente")
 
 	# Comentado: Se ejecutará después de cargar el save
@@ -87,7 +87,7 @@ func _create_container(container_id: String, config: Dictionary):
 	}
 
 	var capacity = config.get("capacity", 100)
-	Logger.info("[UnifiedInventorySystem] ✓ Contenedor %s creado (capacidad: %d)" % [container_id, capacity])
+	Logger.info("[UnifiedInventorySystem] OK: Contenedor %s creado (capacidad: %d)" % [container_id, capacity])
 
 # ============================================================================
 # API PÚBLICA - Interfaz principal
@@ -238,7 +238,7 @@ func _migrate_from_legacy():
 	var save_data = Save.game_data.get("inventory", [])
 
 	if save_data.has("fish"):
-		print("[UnifiedInventorySystem] 🔄 Migrando %d peces del sistema anterior..." % save_data.fish.size())
+		print("[UnifiedInventorySystem] Migrando %d peces del sistema anterior..." % save_data.fish.size())
 
 		for fish_data in save_data.fish:
 			var fish_def = _get_fish_def_from_data(fish_data)
@@ -254,7 +254,7 @@ func _migrate_from_legacy():
 
 				add_item(fish_instance, "fishing")
 
-		print("[UnifiedInventorySystem] ✅ Migración completada: %d peces migrados" % get_fish_count())
+		print("[UnifiedInventorySystem] OK: Migración completada: %d peces migrados" % get_fish_count())
 
 func _get_fish_def_from_data(fish_data: Dictionary) -> FishDef:
 	"""Obtener definición de pez desde datos de guardado"""
@@ -516,7 +516,7 @@ func _add_test_fish_if_empty():
 		print("[UnifiedInventorySystem] Inventario ya tiene items (%d), no añadiendo peces de prueba" % fishing_container.items.size())
 		return
 
-	print("[UnifiedInventorySystem] === AÑADIENDO PECES DE PRUEBA ===")
+	print("[UnifiedInventorySystem] === ANADIENDO PECES DE PRUEBA ===")
 
 	var test_fish_ids = ["salmon", "trucha", "lubina", "calamar", "langosta"]
 	var added_count = 0
@@ -534,15 +534,15 @@ func _add_test_fish_if_empty():
 
 			if add_item(item_instance, "fishing"):
 				added_count += 1
-				print("[UnifiedInventorySystem] ✅ Pez de prueba añadido: %s" % fish_data.name)
+				print("[UnifiedInventorySystem] OK: Pez de prueba anadido: %s" % fish_data.name)
 		else:
-			print("[UnifiedInventorySystem] ❌ Pez no encontrado: %s" % fish_id)
+			print("[UnifiedInventorySystem] ERROR: Pez no encontrado: %s" % fish_id)
 
-	print("[UnifiedInventorySystem] === PECES DE PRUEBA AÑADIDOS: %d ===" % added_count)
+	print("[UnifiedInventorySystem] === PECES DE PRUEBA ANADIDOS: %d ===" % added_count)
 
 func _setup_test_fish_timer():
 	"""Configurar el timer para añadir peces de prueba"""
-	print("[UnifiedInventorySystem] 🎯 Configurando timer para peces de prueba...")
+	print("[UnifiedInventorySystem] Configurando timer para peces de prueba...")
 
 	var timer = Timer.new()
 	add_child(timer)
@@ -551,7 +551,7 @@ func _setup_test_fish_timer():
 	timer.timeout.connect(_add_test_fish_if_empty)
 	timer.start()
 
-	print("[UnifiedInventorySystem] ⏰ Timer iniciado - peces de prueba en 3 segundos")
+	print("[UnifiedInventorySystem] Timer iniciado - peces de prueba en 3 segundos")
 
 # === MÉTODOS PARA MARKETSCREEN ===
 

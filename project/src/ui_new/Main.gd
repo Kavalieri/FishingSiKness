@@ -28,7 +28,7 @@ func _ready() -> void:
 
 func _deferred_setup() -> void:
 	"""Setup diferido ejecutado después de _ready"""
-	print("🔥 [MAIN] === SETUP DIFERIDO ===")
+	print("[MAIN] === SETUP DIFERIDO ===")
 
 	# Verificar referencias críticas
 	_verify_node_references()
@@ -42,7 +42,7 @@ func _deferred_setup() -> void:
 	# Cargar pantalla inicial
 	_load_initial_screen()
 
-	print("🔥 [MAIN] === MAIN UI INICIALIZADO ===")
+	print("[MAIN] === MAIN UI INICIALIZADO ===")
 
 func _verify_node_references() -> void:
 	"""Verificar que todas las referencias de nodo son válidas"""
@@ -53,13 +53,13 @@ func _verify_node_references() -> void:
 		"BottomBar": bottombar
 	}
 
-	print("🔥 [MAIN] === VERIFICANDO COMPONENTES ===")
+	print("[MAIN] === VERIFICANDO COMPONENTES ===")
 	for name in components.keys():
 		var node = components[name]
 		if node:
-			print("🔥 [MAIN] ✓ %s: OK (%s)" % [name, node.get_class()])
+			print("[MAIN] OK %s: (%s)" % [name, node.get_class()])
 		else:
-			print("🔥 [MAIN] ❌ %s: FALTA - PATH INCORRECTO" % name)
+			print("[MAIN] ERROR %s: FALTA - PATH INCORRECTO" % name)
 
 func _setup_background() -> void:
 	"""Configurar fondo inicial del juego"""
@@ -87,26 +87,26 @@ func _setup_background() -> void:
 
 func _connect_navigation_signals() -> void:
 	"""Conectar señales de navegación principales"""
-	print("🔥 [MAIN] === CONECTANDO SEÑALES ===")
+	print("[MAIN] === CONECTANDO SEÑALES ===")
 
 	# Señal crítica: BottomBar → Main
-	print("🔥 [MAIN] Verificando conexión BottomBar...")
-	print("🔥 [MAIN] BottomBar existe: %s" % (bottombar != null))
+	print("[MAIN] Verificando conexión BottomBar...")
+	print("[MAIN] BottomBar existe: %s" % (bottombar != null))
 	if bottombar:
-		print("🔥 [MAIN] BottomBar clase: %s" % bottombar.get_class())
-		print("🔥 [MAIN] Tiene señal tab_selected: %s" % bottombar.has_signal("tab_selected"))
+		print("[MAIN] BottomBar clase: %s" % bottombar.get_class())
+		print("[MAIN] Tiene señal tab_selected: %s" % bottombar.has_signal("tab_selected"))
 		if bottombar.has_signal("tab_selected"):
 			if not bottombar.tab_selected.is_connected(_on_tab_selected):
 				bottombar.tab_selected.connect(_on_tab_selected)
-				print("🔥 [MAIN] ✓ BottomBar.tab_selected → Main._on_tab_selected CONECTADA")
+				print("[MAIN] OK BottomBar.tab_selected -> Main._on_tab_selected CONECTADA")
 			else:
-				print("🔥 [MAIN] ⚠️ Señal BottomBar ya conectada")
+				print("[MAIN] WARNING: Señal BottomBar ya conectada")
 		else:
-			print("🔥 [MAIN] ❌ ERROR: BottomBar no tiene señal 'tab_selected'")
+			print("[MAIN] ERROR: BottomBar no tiene señal 'tab_selected'")
 			var signals = bottombar.get_signal_list()
-			print("🔥 [MAIN] Señales disponibles: ", signals)
+			print("[MAIN] Señales disponibles: ", signals)
 	else:
-		print("🔥 [MAIN] ❌ ERROR: BottomBar es null")
+		print("[MAIN] ERROR: BottomBar es null")
 
 	# Señal TopBar → Main
 	if topbar and topbar.has_signal("button_pressed"):
@@ -116,15 +116,15 @@ func _connect_navigation_signals() -> void:
 	else:
 		print("[Main] ⚠️ TopBar sin señal 'button_pressed' o no existe")
 
-	print("🔥 [MAIN] === FIN CONEXIÓN SEÑALES ===")
+	print("[MAIN] === FIN CONEXIÓN SEÑALES ===")
 
 func _load_initial_screen() -> void:
 	"""Cargar pantalla inicial del juego"""
 	if central_host and central_host.has_method("show_screen"):
-		print("🔥 [MAIN] Cargando pantalla inicial: FishingScreen")
+			print("[MAIN] Cargando pantalla inicial: FishingScreen")
 		central_host.show_screen("res://scenes/ui_new/screens/FishingScreen.tscn")
 	else:
-		print("🔥 [MAIN] ❌ No se pudo cargar pantalla inicial - CentralHost no válido")
+		print("[MAIN] ERROR: No se pudo cargar pantalla inicial - CentralHost no válido")
 
 ## API pública para manejo de fondos
 func set_background(zone_id: String) -> void:
@@ -153,8 +153,8 @@ func set_background(zone_id: String) -> void:
 # Handlers de señales
 func _on_tab_selected(tab_name: String) -> void:
 	"""Manejar selección de tabs desde BottomBar"""
-	print("🔥 [MAIN] ========== SEÑAL RECIBIDA ===========")
-	print("🔥 [MAIN] Tab seleccionado: %s" % tab_name)
+	print("[MAIN] ========== SEÑAL RECIBIDA ===========")
+	print("[MAIN] Tab seleccionado: %s" % tab_name)
 
 	if not central_host or not central_host.has_method("show_screen"):
 		print("[Main] ❌ CentralHost no disponible")
@@ -171,9 +171,9 @@ func _on_tab_selected(tab_name: String) -> void:
 
 	if tab_name in screen_paths:
 		var screen_path = screen_paths[tab_name]
-		print("🔥 [MAIN] → Cambiando a pantalla: %s" % screen_path)
+		print("[MAIN] -> Cambiando a pantalla: %s" % screen_path)
 		central_host.show_screen(screen_path)
-		print("🔥 [MAIN] Pantalla cargada exitosamente")
+		print("[MAIN] Pantalla cargada exitosamente")
 
 		# Conectar señal de selección de zona si es MapScreen
 		if tab_name == "map":
@@ -182,7 +182,7 @@ func _on_tab_selected(tab_name: String) -> void:
 		# Cambiar fondo si es necesario
 		_update_background_for_screen(tab_name)
 	else:
-		print("🔥 [MAIN] ❌ Tab desconocido: %s" % tab_name)
+		print("[MAIN] ERROR: Tab desconocido: %s" % tab_name)
 
 func _connect_map_screen_signals() -> void:
 	"""Conectar señales específicas del MapScreen cuando se carga"""
