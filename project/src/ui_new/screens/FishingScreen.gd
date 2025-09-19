@@ -36,11 +36,14 @@ func _connect_signals() -> void:
 	auto_cast_button.pressed.connect(_on_auto_cast_toggled)
 	stats_button.pressed.connect(_on_stats_button_pressed)
 
-	# Conectar señales del QTE Container (solo si existe y tiene los métodos)
+	# Conectar señales del QTE Container unificado
 	if qte_container and qte_container.has_signal("qte_success"):
 		qte_container.qte_success.connect(_on_qte_success)
 		qte_container.qte_failed.connect(_on_qte_failed)
 		qte_container.qte_timeout.connect(_on_qte_timeout)
+		# Nuevas señales para resultado
+		qte_container.fish_kept.connect(_on_fish_kept)
+		qte_container.fish_released.connect(_on_fish_released)
 	else:
 		print("⚠️ QTEContainer no disponible o sin señales correctas")
 
@@ -51,20 +54,9 @@ func _sync_with_fishing_manager() -> void:
 		print("Content system disponible para datos de peces")
 
 func _setup_capture_window() -> void:
-	"""Configurar la ventana de captura"""
-	var capture_scene = load("res://scenes/ui_new/components/CaptureWindow.tscn")
-	if capture_scene:
-		capture_window = capture_scene.instantiate()
-		add_child(capture_window)
-		capture_window.visible = false
-
-		# Conectar señales de la ventana de captura
-		capture_window.fish_kept.connect(_on_fish_kept)
-		capture_window.fish_sold.connect(_on_fish_sold)
-		capture_window.fish_released.connect(_on_fish_released)
-		capture_window.window_closed.connect(_on_capture_window_closed)
-	else:
-		print("⚠️ No se pudo cargar CaptureWindow.tscn")
+	"""Configurar la ventana de captura (ya no se usa, mantenido para compatibilidad)"""
+	# La ventana de captura ahora se maneja en el QTE unificado
+	pass
 
 	# Configurar ventana de estadísticas
 	var stats_scene = load("res://scenes/ui_new/components/CatchStatsWindow.tscn")
@@ -232,7 +224,7 @@ func _start_qte_event() -> void:
 	set_meta("preview_fish", preview_fish)
 
 func _on_qte_success() -> void:
-	"""QTE exitoso - mostrar ventana de captura"""
+	"""QTE exitoso - mostrar resultado en la misma tarjeta"""
 	is_fishing = false
 	set_casting_state(false)
 
@@ -245,15 +237,11 @@ func _on_qte_success() -> void:
 	if SFX and SFX.has_method("play_event"):
 		SFX.play_event("capture")
 
-	# Mostrar ventana de captura con opciones
-	if capture_window and capture_window.has_method("show_capture"):
-		capture_window.show_capture(caught_fish)
-	else:
-		# Fallback: procesar automáticamente si no hay ventana
-		_process_caught_fish(caught_fish)
+	# Transformar QTE en ventana de resultado
+	qte_container.show_result(caught_fish)
 
-	# Limpiar metadata
-	remove_meta("preview_fish")
+	# Guardar datos para procesamiento posterior
+	set_meta("current_fish", caught_fish)
 
 func _on_qte_failed() -> void:
 	"""QTE fallido - pez escapó"""
@@ -269,6 +257,7 @@ func _on_qte_failed() -> void:
 
 	# Limpiar metadata
 	remove_meta("preview_fish")
+	remove_meta("current_fish")
 
 func _on_qte_timeout() -> void:
 	"""QTE timeout - sin actividad"""
@@ -280,6 +269,21 @@ func _on_qte_timeout() -> void:
 
 	# Limpiar metadata
 	remove_meta("preview_fish")
+	remove_meta("current_fish")
+
+func _on_fish_kept() -> void:
+	"""Pez guardado desde ventana de resultado"""
+	var fish_data = get_meta("current_fish", {})
+	if not fish_data.is_empty():
+		_process_caught_fish(fish_data)
+	remove_meta("current_fish")
+
+func _on_fish_released() -> void:
+	"""Pez liberado desde ventana de resultado"""
+	var fish_data = get_meta("current_fish", {})
+	if not fish_data.is_empty():
+		_show_release_message(fish_data)
+	remove_meta("current_fish")
 
 func _show_escape_message() -> void:
 	"""Mostrar mensaje de pez escapado"""
@@ -395,23 +399,13 @@ func _on_stats_window_closed() -> void:
 #	"""Mostrar potenciadores disponibles"""
 #	boosters_requested.emit()
 
-# Funciones para manejar la ventana de captura
-func _on_fish_kept(fish_data: Dictionary) -> void:
-	"""Pez mantenido en inventario"""
-	_process_caught_fish(fish_data)
-
 func _on_fish_sold(fish_data: Dictionary, value: int) -> void:
-	"""Pez vendido"""
+	"""Pez vendido (función legacy)"""
 	if Save and Save.has_method("add_coins"):
 		Save.add_coins(value)
 
 	# Mostrar mensaje de venta
 	_show_sale_message(fish_data, value)
-
-func _on_fish_released(fish_data: Dictionary) -> void:
-	"""Pez liberado"""
-	# Mostrar mensaje de liberación
-	_show_release_message(fish_data)
 
 func _on_capture_window_closed() -> void:
 	"""Ventana de captura cerrada sin acción"""
@@ -473,3 +467,4 @@ func _show_sale_message(fish_data: Dictionary, value: int) -> void:
 func _show_release_message(fish_data: Dictionary) -> void:
 	"""Mostrar mensaje de liberación"""
 	print("¡%s liberado!" % fish_data.get("name", "Pez"))
+	# TODO: Añadir notificación visual si es necesario

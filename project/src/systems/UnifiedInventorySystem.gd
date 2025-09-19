@@ -72,8 +72,7 @@ func _initialize_system():
 	_initialized = true
 	print("[UnifiedInventorySystem] OK: Sistema unificado activo con %d contenedores" % containers.size())
 	print("[UnifiedInventorySystem] Migración completada exitosamente")
-
-	# No añadir peces de prueba automáticamente
+	print("[UnifiedInventorySystem] MODO PRODUCCIÓN: Sin peces de prueba automáticos")
 
 func _create_container(container_id: String, config: Dictionary):
 	"""Crear un nuevo contenedor de inventario"""
@@ -415,9 +414,9 @@ func load_from_save(inventory_data: Array):
 	print("[UnifiedInventorySystem] Cargados %d items del save" % loaded_count)
 	inventory_updated.emit("fishing")
 
-	# No añadir peces de prueba automáticamente
+	# MODO PRODUCCIÓN: No generar peces automáticamente
 	if loaded_count == 0:
-		print("[UnifiedInventorySystem] Save vacío - listo para nuevas capturas")
+		print("[UnifiedInventorySystem] Inventario vacío - listo para capturar peces reales")
 
 func clear_all_containers():
 	"""Limpiar todos los contenedores"""
@@ -495,67 +494,15 @@ func clear_fishing_container():
 	inventory_updated.emit("fishing")
 
 func _add_test_fish_if_empty():
-	"""Añadir peces de prueba si el inventario está vacío (solo para testing)"""
-	if not _initialized:
-		print("[UnifiedInventorySystem] ERROR: Sistema no inicializado")
-		return
-
-	# Verificar que el sistema Content esté completamente listo
-	if not Content:
-		print("[UnifiedInventorySystem] ERROR: Content system no disponible")
-		return
-
-	var fishing_container = get_fishing_container()
-	if not fishing_container:
-		print("[UnifiedInventorySystem] ERROR: No se puede añadir peces de prueba - contenedor no disponible")
-		return
-
-	if fishing_container.items.size() > 0:
-		print("[UnifiedInventorySystem] Inventario ya tiene items (%d), no añadiendo peces de prueba" % fishing_container.items.size())
-		return
-
-	print("[UnifiedInventorySystem] === ANADIENDO PECES DE PRUEBA ===")
-
-	var test_fish_ids = ["salmon", "trucha", "lubina", "calamar", "langosta"]
-	var added_count = 0
-
-	for fish_id in test_fish_ids:
-		var fish_data = Content.get_fish_by_id(fish_id)
-		if fish_data:
-			var item_instance = ItemInstance.new()
-			var size = randf_range(15.0, 35.0)
-			var quality = randf_range(0.6, 1.0)
-			var weight = size * randf_range(0.8, 1.2) * 0.1 # Peso basado en tamaño
-			item_instance.from_fish_data({
-				"id": fish_id,
-				"size": size,
-				"weight": weight,
-				"quality": quality,
-				"timestamp": Time.get_unix_time_from_system(),
-				"rarity": fish_data.rarity,
-				"capture_zone_id": "lago_montana_alpes"
-			})
-
-			if add_item(item_instance, "fishing"):
-				added_count += 1
-				print("[UnifiedInventorySystem] OK: Pez de prueba anadido: %s" % fish_data.name)
-		else:
-			print("[UnifiedInventorySystem] ERROR: Pez no encontrado: %s" % fish_id)
-
-	print("[UnifiedInventorySystem] === PECES DE PRUEBA ANADIDOS: %d ===" % added_count)
+	"""DESACTIVADO: Método de prueba deshabilitado en modo producción"""
+	print("[UnifiedInventorySystem] MODO PRODUCCIÓN: Generación de peces de prueba desactivada")
+	print("[UnifiedInventorySystem] Use el sistema de captura real para obtener peces")
+	return
 
 func _setup_test_fish_timer():
-	"""Configurar el timer para añadir peces de prueba"""
-	print("[UnifiedInventorySystem] Configurando timer para peces de prueba...")
-
-	var timer = Timer.new()
-	add_child(timer)
-	timer.wait_time = 3.0 # 3 segundos para estar seguro de que todo esté listo
-	timer.one_shot = true
-	timer.timeout.connect(_add_test_fish_if_empty)
-	timer.start()
-
-	print("[UnifiedInventorySystem] Timer iniciado - peces de prueba en 3 segundos")
+	"""DESACTIVADO: Timer de peces de prueba deshabilitado en modo producción"""
+	print("[UnifiedInventorySystem] MODO PRODUCCIÓN: Timer de peces de prueba desactivado")
+	return
 
 # === MÉTODOS PARA MARKETSCREEN ===
 

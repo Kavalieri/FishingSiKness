@@ -6,6 +6,8 @@ extends Control
 signal qte_success
 signal qte_failed
 signal qte_timeout
+signal fish_kept
+signal fish_released
 
 # QTE clásico de pesca con barra en movimiento
 var qte_duration: float = 8.0
@@ -27,6 +29,11 @@ var target_end: float = 0.6
 # Elementos para QTE clásico
 var needle_rect: ColorRect
 var target_zone: ColorRect
+
+# Elementos para ventana de resultado
+var result_container: VBoxContainer
+var action_buttons: HBoxContainer
+var is_showing_result: bool = false
 
 func _ready() -> void:
 	visible = false
@@ -62,9 +69,10 @@ func _setup_initial_state() -> void:
 	target_start = randf() * max_start
 	target_end = target_start + target_width
 
-func start_qte(type = null, duration: float = 5.0, presses: int = 1,
+func start_qte(type = null, duration: float = 8.0, presses: int = 1,
 	icon: Texture2D = null, text: String = "") -> void:
 	"""Iniciar QTE clásico de pesca con barra en movimiento"""
+	is_showing_result = false
 	qte_duration = duration
 
 	# Configurar UI
@@ -156,12 +164,14 @@ func _update_classic_qte(delta: float) -> void:
 
 func _handle_classic_input(event: InputEvent) -> void:
 	"""Manejar input del QTE clásico sin cambios de color"""
+	if is_showing_result:
+		return  # No procesar input durante resultado
+		
 	if event.is_action_pressed("ui_accept") or event.is_action_pressed("click"):
 		# Verificar si la aguja está en la zona objetivo
 		var success = needle_position >= target_start and needle_position <= target_end
 		
-		# Ocultar inmediatamente la barra QTE
-		visible = false
+		# Detener QTE
 		is_active = false
 		
 		# Emitir señal inmediatamente
@@ -215,6 +225,108 @@ func _animate_exit(success: bool) -> void:
 	# Fade out
 	tween.tween_property(self, "modulate:a", 0.0, 0.3)
 	tween.tween_callback(func(): visible = false)
+
+func show_result(fish_data: Dictionary) -> void:
+	"""Transformar la tarjeta QTE en ventana de resultado"""
+	is_showing_result = true
+	is_active = false
+	
+	# Ocultar elementos del QTE
+	_hide_qte_elements()
+	
+	# Mostrar resultado del pez
+	_setup_result_display(fish_data)
+	
+	# Asegurar que la tarjeta esté visible
+	visible = true
+
+func _hide_qte_elements() -> void:
+	"""Ocultar elementos del QTE"""
+	if qte_progress:
+		qte_progress.visible = false
+	if needle_rect:
+		needle_rect.visible = false
+	if target_zone:
+		target_zone.visible = false
+
+func _setup_result_display(fish_data: Dictionary) -> void:
+	"""Configurar display de resultado del pez"""
+	# Actualizar icono del pez
+	if qte_icon and fish_data.has("icon"):
+		qte_icon.texture = fish_data.icon
+		qte_icon.visible = true
+	
+	# Actualizar texto con información del pez
+	if qte_text:
+		var fish_name = fish_data.get("name", "Pez desconocido")
+		var fish_size = fish_data.get("size", 0.0)
+		var fish_value = fish_data.get("value", 0)
+		
+		qte_text.text = "%s\n%.1f cm - %d monedas" % [fish_name, fish_size, fish_value]
+		qte_text.add_theme_color_override("font_color", Color.WHITE)
+	
+	# Crear botones de acción
+	_create_action_buttons()
+
+func _create_action_buttons() -> void:
+	"""Crear botones de acción para el resultado"""
+	# Buscar el contenedor principal
+	var main_container = qte_text.get_parent()
+	if not main_container:
+		return
+	
+	# Crear contenedor de botones
+	action_buttons = HBoxContainer.new()
+	action_buttons.alignment = BoxContainer.ALIGNMENT_CENTER
+	action_buttons.add_theme_constant_override("separation", 20)
+	main_container.add_child(action_buttons)
+	
+	# Botón Guardar
+	var keep_button = Button.new()
+	keep_button.text = "Guardar"
+	keep_button.custom_minimum_size = Vector2(100, 40)
+	keep_button.add_theme_color_override("font_color", Color.WHITE)
+	keep_button.pressed.connect(_on_keep_pressed)
+	action_buttons.add_child(keep_button)
+	
+	# Botón Liberar
+	var release_button = Button.new()
+	release_button.text = "Liberar"
+	release_button.custom_minimum_size = Vector2(100, 40)
+	release_button.add_theme_color_override("font_color", Color.WHITE)
+	release_button.pressed.connect(_on_release_pressed)
+	action_buttons.add_child(release_button)
+
+func _on_keep_pressed() -> void:
+	"""Manejar botón guardar"""
+	fish_kept.emit()
+	_close_result()
+
+func _on_release_pressed() -> void:
+	"""Manejar botón liberar"""
+	fish_released.emit()
+	_close_result()
+
+func _close_result() -> void:
+	"""Cerrar ventana de resultado"""
+	is_showing_result = false
+	visible = false
+	
+	# Limpiar botones
+	if action_buttons:
+		action_buttons.queue_free()
+		action_buttons = null
+	
+	# Resetear para próximo uso
+	_reset_for_next_use()
+
+func _reset_for_next_use() -> void:
+	"""Resetear tarjeta para próximo uso"""
+	_reset_colors()
+	if qte_progress:
+		qte_progress.visible = true
+	if qte_icon:
+		qte_icon.visible = true
 
 func force_end() -> void:
 	"""Forzar fin del QTE (para casos especiales)"""
