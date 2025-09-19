@@ -20,7 +20,8 @@ func _init(def: FishDef = null, caught_size: float = 0.0, zone_id: String = "",
 		size = caught_size
 		capture_zone_id = zone_id
 		zone_multiplier = multiplier
-		weight = size * 0.1 # Peso aproximado
+		# Peso realista basado en tamaño con variación
+		weight = size * randf_range(0.08, 0.12) # Peso más realista
 
 		# Calcular precio final basado en la especie y multiplicador de zona
 		final_price = calculate_final_price()

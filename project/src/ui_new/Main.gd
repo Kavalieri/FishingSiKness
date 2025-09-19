@@ -121,7 +121,7 @@ func _connect_navigation_signals() -> void:
 func _load_initial_screen() -> void:
 	"""Cargar pantalla inicial del juego"""
 	if central_host and central_host.has_method("show_screen"):
-			print("[MAIN] Cargando pantalla inicial: FishingScreen")
+		print("[MAIN] Cargando pantalla inicial: FishingScreen")
 		central_host.show_screen("res://scenes/ui_new/screens/FishingScreen.tscn")
 	else:
 		print("[MAIN] ERROR: No se pudo cargar pantalla inicial - CentralHost no válido")
@@ -317,6 +317,7 @@ func _on_zone_changed(new_zone_id: String) -> void:
 
 func _on_fish_caught(fish_data: Dictionary) -> void:
 	"""Llamado cuando se captura un pez"""
+	print("[Main] Pez capturado: ", fish_data)
 	# Actualizar experiencia
 	if Experience and fish_data.has("xp_reward"):
 		Experience.add_experience(fish_data.xp_reward)
@@ -328,6 +329,24 @@ func _on_fish_caught(fish_data: Dictionary) -> void:
 	# Actualizar monedas si el pez se vende automáticamente
 	if Save and fish_data.has("coin_value"):
 		Save.add_coins(fish_data.coin_value)
+	
+	# Actualizar TopBar
+	update_topbar()
+
+func _on_item_bought(item_data: Dictionary) -> void:
+	"""Llamado cuando se compra un item"""
+	print("[Main] Item comprado: ", item_data)
+	update_topbar()
+
+func _on_item_sold(item_data: Dictionary) -> void:
+	"""Llamado cuando se vende un item"""
+	print("[Main] Item vendido: ", item_data)
+	update_topbar()
+
+func _on_prestige_confirmed(prestige_data: Dictionary) -> void:
+	"""Llamado cuando se confirma prestigio"""
+	print("[Main] Prestigio confirmado: ", prestige_data)
+	update_topbar()
 
 func _on_item_transaction(item_id: String, quantity: int, is_purchase: bool) -> void:
 	"""Manejar compra/venta de items"""

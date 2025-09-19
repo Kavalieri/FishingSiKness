@@ -140,36 +140,8 @@ func _setup_market_screen(screen: Control) -> void:
 		print("[CENTRALHOST] ERROR: MarketScreen no tiene método setup_market_screen() ni setup_market()")
 
 func _get_buyable_items() -> Array[Dictionary]:
-	"""Obtener items comprables del Content system"""
-	var items: Array[Dictionary] = []
-
-	# Por ahora, items de ejemplo basados en el store
-	if Content:
-		# Paquetes de gemas
-		items.append({
-			"id": "gems_120",
-			"name": "Paquete Pequeño de Gemas",
-			"description": "120 gemas\nPerfecto para empezar",
-			"category": "gems",
-			"price": 100, # Precio en dinero real (ficticio)
-			"currency": "real_money",
-			"value": 120,
-			"icon": "res://art/ui/assets/diamonds.png"
-		})
-
-		# Items de mejora básicos
-		items.append({
-			"id": "bait_basic",
-			"name": "Cebo Básico",
-			"description": "Mejora las posibilidades de captura\n+10% probabilidad de pez raro",
-			"category": "consumable",
-			"price": 50,
-			"currency": "coins",
-			"value": 50,
-			"icon": "res://art/ui/assets/coins.png"
-		})
-
-	return items
+	"""Mercado solo para venta - no hay items comprables"""
+	return []
 
 func _setup_upgrades_screen(screen: Control) -> void:
 	"""Configurar pantalla de mejoras con datos del UpgradeSystem"""

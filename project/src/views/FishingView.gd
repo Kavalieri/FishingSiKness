@@ -7,24 +7,24 @@ var cast_button: Button
 # Fondo dinámico
 var background_node: Control
 
-# Sistema QTE como componente separado
+# Sistema QTE clásico de pesca
 var qte_component: Control
 var qte_container: VBoxContainer
 var qte_progress_bar: ProgressBar
-var qte_target_zone: Control
 var qte_needle: Control
+var qte_target_zone: Control
 var qte_instructions: Label
 var qte_timer_bar: ProgressBar
 
 var is_fishing := false
-var qte_progress := 0.0
-var qte_speed := 1.5
-var qte_direction := 1
-var qte_target_min := 0.3
-var qte_target_max := 0.7
-var qte_timer := 0.0
-var qte_max_time := 3.0
 var qte_active := false
+var qte_needle_position := 0.0
+var qte_needle_speed := 1.2
+var qte_needle_direction := 1
+var qte_target_start := 0.4
+var qte_target_end := 0.6
+var qte_timer := 0.0
+var qte_max_time := 5.0
 
 # Historial de pescas
 var fishing_history_panel: PanelContainer
@@ -101,7 +101,7 @@ func _ready():
 	print("FishingView ready")
 
 func setup_qte_component():
-	"""Crear el componente QTE como un elemento separado que no interfiera con la UI"""
+	"""Crear el componente QTE clásico con barra en movimiento"""
 	# Crear contenedor principal del QTE
 	qte_component = Control.new()
 	qte_component.name = "QTEComponent"
@@ -109,73 +109,78 @@ func setup_qte_component():
 	qte_component.layout_mode = 1
 	qte_component.anchor_left = 0.1
 	qte_component.anchor_right = 0.9
-	qte_component.anchor_top = 0.3
-	qte_component.anchor_bottom = 0.6
+	qte_component.anchor_top = 0.6
+	qte_component.anchor_bottom = 0.85
 	add_child(qte_component)
 
-	# Crear contenedor para el QTE
-	qte_container = VBoxContainer.new()
-	qte_container.layout_mode = 1
-	qte_container.anchor_right = 1.0
-	qte_container.anchor_bottom = 1.0
-	qte_container.add_theme_constant_override("separation", 15)
-	qte_component.add_child(qte_container)
+	# Fondo semi-transparente
+	var bg_panel = PanelContainer.new()
+	var bg_style = StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.0, 0.0, 0.0, 0.9)
+	bg_style.corner_radius_top_left = 12
+	bg_style.corner_radius_top_right = 12
+	bg_style.corner_radius_bottom_left = 12
+	bg_style.corner_radius_bottom_right = 12
+	bg_panel.layout_mode = 1
+	bg_panel.anchor_right = 1.0
+	bg_panel.anchor_bottom = 1.0
+	bg_panel.add_theme_stylebox_override("panel", bg_style)
+	qte_component.add_child(bg_panel)
+
+	var content_container = VBoxContainer.new()
+	content_container.add_theme_constant_override("separation", 15)
+	bg_panel.add_child(content_container)
 
 	# Título del QTE
 	qte_instructions = Label.new()
-	qte_instructions.text = "FISHING ¡PESCANDO! ¡Presiona cuando la aguja esté en la zona verde!"
+	qte_instructions.text = "¡Presiona cuando la aguja esté en la zona verde!"
 	qte_instructions.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	qte_instructions.add_theme_font_size_override("font_size", 18)
 	qte_instructions.add_theme_color_override("font_color", Color.WHITE)
-	qte_container.add_child(qte_instructions)
+	content_container.add_child(qte_instructions)
 
-	# Panel del QTE principal
-	var qte_panel = PanelContainer.new()
-	qte_panel.custom_minimum_size = Vector2(350, 120)
-	qte_container.add_child(qte_panel)
-
-	var qte_content = VBoxContainer.new()
-	qte_content.add_theme_constant_override("separation", 10)
-	qte_panel.add_child(qte_content)
+	# Contenedor de la barra de progreso
+	var progress_container = Control.new()
+	progress_container.custom_minimum_size.y = 60
+	content_container.add_child(progress_container)
 
 	# Barra de progreso principal
-	var progress_container = Control.new()
-	progress_container.custom_minimum_size.y = 40
-	qte_content.add_child(progress_container)
-
 	qte_progress_bar = ProgressBar.new()
-	qte_progress_bar.anchor_right = 1.0
-	qte_progress_bar.anchor_bottom = 1.0
 	qte_progress_bar.min_value = 0.0
 	qte_progress_bar.max_value = 1.0
-	qte_progress_bar.value = 0.0
-	qte_progress_bar.show_percentage = false
+	qte_progress_bar.value = 1.0
+	qte_progress_bar.layout_mode = 1
+	qte_progress_bar.anchor_right = 1.0
+	qte_progress_bar.anchor_bottom = 0.6
+	qte_progress_bar.custom_minimum_size.y = 30
+	qte_progress_bar.add_theme_color_override("fill", Color(0.3, 0.3, 0.3))
 	progress_container.add_child(qte_progress_bar)
 
 	# Zona objetivo (verde)
 	qte_target_zone = ColorRect.new()
-	qte_target_zone.color = Color.GREEN
-	qte_target_zone.color.a = 0.6
+	qte_target_zone.color = Color(0.0, 0.8, 0.0, 0.7)
+	qte_target_zone.layout_mode = 1
+	qte_target_zone.anchor_left = qte_target_start
+	qte_target_zone.anchor_right = qte_target_end
+	qte_target_zone.anchor_bottom = 0.6
 	progress_container.add_child(qte_target_zone)
 
-	# Aguja (roja)
+	# Aguja en movimiento
 	qte_needle = ColorRect.new()
 	qte_needle.color = Color.RED
-	qte_needle.custom_minimum_size = Vector2(4, 40)
+	qte_needle.layout_mode = 1
+	qte_needle.custom_minimum_size.x = 4
+	qte_needle.anchor_bottom = 0.6
 	progress_container.add_child(qte_needle)
 
 	# Timer bar
-	var timer_label = Label.new()
-	timer_label.text = "TIMER Tiempo restante:"
-	timer_label.add_theme_font_size_override("font_size", 14)
-	qte_content.add_child(timer_label)
-
 	qte_timer_bar = ProgressBar.new()
 	qte_timer_bar.min_value = 0.0
 	qte_timer_bar.max_value = 1.0
 	qte_timer_bar.value = 1.0
+	qte_timer_bar.custom_minimum_size.y = 15
 	qte_timer_bar.add_theme_color_override("fill", Color.ORANGE)
-	qte_content.add_child(qte_timer_bar)
+	content_container.add_child(qte_timer_bar)
 
 func setup_fishing_history():
 	"""Crear panel de historial de pescas debajo del botón de lanzamiento"""
@@ -451,7 +456,12 @@ func create_catch_popup(popup_data: Dictionary) -> Control:
 	fish_info.add_child(fish_name_label)
 
 	var size_label = Label.new()
-	size_label.text = "SIZE Tamaño: %.1fcm • FISHING Peso: %.1fkg" % [fish_instance.size, fish_instance.weight]
+	# Obtener peso desde instance_data o calcular realista
+	var display_weight = fish_instance.weight
+	if display_weight <= 0:
+		# Calcular peso realista: tamaño * factor (0.08-0.12)
+		display_weight = fish_instance.size * randf_range(0.08, 0.12)
+	size_label.text = "SIZE Tamaño: %.1fcm • WEIGHT Peso: %.1fg" % [fish_instance.size, display_weight]
 	size_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	size_label.add_theme_font_size_override("font_size", 16)
 	fish_info.add_child(size_label)
@@ -543,13 +553,19 @@ func _confirm_store_fish(fish_instance: FishInstance, rarity: String, rarity_mul
 	"""Confirmar almacenamiento del pez capturado"""
 	# Crear ItemInstance desde FishInstance
 	var item_instance = ItemInstance.new()
+	# Asegurar que el peso esté calculado correctamente
+	var calculated_weight = fish_instance.weight
+	if calculated_weight <= 0:
+		calculated_weight = fish_instance.size * randf_range(0.08, 0.12)
+	
 	item_instance.from_fish_data({
 		"id": fish_instance.fish_def.id,
 		"name": fish_instance.fish_def.name,
 		"size": fish_instance.size,
-		"value": int(fish_instance.value),
+		"weight": calculated_weight,
+		"value": int(fish_instance.final_price),
 		"rarity": rarity,
-		"zone_caught": fish_instance.zone_caught,
+		"capture_zone_id": fish_instance.zone_caught,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 
@@ -714,50 +730,27 @@ func _process(delta):
 		else:
 			qte_timer_bar.add_theme_color_override("fill", Color.GREEN)
 
-		# Mover la aguja del QTE con movimiento de rebote
-		qte_progress += qte_speed * qte_direction * delta
-		if qte_progress >= 1.0:
-			qte_progress = 1.0
-			qte_direction = -1
-		elif qte_progress <= 0.0:
-			qte_progress = 0.0
-			qte_direction = 1
-
-		update_qte_display()
+		# Mover la aguja
+		qte_needle_position += qte_needle_speed * qte_needle_direction * delta
+		
+		# Rebotar en los extremos
+		if qte_needle_position >= 1.0:
+			qte_needle_position = 1.0
+			qte_needle_direction = -1
+		elif qte_needle_position <= 0.0:
+			qte_needle_position = 0.0
+			qte_needle_direction = 1
+		
+		# Actualizar posición visual de la aguja
+		if qte_needle:
+			qte_needle.anchor_left = qte_needle_position
+			qte_needle.anchor_right = qte_needle_position + 0.01  # Ancho de la aguja
 
 		# Verificar si se acabó el tiempo
 		if qte_timer >= qte_max_time:
-			qte_failed()
+			_complete_qte(false)
 
-func update_qte_display():
-	if not qte_progress_bar or not qte_needle or not qte_target_zone:
-		return
 
-	# Actualizar barra de progreso
-	qte_progress_bar.value = qte_progress
-
-	# Posicionar zona objetivo
-	var container_width = qte_progress_bar.size.x
-	var target_width = (qte_target_max - qte_target_min) * container_width
-	var target_x = qte_target_min * container_width
-
-	qte_target_zone.position.x = target_x
-	qte_target_zone.size.x = target_width
-	qte_target_zone.size.y = qte_progress_bar.size.y
-
-	# Posicionar aguja
-	var needle_x = qte_progress * container_width - 2
-	qte_needle.position.x = needle_x
-
-	# Cambiar color de la aguja según proximidad al objetivo
-	if qte_progress >= qte_target_min and qte_progress <= qte_target_max:
-		qte_needle.color = Color.LIME_GREEN
-		qte_instructions.text = "¡PERFECTO! ¡Presiona AHORA!"
-		qte_instructions.add_theme_color_override("font_color", Color.LIME_GREEN)
-	else:
-		qte_needle.color = Color.RED
-		qte_instructions.text = "FISHING ¡Espera a que esté en la zona verde!"
-		qte_instructions.add_theme_color_override("font_color", Color.WHITE)
 
 func _on_cast_button_pressed():
 	if SFX:
@@ -772,42 +765,115 @@ func start_fishing():
 	print("Starting fishing...")
 
 	# Verificar espacio en el inventario
-	var inventory = UnifiedInventorySystem.get_fishing_container().get_all_items()
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	if not fishing_container:
+		show_inventory_full_message()
+		return
+		
 	var max_inventory = Save.get_total_inventory_capacity()
-
-	if inventory.size() >= max_inventory:
+	if fishing_container.items.size() >= max_inventory:
 		show_inventory_full_message()
 		return
 
-	# Configurar el QTE
+	# Usar el nuevo sistema QTE
+	_start_advanced_qte()
+	
+	cast_button.text = "¡COMPLETAR QTE!"
+
+func _start_advanced_qte():
+	"""Sistema QTE clásico con barra en movimiento"""
 	is_fishing = true
 	qte_active = true
 	qte_timer = 0.0
-	qte_progress = 0.0
-	qte_direction = 1
-
-	# Randomizar zona objetivo
-	qte_target_min = randf_range(0.2, 0.5)
-	qte_target_max = qte_target_min + randf_range(0.15, 0.25)
-	qte_speed = randf_range(1.2, 2.0)
+	qte_max_time = 5.0
+	
+	# Resetear posición de la aguja
+	qte_needle_position = 0.0
+	qte_needle_direction = 1
+	
+	# Generar zona objetivo aleatoria
+	var target_width = 0.15  # 15% de ancho
+	var max_start = 1.0 - target_width
+	qte_target_start = randf() * max_start
+	qte_target_end = qte_target_start + target_width
+	
+	# Actualizar zona objetivo visual
+	if qte_target_zone:
+		qte_target_zone.anchor_left = qte_target_start
+		qte_target_zone.anchor_right = qte_target_end
 
 	# Mostrar UI del QTE
 	if qte_component:
 		qte_component.visible = true
+	
+	print("[FISHING] QTE clásico iniciado - Zona objetivo: %.2f - %.2f" % [qte_target_start, qte_target_end])
 
-	cast_button.text = "¡ATRAPAR!"
+func _get_qte_instruction_text(qte_type: QTEContainer.QTEType) -> String:
+	"""Obtener texto de instrucción para cada tipo de QTE"""
+	match qte_type:
+		QTEContainer.QTEType.PRESS_BUTTON:
+			return "¡Presiona en el momento correcto!"
+		QTEContainer.QTEType.HOLD_BUTTON:
+			return "¡Mantén presionado cuando aparezca la señal!"
+		QTEContainer.QTEType.RAPID_PRESS:
+			return "¡Presiona rápidamente 3 veces!"
+		QTEContainer.QTEType.TIMING_PRESS:
+			return "¡Espera el momento PERFECTO!"
+		QTEContainer.QTEType.SEQUENCE_PRESS:
+			return "¡Sigue la secuencia de timing!"
+		_:
+			return "¡Completa el desafío!"
+
+func _on_qte_success():
+	"""Manejar éxito del QTE"""
+	print("[FISHING] QTE completado exitosamente")
+	is_fishing = false
+	cast_button.text = "FISHING LANZAR"
+	catch_successful()
+
+func _on_qte_failed():
+	"""Manejar fallo del QTE"""
+	print("[FISHING] QTE fallado")
+	is_fishing = false
+	cast_button.text = "FISHING LANZAR"
+	qte_failed()
+
+func _on_qte_timeout():
+	"""Manejar timeout del QTE"""
+	print("[FISHING] QTE timeout")
+	is_fishing = false
+	cast_button.text = "FISHING LANZAR"
+	qte_failed()
 
 func try_catch_fish():
 	if not qte_active:
 		return
 
-	print("Trying to catch fish... QTE progress: ", qte_progress)
+	# Verificar si la aguja está en la zona objetivo
+	var success = qte_needle_position >= qte_target_start and qte_needle_position <= qte_target_end
+	
+	if success:
+		# ¡Éxito! La aguja está en la zona verde
+		qte_instructions.text = "¡PERFECTO!"
+		qte_instructions.add_theme_color_override("font_color", Color.LIME_GREEN)
+		_complete_qte(true)
+	else:
+		# Fallo - la aguja no estaba en la zona correcta
+		qte_instructions.text = "¡Fallaste!"
+		qte_instructions.add_theme_color_override("font_color", Color.RED)
+		_complete_qte(false)
+	
+	if SFX:
+		SFX.play_event("click")
 
-	var success = qte_progress >= qte_target_min and qte_progress <= qte_target_max
-
-	# Terminar QTE
+func _complete_qte(success: bool):
+	"""Completar el QTE con éxito o fallo"""
 	qte_active = false
 	is_fishing = false
+	
+	# Pequeña pausa para mostrar el resultado
+	await get_tree().create_timer(0.8).timeout
+	
 	if qte_component:
 		qte_component.visible = false
 

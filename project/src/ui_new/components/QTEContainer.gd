@@ -7,21 +7,15 @@ signal qte_success
 signal qte_failed
 signal qte_timeout
 
-enum QTEType {
-	PRESS_BUTTON,
-	HOLD_BUTTON,
-	RAPID_PRESS,
-	SEQUENCE_PRESS,
-	TIMING_PRESS
-}
-
-var qte_type: QTEType = QTEType.PRESS_BUTTON
-var qte_duration: float = 3.0
-var success_window: float = 0.5
+# QTE clásico de pesca con barra en movimiento
+var qte_duration: float = 8.0
 var is_active: bool = false
 var timer: float = 0.0
-var required_presses: int = 1
-var current_presses: int = 0
+var needle_position: float = 0.0
+var needle_speed: float = 0.6  # Más lento
+var needle_direction: int = 1
+var target_start: float = 0.4
+var target_end: float = 0.6
 
 @onready var qte_icon: TextureRect = $AspectRatioContainer/QTEPanel/MarginContainer / \
 	VBoxContainer / QTEIcon
@@ -29,6 +23,10 @@ var current_presses: int = 0
 	VBoxContainer / QTEText
 @onready var qte_progress: ProgressBar = $AspectRatioContainer/QTEPanel/MarginContainer / \
 	VBoxContainer / QTEProgress
+
+# Elementos para QTE clásico
+var needle_rect: ColorRect
+var target_zone: ColorRect
 
 func _ready() -> void:
 	visible = false
@@ -39,7 +37,7 @@ func _process(delta: float) -> void:
 		return
 
 	timer += delta
-	_update_progress()
+	_update_classic_qte(delta)
 
 	# Verificar timeout
 	if timer >= qte_duration:
@@ -49,39 +47,38 @@ func _input(event: InputEvent) -> void:
 	if not is_active:
 		return
 
-	match qte_type:
-		QTEType.PRESS_BUTTON:
-			_handle_press_button(event)
-		QTEType.HOLD_BUTTON:
-			_handle_hold_button(event)
-		QTEType.RAPID_PRESS:
-			_handle_rapid_press(event)
+	_handle_classic_input(event)
 
 func _setup_initial_state() -> void:
-	"""Configurar estado inicial del QTE"""
+	"""Configurar estado inicial del QTE clásico"""
 	timer = 0.0
-	current_presses = 0
-	qte_progress.value = 0.0
+	needle_position = 0.0
+	needle_direction = 1
+	qte_progress.value = 1.0
+	
+	# Generar zona objetivo aleatoria más grande
+	var target_width = 0.2  # 20% de ancho para mejor jugabilidad
+	var max_start = 1.0 - target_width
+	target_start = randf() * max_start
+	target_end = target_start + target_width
 
-func start_qte(type: QTEType, duration: float = 3.0, presses: int = 1,
+func start_qte(type = null, duration: float = 5.0, presses: int = 1,
 	icon: Texture2D = null, text: String = "") -> void:
-	"""Iniciar Quick Time Event"""
-	qte_type = type
+	"""Iniciar QTE clásico de pesca con barra en movimiento"""
 	qte_duration = duration
-	required_presses = presses
 
 	# Configurar UI
 	if icon:
 		qte_icon.texture = icon
 		qte_icon.visible = true
-		qte_icon.custom_minimum_size = Vector2(80, 80) # Tamaño mínimo para mejor visibilidad
+		qte_icon.custom_minimum_size = Vector2(80, 80)
 	else:
 		qte_icon.visible = false
 
-	if text != "":
-		qte_text.text = text
-	else:
-		qte_text.text = _get_default_text(type)
+	qte_text.text = "¡Presiona cuando la aguja esté en la zona verde!"
+
+	# Configurar barra clásica
+	_setup_classic_bar()
 
 	# Activar QTE
 	_setup_initial_state()
@@ -91,69 +88,106 @@ func start_qte(type: QTEType, duration: float = 3.0, presses: int = 1,
 	# Animación de entrada
 	_animate_entrance()
 
-func _get_default_text(type: QTEType) -> String:
-	"""Obtener texto por defecto según tipo de QTE"""
-	match type:
-		QTEType.PRESS_BUTTON:
-			return "¡Presiona!"
-		QTEType.HOLD_BUTTON:
-			return "¡Mantén presionado!"
-		QTEType.RAPID_PRESS:
-			return "¡Presiona rápido! (%d)" % required_presses
-		QTEType.SEQUENCE_PRESS:
-			return "¡Secuencia!"
-		QTEType.TIMING_PRESS:
-			return "¡Momento perfecto!"
-		_:
-			return "¡Acción!"
+func _setup_classic_bar() -> void:
+	"""Configurar barra clásica de QTE estilo juegos de pesca"""
+	# Limpiar elementos existentes
+	if needle_rect:
+		needle_rect.queue_free()
+	if target_zone:
+		target_zone.queue_free()
+	
+	# Hacer la barra más alta y visible
+	qte_progress.custom_minimum_size.y = 40
+	qte_progress.add_theme_color_override("fill", Color(0.1, 0.1, 0.1))  # Fondo oscuro
+	qte_progress.add_theme_color_override("background", Color(0.3, 0.3, 0.3))  # Borde gris
+	
+	# Crear zona objetivo (verde clásico)
+	target_zone = ColorRect.new()
+	target_zone.color = Color(0.2, 0.8, 0.2, 0.9)  # Verde clásico
+	target_zone.layout_mode = 1
+	target_zone.z_index = 1
+	qte_progress.add_child(target_zone)
+	
+	# Crear aguja (amarilla brillante como juegos clásicos)
+	needle_rect = ColorRect.new()
+	needle_rect.color = Color(1.0, 1.0, 0.0, 1.0)  # Amarillo brillante
+	needle_rect.layout_mode = 1
+	needle_rect.z_index = 2
+	qte_progress.add_child(needle_rect)
 
-func _update_progress() -> void:
-	"""Actualizar barra de progreso"""
-	var progress = timer / qte_duration
-	qte_progress.value = progress
+func _update_classic_qte(delta: float) -> void:
+	"""Actualizar QTE clásico estilo juegos de pesca"""
+	# Mover la aguja más lentamente
+	needle_position += needle_speed * needle_direction * delta
+	
+	# Rebotar en los extremos
+	if needle_position >= 1.0:
+		needle_position = 1.0
+		needle_direction = -1
+	elif needle_position <= 0.0:
+		needle_position = 0.0
+		needle_direction = 1
+	
+	# Actualizar posiciones visuales
+	if target_zone and qte_progress and qte_progress.size.x > 0:
+		var bar_width = qte_progress.size.x
+		var bar_height = qte_progress.size.y
+		
+		# Zona objetivo más ancha para mejor jugabilidad
+		target_zone.position.x = target_start * bar_width
+		target_zone.position.y = 2  # Pequeño margen
+		target_zone.size.x = (target_end - target_start) * bar_width
+		target_zone.size.y = bar_height - 4  # Margen arriba y abajo
+	
+	if needle_rect and qte_progress and qte_progress.size.x > 0:
+		var bar_width = qte_progress.size.x
+		var bar_height = qte_progress.size.y
+		var needle_width = max(8, bar_width * 0.025)  # Aguja más ancha
+		
+		# Aguja bien visible
+		needle_rect.position.x = (needle_position * bar_width) - (needle_width / 2)
+		needle_rect.position.y = 1
+		needle_rect.size.x = needle_width
+		needle_rect.size.y = bar_height - 2
+	
+	# Solo mostrar progreso del tiempo sin cambiar colores
+	var time_progress = 1.0 - (timer / qte_duration)
+	qte_progress.value = 1.0  # Barra siempre llena, solo para mostrar elementos
 
-func _handle_press_button(event: InputEvent) -> void:
-	"""Manejar QTE de presionar botón"""
+func _handle_classic_input(event: InputEvent) -> void:
+	"""Manejar input del QTE clásico sin cambios de color"""
 	if event.is_action_pressed("ui_accept") or event.is_action_pressed("click"):
-		if _is_in_success_window():
-			_end_qte(true)
+		# Verificar si la aguja está en la zona objetivo
+		var success = needle_position >= target_start and needle_position <= target_end
+		
+		# Ocultar inmediatamente la barra QTE
+		visible = false
+		is_active = false
+		
+		# Emitir señal inmediatamente
+		if success:
+			qte_success.emit()
 		else:
-			_end_qte(false)
-
-func _handle_hold_button(event: InputEvent) -> void:
-	"""Manejar QTE de mantener presionado"""
-	if event.is_action_released("ui_accept") or event.is_action_released("click"):
-		if timer >= (qte_duration - success_window):
-			_end_qte(true)
-		else:
-			_end_qte(false)
-
-func _handle_rapid_press(event: InputEvent) -> void:
-	"""Manejar QTE de presionar rápidamente"""
-	if event.is_action_pressed("ui_accept") or event.is_action_pressed("click"):
-		current_presses += 1
-		qte_text.text = "¡Presiona rápido! (%d/%d)" % [current_presses, required_presses]
-
-		if current_presses >= required_presses:
-			_end_qte(true)
-
-func _is_in_success_window() -> bool:
-	"""Verificar si estamos en la ventana de éxito"""
-	var target_time = qte_duration * 0.7 # 70% del tiempo
-	return abs(timer - target_time) <= success_window
+			qte_failed.emit()
 
 func _end_qte(success: bool) -> void:
-	"""Finalizar QTE"""
+	"""Finalizar QTE por timeout"""
 	is_active = false
+	visible = false
 
-	# Animación de salida
-	_animate_exit(success)
+	# Resetear colores
+	_reset_colors()
 
-	# Emitir señal apropiada
-	if success:
-		qte_success.emit()
-	else:
-		qte_failed.emit()
+	# Emitir señal de timeout/fallo
+	qte_failed.emit()
+
+func _reset_colors() -> void:
+	"""Resetear todos los colores a su estado inicial"""
+	if qte_text:
+		qte_text.remove_theme_color_override("font_color")
+	# NO cambiar colores de la tarjeta principal
+	modulate = Color.WHITE
+	scale = Vector2.ONE
 
 func _animate_entrance() -> void:
 	"""Animar entrada del QTE"""
@@ -165,19 +199,17 @@ func _animate_entrance() -> void:
 	tween.parallel().tween_property(self, "modulate:a", 1.0, 0.3)
 
 func _animate_exit(success: bool) -> void:
-	"""Animar salida del QTE"""
+	"""Animar salida del QTE sin cambios de color"""
 	var tween = create_tween()
 
 	if success:
-		# Animación de éxito - pulso verde
-		modulate = Color.GREEN
-		tween.tween_property(self, "scale", Vector2(1.2, 1.2), 0.2)
+		# Animación de éxito - solo escala
+		tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.2)
 		tween.tween_property(self, "scale", Vector2.ONE, 0.1)
 	else:
-		# Animación de fallo - shake rojo
-		modulate = Color.RED
-		tween.tween_property(self, "position:x", position.x + 10, 0.1)
-		tween.tween_property(self, "position:x", position.x - 10, 0.1)
+		# Animación de fallo - solo shake
+		tween.tween_property(self, "position:x", position.x + 8, 0.1)
+		tween.tween_property(self, "position:x", position.x - 8, 0.1)
 		tween.tween_property(self, "position:x", position.x, 0.1)
 
 	# Fade out

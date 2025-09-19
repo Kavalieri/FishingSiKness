@@ -73,8 +73,7 @@ func _initialize_system():
 	print("[UnifiedInventorySystem] OK: Sistema unificado activo con %d contenedores" % containers.size())
 	print("[UnifiedInventorySystem] Migración completada exitosamente")
 
-	# Comentado: Se ejecutará después de cargar el save
-	call_deferred("_add_test_fish_if_empty")
+	# No añadir peces de prueba automáticamente
 
 func _create_container(container_id: String, config: Dictionary):
 	"""Crear un nuevo contenedor de inventario"""
@@ -416,10 +415,9 @@ func load_from_save(inventory_data: Array):
 	print("[UnifiedInventorySystem] Cargados %d items del save" % loaded_count)
 	inventory_updated.emit("fishing")
 
-	# Si no hay items cargados, añadir peces de prueba
+	# No añadir peces de prueba automáticamente
 	if loaded_count == 0:
-		print("[UnifiedInventorySystem] Save vacío - añadiendo peces de prueba...")
-		call_deferred("_add_test_fish_if_empty")
+		print("[UnifiedInventorySystem] Save vacío - listo para nuevas capturas")
 
 func clear_all_containers():
 	"""Limpiar todos los contenedores"""
@@ -525,11 +523,17 @@ func _add_test_fish_if_empty():
 		var fish_data = Content.get_fish_by_id(fish_id)
 		if fish_data:
 			var item_instance = ItemInstance.new()
+			var size = randf_range(15.0, 35.0)
+			var quality = randf_range(0.6, 1.0)
+			var weight = size * randf_range(0.8, 1.2) * 0.1 # Peso basado en tamaño
 			item_instance.from_fish_data({
-				"id": fish_id, # Corregido: usar "id" en lugar de "fish_id"
-				"size": randf_range(15.0, 35.0),
-				"quality": randf_range(0.6, 1.0),
-				"timestamp": Time.get_unix_time_from_system()
+				"id": fish_id,
+				"size": size,
+				"weight": weight,
+				"quality": quality,
+				"timestamp": Time.get_unix_time_from_system(),
+				"rarity": fish_data.rarity,
+				"capture_zone_id": "lago_montana_alpes"
 			})
 
 			if add_item(item_instance, "fishing"):

@@ -86,14 +86,17 @@ func setup_from_fish_def(fish_def: FishDef) -> void:
 	# Generar datos aleatorios para el pez
 	var size = randf_range(fish_def.size_min, fish_def.size_max)
 	var quality = randf_range(0.6, 1.0)
+	var weight = size * randf_range(0.8, 1.2) * 0.1 # Peso realista basado en tamaño
 	var value = int(fish_def.base_market_value * quality)
 
 	instance_data = {
 		"size": size,
+		"weight": weight,
 		"value": value,
 		"quality": quality,
 		"capture_timestamp": Time.get_unix_time_from_system(),
-		"rarity_bonus": fish_def.rarity
+		"rarity_bonus": fish_def.rarity,
+		"capture_zone_id": "lago_montana_alpes"
 	}
 
 func from_fish_data(fish_data: Dictionary) -> void:
@@ -107,9 +110,14 @@ func from_fish_data(fish_data: Dictionary) -> void:
 
 	set_item_def(fish_def)
 
-	for key in ["size", "value", "capture_zone_id", "zone_multiplier", "capture_timestamp", "rarity_bonus"]:
+	# Copiar todos los datos relevantes del pez
+	for key in ["size", "weight", "value", "capture_zone_id", "zone_multiplier", "capture_timestamp", "rarity_bonus", "rarity", "timestamp"]:
 		if key in fish_data:
 			instance_data[key] = fish_data[key]
+	
+	# Si no hay peso, calcularlo basado en el tamaño
+	if not instance_data.has("weight") and instance_data.has("size"):
+		instance_data["weight"] = instance_data["size"] * randf_range(0.8, 1.2) * 0.1
 
 func get_display_name() -> String:
 	var item_def = get_item_def()
@@ -139,7 +147,7 @@ func to_market_dict() -> Dictionary:
 		"size": instance_data.get("size", 0.0),
 		"value": instance_data.get("value", 0),
 		"rarity": instance_data.get("rarity_bonus", "común"),
-		"weight": fish_def.base_weight,
+		"weight": instance_data.get("weight", 0.0),
 		"capture_zone_id": instance_data.get("capture_zone_id", "Desconocida"),
 		"timestamp": instance_data.get("capture_timestamp", 0),
 		"description": fish_def.description if fish_def.has_method("get") and fish_def.has("description") else "Sin descripción"

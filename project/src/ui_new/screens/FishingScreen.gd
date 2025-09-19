@@ -203,46 +203,29 @@ func _start_fishing() -> void:
 	_start_qte_event()
 
 func _start_qte_event() -> void:
-	"""Iniciar evento QTE de pesca"""
-	var qte_duration = randf_range(2.0, 4.0)
-	var qte_type = QTEContainer.QTEType.PRESS_BUTTON
-
-	# Variar tipo de QTE según dificultad
-	var rand_type = randi() % 3
-	match rand_type:
-		0: qte_type = QTEContainer.QTEType.PRESS_BUTTON
-		1: qte_type = QTEContainer.QTEType.HOLD_BUTTON
-		2: qte_type = QTEContainer.QTEType.RAPID_PRESS
+	"""Iniciar evento QTE clásico de pesca"""
+	var qte_duration = 5.0  # Tiempo fijo para QTE clásico
 
 	# Pre-generar datos de pez para mostrar icono correcto
 	var preview_fish = _generate_caught_fish()
 	var fish_icon_texture = preview_fish.get("icon", null)
 
-	print("🎣 [QTE] Iniciando QTE con pez: %s" % preview_fish.get("name", "desconocido"))
+	print("🎣 [QTE] Iniciando QTE clásico con pez: %s" % preview_fish.get("name", "desconocido"))
 	print("🎣 [QTE] Sprite disponible: %s" % (fish_icon_texture != null))
 	if fish_icon_texture:
 		print("🎣 [QTE] Tamaño sprite: %dx%d" % [fish_icon_texture.get_width(), fish_icon_texture.get_height()])
-
-	# Mensaje dinámico según tipo de QTE
-	var qte_message = ""
-	match qte_type:
-		QTEContainer.QTEType.PRESS_BUTTON:
-			qte_message = "¡Presiona cuando veas el pez!"
-		QTEContainer.QTEType.HOLD_BUTTON:
-			qte_message = "¡Mantén presionado para atrapar!"
-		QTEContainer.QTEType.RAPID_PRESS:
-			qte_message = "¡Presiona rápido para luchar!"
 
 	# Reproducir sonido de anzuelo
 	if SFX and SFX.has_method("play_event"):
 		SFX.play_event("qte")
 
+	# Iniciar QTE clásico (sin parámetros de tipo)
 	qte_container.start_qte(
-		qte_type,
+		null,  # No hay tipos múltiples
 		qte_duration,
-		3 if qte_type == QTEContainer.QTEType.RAPID_PRESS else 1,
+		1,  # No usado en QTE clásico
 		fish_icon_texture,
-		qte_message
+		"¡Presiona cuando la aguja esté en la zona verde!"
 	)
 
 	# Guardar datos del pez para cuando se complete el QTE

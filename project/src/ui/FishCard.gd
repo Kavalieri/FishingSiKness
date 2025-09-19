@@ -37,7 +37,7 @@ func get_fish_details() -> String:
 	details += "FISH %s\n\n" % fish_data.name
 	details += "COINS Precio: %dc\n" % individual_fish_data.get("value", 0)
 	details += "SIZE Tamaño: %.1fcm\n" % individual_fish_data.get("size", 0.0)
-	details += "WEIGHT Peso: %.2fkg\n" % individual_fish_data.get("weight", 0.0)
+	details += "WEIGHT Peso: %.2fg\n" % individual_fish_data.get("weight", 0.0)
 	details += "PIN Zona: %s\n" % individual_fish_data.get("capture_zone_id", "Desconocida").capitalize()
 	return details
 
