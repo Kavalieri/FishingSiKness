@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "rod_guides"
+name = "Guías de Caña"
+description = "Mejora las guías para reducir la fricción del sedal y mejorar el lanzamiento"
+max_level = 40
+cost_base = 400
+cost_mult = 1.22
+effects = {"fishing_speed": 0.05}

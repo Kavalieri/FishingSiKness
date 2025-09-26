@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "boat_sonar"
+name = "Sonar del Barco"
+description = "Sistema de sonar para localizar bancos de peces y especies raras"
+max_level = 25
+cost_base = 3000
+cost_mult = 1.32
+effects = {"rare_fish_chance": 0.04}

@@ -26,10 +26,7 @@ size_flags_horizontal = 3
 text = "Mejoras"
 horizontal_alignment = 1
 
-[node name="CloseButton" type="Button" parent="VBoxContainer/Header"]
-layout_mode = 2
-size_flags_horizontal = 0
-text = "✕"
+
 
 [node name="CategoryTabs" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -38,26 +35,21 @@ size_flags_horizontal = 3
 [node name="RodButton" type="Button" parent="VBoxContainer/CategoryTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-toggle_mode = true
-button_pressed = true
 text = "Caña"
 
 [node name="HookButton" type="Button" parent="VBoxContainer/CategoryTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-toggle_mode = true
 text = "Anzuelo"
 
 [node name="LineButton" type="Button" parent="VBoxContainer/CategoryTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-toggle_mode = true
 text = "Sedal"
 
 [node name="BoatButton" type="Button" parent="VBoxContainer/CategoryTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-toggle_mode = true
 text = "Barco"
 
 [node name="PlayerStats" type="PanelContainer" parent="VBoxContainer"]

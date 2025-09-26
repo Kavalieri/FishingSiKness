@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "fridge"
-name = "Nevera Profesional"
-description = "Nevera de alta capacidad para almacenar más peces"
-max_level = 8
+id = "hook_point"
+name = "Punta de Anzuelo"
+description = "Mejora la punta para mayor penetración y menos escapes"
+max_level = 60
 cost_base = 100
-cost_mult = 1.5
-effects = {"inventory_capacity": 5}
+cost_mult = 1.16
+effects = {"escape_reduction": 0.03}

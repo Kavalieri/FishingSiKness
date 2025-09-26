@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "line_diameter"
+name = "Grosor del Sedal"
+description = "Optimiza el grosor del sedal para mejor invisibilidad y resistencia"
+max_level = 55
+cost_base = 350
+cost_mult = 1.21
+effects = {"rare_fish_chance": 0.02}

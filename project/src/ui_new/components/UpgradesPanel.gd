@@ -19,10 +19,10 @@ var player_money: int = 0
 var player_gems: int = 0
 var player_stats: Dictionary = {}
 
-const UPGRADE_CARD_SCENE = preload("res://scenes/ui_new/components/Card.tscn")
+const UPGRADE_CARD_SCENE = preload("res://scenes/ui_new/components/UpgradeCard.tscn")
 
 @onready var title_label: Label = $VBoxContainer/Header/Title
-@onready var close_button: Button = $VBoxContainer/Header/CloseButton
+# Removed close button - not needed in upgrades panel
 @onready var rod_button: Button = $VBoxContainer/CategoryTabs/RodButton
 @onready var hook_button: Button = $VBoxContainer/CategoryTabs/HookButton
 @onready var line_button: Button = $VBoxContainer/CategoryTabs/LineButton
@@ -41,11 +41,10 @@ func _ready() -> void:
 	_setup_initial_state()
 
 func _connect_signals() -> void:
-	close_button.pressed.connect(_on_close_pressed)
-	rod_button.toggled.connect(_on_category_toggled.bind(UpgradeCategory.ROD))
-	hook_button.toggled.connect(_on_category_toggled.bind(UpgradeCategory.HOOK))
-	line_button.toggled.connect(_on_category_toggled.bind(UpgradeCategory.LINE))
-	boat_button.toggled.connect(_on_category_toggled.bind(UpgradeCategory.BOAT))
+	rod_button.pressed.connect(_on_category_pressed.bind(UpgradeCategory.ROD))
+	hook_button.pressed.connect(_on_category_pressed.bind(UpgradeCategory.HOOK))
+	line_button.pressed.connect(_on_category_pressed.bind(UpgradeCategory.LINE))
+	boat_button.pressed.connect(_on_category_pressed.bind(UpgradeCategory.BOAT))
 
 func _setup_initial_state() -> void:
 	_update_category_display()
@@ -104,10 +103,11 @@ func _format_effect_value(effect: float) -> String:
 
 func _update_category_display() -> void:
 	"""Actualizar visualización de categoría activa"""
-	rod_button.button_pressed = (current_category == UpgradeCategory.ROD)
-	hook_button.button_pressed = (current_category == UpgradeCategory.HOOK)
-	line_button.button_pressed = (current_category == UpgradeCategory.LINE)
-	boat_button.button_pressed = (current_category == UpgradeCategory.BOAT)
+	# Visual feedback for active category
+	rod_button.modulate = Color.WHITE if current_category == UpgradeCategory.ROD else Color.GRAY
+	hook_button.modulate = Color.WHITE if current_category == UpgradeCategory.HOOK else Color.GRAY
+	line_button.modulate = Color.WHITE if current_category == UpgradeCategory.LINE else Color.GRAY
+	boat_button.modulate = Color.WHITE if current_category == UpgradeCategory.BOAT else Color.GRAY
 
 func _refresh_upgrades_list() -> void:
 	"""Actualizar lista de mejoras para la categoría actual"""
@@ -117,9 +117,16 @@ func _refresh_upgrades_list() -> void:
 
 	# Filtrar mejoras por categoría
 	var category_name = _get_category_name(current_category)
+	print("[UPGRADESPANEL] Filtrando por categoría: %s" % category_name)
+	print("[UPGRADESPANEL] Total upgrades disponibles: %d" % available_upgrades.size())
+	
 	var filtered_upgrades = available_upgrades.filter(
 		func(upgrade): return upgrade.get("category", "") == category_name
 	)
+	
+	print("[UPGRADESPANEL] Upgrades filtrados: %d" % filtered_upgrades.size())
+	for upgrade in filtered_upgrades:
+		print("[UPGRADESPANEL] - %s (categoría: %s)" % [upgrade.get("name", "?"), upgrade.get("category", "?")])
 
 	# Crear tarjetas para cada mejora
 	for upgrade in filtered_upgrades:
@@ -141,63 +148,15 @@ func _get_category_name(category: UpgradeCategory) -> String:
 			return ""
 
 func _create_upgrade_card(upgrade_data: Dictionary) -> Control:
-	"""Crear tarjeta de mejora reutilizando Card"""
-	var card = UPGRADE_CARD_SCENE.instantiate()
+	"""Crear tarjeta de mejora especializada"""
+	var card = UPGRADE_CARD_SCENE.instantiate() as UpgradeCard
 
-	# Información básica
-	var name = upgrade_data.get("name", "")
-	var base_description = upgrade_data.get("description", "")
-	var icon = upgrade_data.get("icon", null)
-	var upgrade_id = upgrade_data.get("id", "")
+	# Configurar tarjeta con datos
+	card.setup_upgrade(upgrade_data)
 
-	# Obtener información de efectos del sistema
-	var upgrade_info = UpgradeSystem.get_upgrade_info(upgrade_id)
-	var current_level = upgrade_info.get("current_level", 0)
-	var max_level = upgrade_info.get("max_level", 0)
-	var current_effect = upgrade_info.get("current_effect", 0)
-	var next_effect = upgrade_info.get("next_effect", 0)
-
-	# Crear descripción extendida con efectos
-	var enhanced_description = base_description
-	if current_level > 0:
-		enhanced_description += "\n\n🔹 Nivel actual: %d/%d" % [current_level, max_level]
-		enhanced_description += "\n🔹 Efecto actual: %s" % _format_effect_value(current_effect)
-
-	if current_level < max_level:
-		enhanced_description += "\n🔸 Próximo efecto: %s" % _format_effect_value(next_effect)
-	else:
-		enhanced_description += "\n✨ ¡Nivel máximo alcanzado!"
-
-	# Costo y disponibilidad
-	var cost_money = upgrade_data.get("cost_money", 0)
-	var cost_gems = upgrade_data.get("cost_gems", 0)
-	var is_max_level = (current_level >= max_level)
-	var can_afford = _can_afford_upgrade(upgrade_data)
-
-	# Texto del botón de acción
-	var action_text = ""
-	if is_max_level:
-		action_text = "Máximo"
-	elif cost_gems > 0:
-		action_text = "%d 💎" % cost_gems
-	else:
-		action_text = "%s 💰" % _format_number(cost_money)
-
-	# Configurar tarjeta
-	card.setup_card(name, enhanced_description, icon, action_text)
-
-	# Configurar estado del botón
-	var action_button = card.get_node("MarginContainer/HBoxContainer/ButtonsContainer/ActionButton")
-	if is_max_level:
-		action_button.disabled = true
-		action_button.modulate = Color.GREEN * 0.8 # Verde atenuado para máximo
-	elif not can_afford:
-		action_button.disabled = true
-		action_button.modulate = Color.GRAY
-
-	# Conectar señal
-	if not is_max_level and can_afford:
-		card.action_pressed.connect(_on_upgrade_selected.bind(upgrade_data))
+	# Conectar señales
+	card.upgrade_purchased.connect(_on_upgrade_selected)
+	card.upgrade_info_requested.connect(_on_upgrade_info_requested)
 
 	return card
 
@@ -208,18 +167,41 @@ func _can_afford_upgrade(upgrade_data: Dictionary) -> bool:
 
 	return player_money >= cost_money and player_gems >= cost_gems
 
-func _on_close_pressed() -> void:
-	upgrade_panel_closed.emit()
+func _on_upgrade_info_requested(upgrade_id: String) -> void:
+	"""Mostrar información detallada del upgrade"""
+	# Crear y mostrar popup de información
+	var popup_scene = preload("res://scenes/ui_new/components/UpgradeInfoPopup.tscn")
+	var popup = popup_scene.instantiate()
+	get_tree().current_scene.add_child(popup)
+	popup.show_upgrade_info(upgrade_id)
+	popup.popup_closed.connect(func(): popup.queue_free())
 
-func _on_category_toggled(category: UpgradeCategory, pressed: bool) -> void:
-	if not pressed:
-		return
-
+func _on_category_pressed(category: UpgradeCategory) -> void:
+	print("[UPGRADESPANEL] Cambiando a categoría: %s" % category)
 	current_category = category
 	_update_category_display()
 	_refresh_upgrades_list()
 
-func _on_upgrade_selected(upgrade_data: Dictionary) -> void:
+func _on_upgrade_selected(upgrade_id: String) -> void:
 	"""Manejar selección de mejora"""
-	var upgrade_id = upgrade_data.get("id", "")
 	upgrade_purchased.emit(upgrade_id)
+
+func _get_milestone_info(upgrade_id: String) -> Dictionary:
+	"""Obtener información de milestones para un upgrade"""
+	var upgrade_def = UpgradeSystem.available_upgrades.get(upgrade_id)
+	if not upgrade_def:
+		return {}
+	
+	var milestones = {}
+	for level in range(1, upgrade_def.max_level + 1):
+		var cost = upgrade_def.get_level_cost(level)
+		var effect_key = UpgradeSystem.PRIMARY_EFFECT_KEY_BY_ID.get(upgrade_id, "")
+		var effect_value = upgrade_def.get_effect_at_level(effect_key, level) if effect_key else 0
+		
+		milestones[level] = {
+			"cost": cost,
+			"effect": effect_value,
+			"description": "Nivel %d: %s" % [level, _format_effect_value(effect_value)]
+		}
+	
+	return milestones

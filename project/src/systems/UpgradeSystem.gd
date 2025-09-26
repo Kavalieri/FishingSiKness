@@ -3,15 +3,25 @@ extends Node
 # Sistema de mejoras unificado
 # Maneja compra, aplicación de efectos y persistencia de upgrades
 
-# Claves primarias de efecto por upgrade_id para consultar valores en UpgradeDef.effects
+# Sistema realista por componentes de pesca
 const PRIMARY_EFFECT_KEY_BY_ID := {
-	"rod": "fish_value_multiplier",
-	"hook": "rare_fish_chance",
-	"reel": "fishing_speed",
-	"line": "qte_time_bonus",
-	"bait": "fish_value_bonus",
-	"zone_multiplier": "zone_multiplier_bonus",
-	"fridge": "inventory_capacity",
+	# Rod Components
+	"rod_handle": "qte_success_bonus",
+	"rod_blank": "fish_value_multiplier",
+	"rod_guides": "fishing_speed",
+	# Hook Components
+	"hook_point": "escape_reduction",
+	"hook_barb": "rare_fish_chance",
+	"hook_bend": "fish_value_multiplier",
+	# Line Components
+	"line_strength": "escape_reduction",
+	"line_diameter": "rare_fish_chance",
+	"line_coating": "qte_time_bonus",
+	# Boat Components
+	"boat_hull": "zone_multiplier_bonus",
+	"boat_engine": "fishing_speed",
+	"boat_sonar": "rare_fish_chance",
+	"boat_storage": "inventory_capacity",
 }
 
 # Referencia a los upgrades disponibles
@@ -45,8 +55,8 @@ func _load_upgrade_definitions() -> void:
 
 	print("[UPGRADESYSTEM] Total upgrades cargados: %d" % available_upgrades.size())
 
-func purchase_upgrade(upgrade_id: String) -> bool:
-	"""Comprar un upgrade"""
+func purchase_upgrade(upgrade_id: String, quantity: int = 1) -> bool:
+	"""Comprar upgrade(s) - soporta compra múltiple"""
 	if not available_upgrades.has(upgrade_id):
 		Logger.warn("Upgrade no existe: " + upgrade_id)
 		return false
@@ -58,29 +68,41 @@ func purchase_upgrade(upgrade_id: String) -> bool:
 
 	var current_level = Save.game_data.upgrades.get(upgrade_id, 0)
 
-	# Verificar si puede mejorar más
-	if current_level >= upgrade_def.max_level:
+	# Calcular costo total para la cantidad solicitada
+	var total_cost = 0
+	for i in range(quantity):
+		var level_cost = upgrade_def.get_level_cost(current_level + i + 1)
+		total_cost += level_cost
+		
+		# Verificar límite máximo
+		if current_level + i + 1 > upgrade_def.max_level:
+			quantity = i  # Ajustar cantidad al máximo posible
+			break
+
+	if quantity == 0:
 		Logger.info("Upgrade ya está al máximo: " + upgrade_id)
 		return false
 
-	# Calcular costo del siguiente nivel
-	var cost = upgrade_def.get_level_cost(current_level + 1)
-	var current_coins = Save.get_coins()
-
 	# Verificar fondos
-	if current_coins < cost:
+	var current_coins = Save.get_coins()
+	if current_coins < total_cost:
 		Logger.warn("Fondos insuficientes para upgrade: " + upgrade_id)
 		return false
 
 	# Realizar compra
-	if Save.spend_coins(cost):
-		var new_level = current_level + 1
+	if Save.spend_coins(total_cost):
+		var new_level = current_level + quantity
 		Save.game_data.upgrades[upgrade_id] = new_level
 
 		# Aplicar efectos del upgrade
 		apply_upgrade_effects(upgrade_id, new_level)
+		
+		# Verificar milestones
+		for i in range(current_level + 1, new_level + 1):
+			if MilestoneSystem:
+				MilestoneSystem.apply_milestone_effects(upgrade_id, i)
 
-		Logger.info("Upgrade comprado: %s nivel %d por %d monedas" % [upgrade_id, new_level, cost])
+		Logger.info("Upgrade comprado: %s +%d niveles (total: %d) por %d monedas" % [upgrade_id, quantity, new_level, total_cost])
 		return true
 
 	return false

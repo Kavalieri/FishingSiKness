@@ -48,39 +48,51 @@ func setup_screen() -> void:
 		print("[UPGRADESSCREEN] ERROR: componentes no disponibles")
 
 func _get_upgrades_data() -> Array[Dictionary]:
-	"""Obtener datos de upgrades del sistema"""
+	"""Obtener datos de upgrades del sistema con precios balanceados"""
 	var upgrades: Array[Dictionary] = []
 
-	print("[UPGRADESSCREEN] UpgradeSystem.available_upgrades.keys(): %s" % str(UpgradeSystem.available_upgrades.keys()))
+	# Orden específico para cada categoría con precios balanceados
+	var upgrade_order = {
+		"rod": ["rod_handle", "rod_blank", "rod_guides"],
+		"hook": ["hook_point", "hook_barb", "hook_bend"],
+		"line": ["line_strength", "line_diameter", "line_coating"],
+		"boat": ["boat_hull", "boat_engine", "boat_sonar", "boat_storage"]
+	}
 
-	for upgrade_id in UpgradeSystem.available_upgrades.keys():
-		var upgrade_info = UpgradeSystem.get_upgrade_info(upgrade_id)
-		var upgrade_data = {
-			"id": upgrade_id,
-			"name": upgrade_info.name,
-			"description": upgrade_info.description,
-			"category": _get_upgrade_category(upgrade_id),
-			"cost_money": upgrade_info.next_level_cost,
-			"cost_gems": 0, # Por ahora solo dinero
-			"owned": upgrade_info.current_level > 0,
-			"level": upgrade_info.current_level,
-			"max_level": upgrade_info.max_level
-		}
-		upgrades.append(upgrade_data)
+	for category in upgrade_order.keys():
+		for upgrade_id in upgrade_order[category]:
+			if UpgradeSystem.available_upgrades.has(upgrade_id):
+				var upgrade_info = UpgradeSystem.get_upgrade_info(upgrade_id)
+				var upgrade_data = {
+					"id": upgrade_id,
+					"name": upgrade_info.name,
+					"description": upgrade_info.description,
+					"category": category,
+					"cost_money": upgrade_info.next_level_cost,
+					"cost_gems": 0,
+					"owned": upgrade_info.current_level > 0,
+					"level": upgrade_info.current_level,
+					"max_level": upgrade_info.max_level
+				}
+				upgrades.append(upgrade_data)
 
 	return upgrades
 
 func _get_upgrade_category(upgrade_id: String) -> String:
-	"""Mapear upgrade_id a categoría"""
+	"""Mapear upgrade_id a categoría - sistema realista por componentes"""
 	match upgrade_id:
-		"rod":
+		# Rod Components
+		"rod_handle", "rod_blank", "rod_guides":
 			return "rod"
-		"hook":
+		# Hook Components
+		"hook_point", "hook_barb", "hook_bend":
 			return "hook"
-		"line":
+		# Line Components
+		"line_strength", "line_diameter", "line_coating":
 			return "line"
-		"reel", "bait", "zone_multiplier", "fridge":
-			return "boat" # Agrupamos otros upgrades en "boat"
+		# Boat Components
+		"boat_hull", "boat_engine", "boat_sonar", "boat_storage":
+			return "boat"
 		_:
 			return "rod"
 

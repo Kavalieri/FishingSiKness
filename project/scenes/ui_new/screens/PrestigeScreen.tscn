@@ -1,6 +1,6 @@
-[gd_scene load_steps=1 format=3 uid="uid://dxnyqwwv6pnoc"]
+[gd_scene load_steps=2 format=3 uid="uid://dxnyqwwv6pnoc"]
 
-
+[ext_resource type="Script" path="res://src/ui_new/screens/PrestigeScreen.gd" id="1_prestige"]
 [ext_resource type="StyleBox" uid="uid://cwmijfvtxcg4s" path="res://themes/card.tres" id="2_fdt8a"]
 
 [node name="PrestigeScreen" type="Control"]
@@ -8,6 +8,14 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource("1_prestige")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.1, 0.15, 0.95)
 
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -15,6 +23,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_constants/separation = 20
 
 [node name="Header" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -24,6 +33,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "🌟 PRESTIGIO 🌟"
 horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
 
 [node name="Subtitle" type="Label" parent="VBoxContainer/Header"]
 layout_mode = 2

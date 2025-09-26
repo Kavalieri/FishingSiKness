@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "hook_barb"
+name = "Barbilla de Anzuelo"
+description = "Mejora la barbilla para asegurar mejor la captura de peces grandes"
+max_level = 45
+cost_base = 300
+cost_mult = 1.20
+effects = {"rare_fish_chance": 0.025}

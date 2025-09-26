@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "reel"
-name = "Carrete Profesional"
-description = "Carrete de alta calidad que reduce el tiempo entre capturas"
-max_level = 7
+id = "line_strength"
+name = "Resistencia del Sedal"
+description = "Aumenta la resistencia del sedal para peces más grandes"
+max_level = 80
 cost_base = 120
-cost_mult = 1.5
-effects = {"fishing_speed": 0.3}
+cost_mult = 1.17
+effects = {"escape_reduction": 0.02}

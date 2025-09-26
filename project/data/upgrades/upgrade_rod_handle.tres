@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "rod"
-name = "Caña de Pescar"
-description = "Mejora tu caña de pescar para capturar peces más valiosos"
-max_level = 10
+id = "rod_handle"
+name = "Mango de Caña"
+description = "Mejora el mango para mejor agarre y control durante la pesca"
+max_level = 50
 cost_base = 50
-cost_mult = 1.4
-effects = {"fish_value_multiplier": 0.15}
+cost_mult = 1.15
+effects = {"qte_success_bonus": 0.02}

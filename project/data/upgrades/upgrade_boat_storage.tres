@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "boat_storage"
+name = "Almacenamiento del Barco"
+description = "Mejora el sistema de almacenamiento para conservar más peces"
+max_level = 50
+cost_base = 8000
+cost_mult = 1.35
+effects = {"inventory_capacity": 2}

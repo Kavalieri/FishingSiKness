@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1")
-id = "zone_multiplier"
-name = "Mapa Detallado"
-description = "Mapas detallados de zonas aumentan los multiplicadores de precio"
-max_level = 4
+id = "boat_hull"
+name = "Casco del Barco"
+description = "Mejora el casco para mayor estabilidad y acceso a aguas más profundas"
+max_level = 40
 cost_base = 500
-cost_mult = 2.0
-effects = {"zone_multiplier_bonus": 0.2}
+cost_mult = 1.28
+effects = {"zone_multiplier_bonus": 0.1}

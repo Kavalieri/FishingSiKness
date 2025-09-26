@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "boat_engine"
+name = "Motor del Barco"
+description = "Motor más potente para llegar a zonas de pesca más rápido"
+max_level = 60
+cost_base = 1200
+cost_mult = 1.24
+effects = {"fishing_speed": 0.07}
