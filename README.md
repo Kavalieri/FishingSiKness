@@ -460,6 +460,8 @@ copies or substantial portions of the Software.
 
 [⭐ **Star**](https://github.com/Kavalieri/FishingSiKness/stargazers) • [👀 **Watch**](https://github.com/Kavalieri/FishingSiKness/watchers) • [🍴 **Fork**](https://github.com/Kavalieri/FishingSiKness/fork) • [📱 **Discussions**](https://github.com/Kavalieri/FishingSiKness/discussions)
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Kavalieri/FishingSiKness)
+
 ---
 
 *🤖 "Donde la Inteligencia Artificial encuentra la Creatividad Humana"*

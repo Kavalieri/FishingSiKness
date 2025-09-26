@@ -52,14 +52,20 @@ func _setup_initial_state() -> void:
 
 func setup_upgrades(upgrades: Array[Dictionary], money: int, gems: int, stats: Dictionary) -> void:
 	"""Configurar panel con datos de mejoras"""
+	print("[UPGRADESPANEL] setup_upgrades llamado")
+	print("[UPGRADESPANEL] Upgrades recibidos: %d" % upgrades.size())
+	print("[UPGRADESPANEL] Money: %d, Gems: %d" % [money, gems])
+
 	available_upgrades = upgrades
 	player_money = money
 	player_gems = gems
 	player_stats = stats
 
+	print("[UPGRADESPANEL] Actualizando displays...")
 	_update_resources_display()
 	_update_stats_display()
 	_refresh_upgrades_list()
+	print("[UPGRADESPANEL] Setup completado")
 
 func _update_resources_display() -> void:
 	"""Actualizar visualización de recursos"""
@@ -78,10 +84,23 @@ func _format_number(number: int) -> String:
 	"""Formatear números grandes"""
 	if number >= 1000000:
 		return "%.1fM" % (number / 1000000.0)
-	elif number >= 1000:
+	if number >= 1000:
 		return "%.1fK" % (number / 1000.0)
-	else:
-		return str(number)
+	return str(number)
+
+func _format_effect_value(effect: float) -> String:
+	"""Formatear valor de efecto para mostrar en UI"""
+	if effect == 0:
+		return "Sin efecto"
+
+	# Para multiplicadores (valores > 1.0)
+	if effect >= 1.0:
+		if effect == int(effect):
+			return "x%.0f" % effect
+		return "x%.2f" % effect
+
+	# Para porcentajes (valores < 1.0 pero > 0)
+	return "%.1f%%" % (effect * 100)
 
 func _update_category_display() -> void:
 	"""Actualizar visualización de categoría activa"""
@@ -127,37 +146,57 @@ func _create_upgrade_card(upgrade_data: Dictionary) -> Control:
 
 	# Información básica
 	var name = upgrade_data.get("name", "")
-	var description = upgrade_data.get("description", "")
+	var base_description = upgrade_data.get("description", "")
 	var icon = upgrade_data.get("icon", null)
+	var upgrade_id = upgrade_data.get("id", "")
+
+	# Obtener información de efectos del sistema
+	var upgrade_info = UpgradeSystem.get_upgrade_info(upgrade_id)
+	var current_level = upgrade_info.get("current_level", 0)
+	var max_level = upgrade_info.get("max_level", 0)
+	var current_effect = upgrade_info.get("current_effect", 0)
+	var next_effect = upgrade_info.get("next_effect", 0)
+
+	# Crear descripción extendida con efectos
+	var enhanced_description = base_description
+	if current_level > 0:
+		enhanced_description += "\n\n🔹 Nivel actual: %d/%d" % [current_level, max_level]
+		enhanced_description += "\n🔹 Efecto actual: %s" % _format_effect_value(current_effect)
+
+	if current_level < max_level:
+		enhanced_description += "\n🔸 Próximo efecto: %s" % _format_effect_value(next_effect)
+	else:
+		enhanced_description += "\n✨ ¡Nivel máximo alcanzado!"
 
 	# Costo y disponibilidad
 	var cost_money = upgrade_data.get("cost_money", 0)
 	var cost_gems = upgrade_data.get("cost_gems", 0)
-	var is_owned = upgrade_data.get("owned", false)
+	var is_max_level = (current_level >= max_level)
 	var can_afford = _can_afford_upgrade(upgrade_data)
 
 	# Texto del botón de acción
 	var action_text = ""
-	if is_owned:
-		action_text = "Poseído"
+	if is_max_level:
+		action_text = "Máximo"
 	elif cost_gems > 0:
 		action_text = "%d 💎" % cost_gems
 	else:
 		action_text = "%s 💰" % _format_number(cost_money)
 
 	# Configurar tarjeta
-	card.setup_card(name, description, icon, action_text)
+	card.setup_card(name, enhanced_description, icon, action_text)
 
 	# Configurar estado del botón
-	var action_button = card.get_node("MarginContainer/VBoxContainer/ActionButton")
-	if is_owned:
+	var action_button = card.get_node("MarginContainer/HBoxContainer/ButtonsContainer/ActionButton")
+	if is_max_level:
 		action_button.disabled = true
+		action_button.modulate = Color.GREEN * 0.8 # Verde atenuado para máximo
 	elif not can_afford:
 		action_button.disabled = true
 		action_button.modulate = Color.GRAY
 
 	# Conectar señal
-	if not is_owned and can_afford:
+	if not is_max_level and can_afford:
 		card.action_pressed.connect(_on_upgrade_selected.bind(upgrade_data))
 
 	return card

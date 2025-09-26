@@ -24,8 +24,27 @@ func _ready() -> void:
 	if info_button and not info_button.pressed.is_connected(_on_info_pressed):
 		info_button.pressed.connect(_on_info_pressed)
 
-func setup_card(data: Dictionary) -> void:
-	"""Configurar tarjeta con datos"""
+func setup_card(
+	data_or_title,
+	description: String = "",
+	icon_texture = null,
+	action_text: String = ""
+) -> void:
+	"""Configurar tarjeta con datos (soporta Dictionary o parámetros separados)"""
+	var data: Dictionary
+
+	if data_or_title is Dictionary:
+		data = data_or_title
+	else:
+		# Crear Dictionary a partir de parámetros separados
+		data = {
+			"title": str(data_or_title),
+			"description": description,
+			"action_text": action_text
+		}
+		if icon_texture:
+			data["icon_texture"] = icon_texture
+
 	card_data = data
 
 	# Si no estamos en el árbol aún, diferir la configuración
@@ -73,7 +92,10 @@ func _setup_card_deferred(data: Dictionary) -> void:
 		# Ocultar el indicador de especies si no se proporciona
 		fish_count_label.visible = false
 
-	if data.has("icon_path") and data.icon_path != null and data.icon_path != "":
+	# Manejar icono (directo o por ruta)
+	if data.has("icon_texture") and data.icon_texture != null and icon:
+		icon.texture = data.icon_texture
+	elif data.has("icon_path") and data.icon_path != null and data.icon_path != "":
 		var texture = load(str(data.icon_path))
 		if texture and icon:
 			icon.texture = texture

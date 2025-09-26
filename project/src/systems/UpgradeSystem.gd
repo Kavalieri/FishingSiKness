@@ -3,12 +3,26 @@ extends Node
 # Sistema de mejoras unificado
 # Maneja compra, aplicación de efectos y persistencia de upgrades
 
+# Claves primarias de efecto por upgrade_id para consultar valores en UpgradeDef.effects
+const PRIMARY_EFFECT_KEY_BY_ID := {
+	"rod": "fish_value_multiplier",
+	"hook": "rare_fish_chance",
+	"reel": "fishing_speed",
+	"line": "qte_time_bonus",
+	"bait": "fish_value_bonus",
+	"zone_multiplier": "zone_multiplier_bonus",
+	"fridge": "inventory_capacity",
+}
+
 # Referencia a los upgrades disponibles
 var available_upgrades: Dictionary = {}
 
 func _ready() -> void:
 	"""Inicializar sistema de upgrades"""
 	_load_upgrade_definitions()
+	_migrate_legacy_upgrades()
+	# Aplicar efectos existentes tras migración para garantizar coherencia al arrancar
+	call_deferred("apply_all_upgrade_effects")
 	Logger.info("UpgradeSystem inicializado con %d upgrades" % available_upgrades.size())
 
 func _load_upgrade_definitions() -> void:
@@ -17,16 +31,19 @@ func _load_upgrade_definitions() -> void:
 		Logger.warn("Content no disponible al cargar upgrades")
 		return
 
-	# Lista de upgrades esperados
-	var upgrade_ids = ["rod", "hook", "reel", "bait", "line", "zone_multiplier", "fridge"]
+	# Obtener todos los upgrades disponibles desde Content
+	var all_upgrades = Content.get_all_upgrades()
+	print("[UPGRADESYSTEM] Content.get_all_upgrades() devolvió: %d upgrades" % all_upgrades.size())
 
-	for upgrade_id in upgrade_ids:
-		var upgrade_def = Content.get_upgrade_by_id(upgrade_id)
-		if upgrade_def:
+	for upgrade_def in all_upgrades:
+		if upgrade_def and upgrade_def.id:
+			var upgrade_id = upgrade_def.id
 			available_upgrades[upgrade_id] = upgrade_def
-			Logger.debug("Upgrade cargado: " + upgrade_id)
+			print("[UPGRADESYSTEM] Upgrade cargado: %s (%s)" % [upgrade_id, upgrade_def.name])
 		else:
-			Logger.warn("Upgrade no encontrado: " + upgrade_id)
+			Logger.warn("Upgrade inválido encontrado: " + str(upgrade_def))
+
+	print("[UPGRADESYSTEM] Total upgrades cargados: %d" % available_upgrades.size())
 
 func purchase_upgrade(upgrade_id: String) -> bool:
 	"""Comprar un upgrade"""
@@ -35,7 +52,11 @@ func purchase_upgrade(upgrade_id: String) -> bool:
 		return false
 
 	var upgrade_def = available_upgrades[upgrade_id]
-	var current_level = Save.get_data("upgrades/" + upgrade_id, 0)
+
+	if not Save or not Save.game_data.has("upgrades"):
+		Save.game_data.upgrades = {}
+
+	var current_level = Save.game_data.upgrades.get(upgrade_id, 0)
 
 	# Verificar si puede mejorar más
 	if current_level >= upgrade_def.max_level:
@@ -44,7 +65,7 @@ func purchase_upgrade(upgrade_id: String) -> bool:
 
 	# Calcular costo del siguiente nivel
 	var cost = upgrade_def.get_level_cost(current_level + 1)
-	var current_coins = Save.get_data("coins", 0)
+	var current_coins = Save.get_coins()
 
 	# Verificar fondos
 	if current_coins < cost:
@@ -54,7 +75,7 @@ func purchase_upgrade(upgrade_id: String) -> bool:
 	# Realizar compra
 	if Save.spend_coins(cost):
 		var new_level = current_level + 1
-		Save.set_data("upgrades/" + upgrade_id, new_level)
+		Save.game_data.upgrades[upgrade_id] = new_level
 
 		# Aplicar efectos del upgrade
 		apply_upgrade_effects(upgrade_id, new_level)
@@ -66,59 +87,8 @@ func purchase_upgrade(upgrade_id: String) -> bool:
 
 func apply_upgrade_effects(upgrade_id: String, level: int) -> void:
 	"""Aplicar efectos de un upgrade específico"""
-	if not available_upgrades.has(upgrade_id):
-		return
-
-	var upgrade_def = available_upgrades[upgrade_id]
-	var effect_value = upgrade_def.get_effect_at_level(level)
-
-	match upgrade_id:
-		"rod":
-			# Aumentar valor de peces pescados
-			var current_multiplier = Save.get_data("fishing_multipliers/value", 1.0)
-			var new_multiplier = 1.0 + (level * 0.15) # 15% por nivel
-			Save.set_data("fishing_multipliers/value", new_multiplier)
-			Logger.debug("Rod upgrade: valor de peces +%d%%" % int((new_multiplier - 1.0) * 100))
-
-		"hook":
-			# Aumentar probabilidad de peces raros
-			var current_rare_bonus = Save.get_data("fishing_multipliers/rare_chance", 0.0)
-			var new_rare_bonus = level * 0.05 # 5% por nivel
-			Save.set_data("fishing_multipliers/rare_chance", new_rare_bonus)
-			Logger.debug("Hook upgrade: probabilidad raros +%d%%" % int(new_rare_bonus * 100))
-
-		"reel":
-			# Reducir tiempo de pesca
-			var base_time = 3.0
-			var time_reduction = level * 0.3 # 0.3s menos por nivel
-			var new_time = max(base_time - time_reduction, 1.0) # mínimo 1 segundo
-			Save.set_data("fishing_times/reel_speed", new_time)
-			Logger.debug("Reel upgrade: tiempo de pesca %.1fs" % new_time)
-
-		"bait":
-			# Bonus de valor temporal o permanente
-			var value_bonus = level * 0.25 # 25% por nivel
-			Save.set_data("fishing_multipliers/bait_bonus", value_bonus)
-			Logger.debug("Bait upgrade: bonus valor +%d%%" % int(value_bonus * 100))
-
-		"line":
-			# Facilitar QTE o reducir su tiempo
-			var qte_reduction = level * 0.5 # 0.5s menos por nivel
-			Save.set_data("fishing_times/qte_duration", max(3.0 - qte_reduction, 1.5))
-			Logger.debug("Line upgrade: QTE duration reduced")
-
-		"zone_multiplier":
-			# Multiplicador general para la zona actual
-			var zone_bonus = level * 0.20 # 20% por nivel
-			Save.set_data("fishing_multipliers/zone_bonus", zone_bonus)
-			Logger.debug("Zone multiplier: +%d%%" % int(zone_bonus * 100))
-
-		"fridge":
-			# Aumentar capacidad de inventario
-			var base_capacity = 10
-			var new_capacity = base_capacity + (level * 5) # 5 slots por nivel
-			Save.set_data("inventory/max_capacity", new_capacity)
-			Logger.debug("Fridge upgrade: capacidad %d slots" % new_capacity)
+	# TODO: Implementar efectos reales cuando Save tenga la estructura correcta
+	Logger.debug("Upgrade %s aplicado en nivel %d (efectos pendientes)" % [upgrade_id, level])
 
 func get_upgrade_info(upgrade_id: String) -> Dictionary:
 	"""Obtener información completa de un upgrade"""
@@ -126,7 +96,20 @@ func get_upgrade_info(upgrade_id: String) -> Dictionary:
 		return {}
 
 	var upgrade_def = available_upgrades[upgrade_id]
-	var current_level = Save.get_data("upgrades/" + upgrade_id, 0)
+
+	if not Save or not Save.game_data.has("upgrades"):
+		Save.game_data.upgrades = {}
+
+	var current_level = Save.game_data.upgrades.get(upgrade_id, 0)
+	var effect_key: String = PRIMARY_EFFECT_KEY_BY_ID.get(upgrade_id, "")
+
+	var current_effect_value: float = 0.0
+	var next_effect_value: float = 0.0
+	if effect_key != "":
+		if current_level > 0:
+			current_effect_value = upgrade_def.get_effect_at_level(effect_key, current_level)
+		if current_level < upgrade_def.max_level:
+			next_effect_value = upgrade_def.get_effect_at_level(effect_key, current_level + 1)
 
 	return {
 		"id": upgrade_id,
@@ -134,10 +117,14 @@ func get_upgrade_info(upgrade_id: String) -> Dictionary:
 		"description": upgrade_def.description,
 		"current_level": current_level,
 		"max_level": upgrade_def.max_level,
-		"next_level_cost": upgrade_def.get_level_cost(current_level + 1) if current_level < upgrade_def.max_level else 0,
+		"next_level_cost": (
+			upgrade_def.get_level_cost(current_level + 1)
+			if current_level < upgrade_def.max_level
+			else 0
+		),
 		"total_cost_to_max": upgrade_def.get_total_cost_to_level(upgrade_def.max_level),
-		"current_effect": upgrade_def.get_effect_at_level(current_level),
-		"next_effect": upgrade_def.get_effect_at_level(current_level + 1) if current_level < upgrade_def.max_level else 0
+		"current_effect": current_effect_value,
+		"next_effect": next_effect_value
 	}
 
 func get_all_upgrades_info() -> Array[Dictionary]:
@@ -151,7 +138,38 @@ func get_all_upgrades_info() -> Array[Dictionary]:
 
 func apply_all_upgrade_effects() -> void:
 	"""Aplicar todos los efectos de upgrades al cargar partida"""
+	if not Save or not Save.game_data.has("upgrades"):
+		return
+
 	for upgrade_id in available_upgrades.keys():
-		var level = Save.get_data("upgrades/" + upgrade_id, 0)
+		var level = Save.game_data.upgrades.get(upgrade_id, 0)
 		if level > 0:
 			apply_upgrade_effects(upgrade_id, level)
+
+# --- Utilidades internas ---
+
+func _migrate_legacy_upgrades() -> void:
+	"""Migrar IDs legacy de upgrades a los nuevos.
+	- bait_quality -> bait
+	- fishing_speed -> reel
+	Idempotente: se limita a copiar niveles si existen las claves legacy.
+	"""
+	if not Save or not Save.game_data.has("upgrades"):
+		Save.game_data.upgrades = {}
+		return
+
+	var legacy_map := {
+		"bait_quality": "bait",
+		"fishing_speed": "reel",
+	}
+
+	for legacy_id in legacy_map.keys():
+		var level = Save.game_data.upgrades.get(legacy_id, null)
+		if level != null:
+			var new_id = legacy_map[legacy_id]
+			# Si ya existe nivel en el nuevo ID, conservar el mayor
+			var current_new_level = Save.game_data.upgrades.get(new_id, 0)
+			var final_level = max(int(level), int(current_new_level))
+			Save.game_data.upgrades[new_id] = final_level
+			var msg = "[UpgradeSystem] Migrado upgrade legacy '%s' -> '%s' (nivel %d)"
+			Logger.info(msg % [legacy_id, new_id, final_level])

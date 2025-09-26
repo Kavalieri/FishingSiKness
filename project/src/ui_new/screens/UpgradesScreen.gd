@@ -27,17 +27,31 @@ func _setup_upgrades_panel() -> void:
 
 func setup_screen() -> void:
 	"""Configurar pantalla con datos del UpgradeSystem"""
+	print("[UPGRADESSCREEN] setup_screen() llamado")
+	print("[UPGRADESSCREEN] upgrades_panel existe: %s" % (upgrades_panel != null))
+	print("[UPGRADESSCREEN] UpgradeSystem existe: %s" % (UpgradeSystem != null))
+
 	if upgrades_panel and UpgradeSystem:
+		print("[UPGRADESSCREEN] Obteniendo datos de upgrades...")
 		var upgrades_data = _get_upgrades_data()
+		print("[UPGRADESSCREEN] Upgrades obtenidos: %d" % upgrades_data.size())
+
 		var money = Save.get_coins()
 		var gems = Save.get_gems()
 		var stats = _get_player_stats()
 
+		print("[UPGRADESSCREEN] Money: %d, Gems: %d" % [money, gems])
+		print("[UPGRADESSCREEN] Llamando setup_upgrades...")
 		upgrades_panel.setup_upgrades(upgrades_data, money, gems, stats)
+		print("[UPGRADESSCREEN] setup_screen completado")
+	else:
+		print("[UPGRADESSCREEN] ERROR: componentes no disponibles")
 
 func _get_upgrades_data() -> Array[Dictionary]:
 	"""Obtener datos de upgrades del sistema"""
 	var upgrades: Array[Dictionary] = []
+
+	print("[UPGRADESSCREEN] UpgradeSystem.available_upgrades.keys(): %s" % str(UpgradeSystem.available_upgrades.keys()))
 
 	for upgrade_id in UpgradeSystem.available_upgrades.keys():
 		var upgrade_info = UpgradeSystem.get_upgrade_info(upgrade_id)
@@ -79,7 +93,7 @@ func _get_player_stats() -> Dictionary:
 
 	# Aplicar efectos de upgrades
 	for upgrade_id in UpgradeSystem.available_upgrades.keys():
-		var level = Save.get_data("upgrades/" + upgrade_id, 0)
+		var level = Save.game_data.get("upgrades", {}).get(upgrade_id, 0)
 		if level > 0:
 			var upgrade_def = UpgradeSystem.available_upgrades[upgrade_id]
 			match upgrade_id:
