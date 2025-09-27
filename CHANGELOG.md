@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.5-alpha...v0.3.0-alpha) (2025-09-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Sistema de loot tables consolidado a Single Source of Truth
+* migrated from legacy .theme files to official .tres format
+
+### Features
+
+* botón + Información y zonas basadas en CSVs ([5a11bb2](https://github.com/Kavalieri/FishingSiKness/commit/5a11bb281fea4d8f6e4fdc32d2d52b282bc58780))
+* Completar TopBar con distribución en tercios y botón social ([f50ea98](https://github.com/Kavalieri/FishingSiKness/commit/f50ea9874f4d634081cbbeb2dbf7c89fa7c54114))
+* complete pause system implementation and fix critical theme format issue ([b998ce6](https://github.com/Kavalieri/FishingSiKness/commit/b998ce6a0a77feea82dda57002d89885f6684e3e))
+* implement complete zone information popup system ([01333ae](https://github.com/Kavalieri/FishingSiKness/commit/01333aea41a4bcdf6443fc8d6e130989c46c34a8))
+* implementar sistema completo de menú de pausa con UI-BG-GLOBAL ([b2a3a12](https://github.com/Kavalieri/FishingSiKness/commit/b2a3a127430ddf3addfd4818bcc8192621f5bc36))
+* implementar sistema UI fondo único global ([e7c6da7](https://github.com/Kavalieri/FishingSiKness/commit/e7c6da7263a415435ba4abee3e1d99e76d6094c0))
+* profesionalización QTE system y mejoras UI ([d738cf3](https://github.com/Kavalieri/FishingSiKness/commit/d738cf32de5836c951b10354289fc23ffda68096))
+* sistema completo de ventanas flotantes con toggle behavior ([f394e9e](https://github.com/Kavalieri/FishingSiKness/commit/f394e9e58f891424f411dac54382bae1eff6d61e))
+* sistema completo de zonas geográficas realistas con peces del catálogo CSV ([517137e](https://github.com/Kavalieri/FishingSiKness/commit/517137e381330f869ff2c992c1c71171923d6fa0))
+* sistema de versionado automático para builds ([047ecdc](https://github.com/Kavalieri/FishingSiKness/commit/047ecdc4a0717e7336c2fb12e41ee2cc1ad39cd6))
+* TopBar completamente profesionalizada con transparencia y iconos mejorados ([6975a24](https://github.com/Kavalieri/FishingSiKness/commit/6975a249d9e3ea284961a68f999288c3f49f751a))
+
+
+### Bug Fixes
+
+* arregladas pantallas UI y añadido sistema de upgrades completo ([0694fd6](https://github.com/Kavalieri/FishingSiKness/commit/0694fd67a5fb5838d557a28106c789d92d7c9088))
+* bucle jugable funcional - sistema de contenido completamente operativo ([6e9a448](https://github.com/Kavalieri/FishingSiKness/commit/6e9a4485086915236090703bde5b36728c8f9a1c))
+* completar limpieza automática de emojis en todo el proyecto ([d0a1318](https://github.com/Kavalieri/FishingSiKness/commit/d0a131899f46551fdf6a2ffd421ac780d9a67bb6))
+* Corregir botones de mejoras y sistema de prestigio ([9d9d0fa](https://github.com/Kavalieri/FishingSiKness/commit/9d9d0fa8d15480b6be098916dab9e174df70d147))
+* corregir errores de sintaxis y mejorar sistema de debug ([960b2c1](https://github.com/Kavalieri/FishingSiKness/commit/960b2c1782ba91b0b14007c1202eb3420beb0e04))
+* corregir navegación de botones y errores de tipos en BottomBar ([245f91e](https://github.com/Kavalieri/FishingSiKness/commit/245f91eaa8f13836459e3db27f4f5ed92fd4b4d2))
+* establecer UnifiedInventorySystem como fuente única de verdad ([d9e3fd4](https://github.com/Kavalieri/FishingSiKness/commit/d9e3fd4891cfc76572af30dfeef3c19d934654d5))
+* implement unified catches database system with realistic fish generation ([0d1cf9e](https://github.com/Kavalieri/FishingSiKness/commit/0d1cf9eceb3c88c91f088d1b40b512b2888e545f))
+* implementar QTE clasico de pesca con barra en movimiento ([4e75710](https://github.com/Kavalieri/FishingSiKness/commit/4e757101e00a618bf25d5985e0629c630d9bac32))
+* implementar ventana de resultado unificada y desactivar peces de prueba ([9578904](https://github.com/Kavalieri/FishingSiKness/commit/957890490b7576c0a770deb16fff5a4bfc166687))
+* MapScreen UI con tarjetas horizontales y datos correctos ([6d1a417](https://github.com/Kavalieri/FishingSiKness/commit/6d1a417cd219d3dfd9ea193ebff634cca3548a7a))
+* market screen inventory display working - complete navigation system repair ([9b8d29b](https://github.com/Kavalieri/FishingSiKness/commit/9b8d29b47d88991e1f3dbbbae405c8fe475b4f8b))
+* migración sistemática de emojis a imágenes PNG ([9a9cd66](https://github.com/Kavalieri/FishingSiKness/commit/9a9cd666d649f35f06e1a4fbabf809296cde3b6f))
+* profesionalización TopBar UI con iconos y layout mejorado ([6a3b4bd](https://github.com/Kavalieri/FishingSiKness/commit/6a3b4bdedaab65eb23ee3ceb4957b7d76d82ce37))
+* remove all emojis from code for web/mobile compatibility ([fc6fd81](https://github.com/Kavalieri/FishingSiKness/commit/fc6fd81410ef1360f74d19feefe322053d2b28a3))
+* reparar sistema completo de desbloqueo de zonas con botones funcionales ([e5aad84](https://github.com/Kavalieri/FishingSiKness/commit/e5aad845e20c56741dec4850dff6e8cc32d42caf))
+* Reparar TopBar.gd corrompido y mantener iconos 35x35 ([a4548d5](https://github.com/Kavalieri/FishingSiKness/commit/a4548d58684475a29d99957baad5c8bf7ac1ebca))
+* resolver problemas críticos overlay input en sistema de pausa ([ae052ae](https://github.com/Kavalieri/FishingSiKness/commit/ae052aeb6070181c3eac118cdb958ff698c1c51c))
+* restaurar splash screen funcional completa de release anterior ([79f91d3](https://github.com/Kavalieri/FishingSiKness/commit/79f91d3393858e6a7faa72e6c2dc49e3106480d7))
+* restore MapScreen system with realistic zones ([309b53d](https://github.com/Kavalieri/FishingSiKness/commit/309b53dd96a21c676bad539bb51819f8a5b952bb))
+* Sistema de pesca completo ([2e66cfa](https://github.com/Kavalieri/FishingSiKness/commit/2e66cfab546a436d2898fd1750f270c531d1353a))
+* sistema de upgrades completamente funcional ([4bc3cc6](https://github.com/Kavalieri/FishingSiKness/commit/4bc3cc6ecdf628979744bdc03b0da7cf3381ac26))
+
+
+### Code Refactoring
+
+* unificar sistema loot tables eliminando duplicación ([4200517](https://github.com/Kavalieri/FishingSiKness/commit/4200517905d0b1e7d90369b1137ff0b787d4394c))
+
 ## [0.2.5-alpha](https://github.com/Kavalieri/FishingSiKness/compare/v0.2.4-alpha...v0.2.5-alpha) (2025-08-29)
 
 
