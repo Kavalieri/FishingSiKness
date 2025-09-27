@@ -154,20 +154,21 @@ func get_random_fish_for_zone(zone_id: String) -> Dictionary:
 			current_weight += entry.weight
 			if random_roll < current_weight:
 				var fish_def = entry.fish
-				# Generar datos del pez capturado
+				# Solo devolver datos base, FishingScreen calculará el resto
 				var random_size = randf_range(fish_def.size_min, fish_def.size_max)
-				var base_price = fish_def.base_market_value
-				var final_price = int(base_price * zone_def.price_multiplier)
 
 				return {
 					"id": fish_def.id,
 					"name": fish_def.name,
 					"size": random_size,
-					"value": final_price,
+					"base_market_value": fish_def.base_market_value,
 					"rarity": fish_def.rarity,
 					"zone_caught": zone_id,
+					"zone_multiplier": zone_def.price_multiplier,
+					"size_min": fish_def.size_min,
+					"size_max": fish_def.size_max,
 					"timestamp": Time.get_datetime_dict_from_system(),
-					"icon": fish_def.sprite # Incluir el sprite del pez
+					"icon": fish_def.sprite
 				}
 
 	print("[Content] ERROR: No se pudo seleccionar pez en zona: %s" % zone_id)

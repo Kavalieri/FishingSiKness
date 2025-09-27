@@ -9,6 +9,7 @@ const PRIMARY_EFFECT_KEY_BY_ID := {
 	"rod_handle": "qte_success_bonus",
 	"rod_blank": "fish_value_multiplier",
 	"rod_guides": "fishing_speed",
+	"rod_energy": "max_energy_bonus",
 	# Hook Components
 	"hook_point": "escape_reduction",
 	"hook_barb": "rare_fish_chance",
@@ -142,7 +143,13 @@ func apply_upgrade_effects(upgrade_id: String, level: int) -> void:
 		"zone_multiplier_bonus":
 			Save.game_data.zone_multiplier_bonus = effect_value
 		"inventory_capacity":
-			Save.game_data.max_inventory += int(effect_value)
+			if UnifiedInventorySystem:
+				var fishing_container = UnifiedInventorySystem.get_fishing_container()
+				if fishing_container:
+					fishing_container.capacity += int(effect_value)
+		"max_energy_bonus":
+			if EnergySystem:
+				EnergySystem.increase_max_energy(int(effect_value))
 	
 	Logger.info("Upgrade %s nivel %d aplicado: %s = %s" % [upgrade_id, level, effect_key, effect_value])
 

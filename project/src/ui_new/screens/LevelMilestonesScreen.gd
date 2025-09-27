@@ -49,51 +49,54 @@ func _populate_milestones() -> void:
 
 func _create_milestone_section(level: int, milestones: Array, unlocked: bool) -> void:
 	"""Crear sección de milestone para un nivel"""
-	var section = VBoxContainer.new()
-	milestones_container.add_child(section)
+	# Panel con fondo
+	var panel = PanelContainer.new()
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.1, 0.1, 0.1, 0.8) if unlocked else Color(0.05, 0.05, 0.05, 0.6)
+	panel_style.border_width_left = 2
+	panel_style.border_width_right = 2
+	panel_style.border_width_top = 2
+	panel_style.border_width_bottom = 2
+	panel_style.border_color = Color.GREEN if unlocked else Color.GRAY
+	panel_style.corner_radius_top_left = 4
+	panel_style.corner_radius_top_right = 4
+	panel_style.corner_radius_bottom_left = 4
+	panel_style.corner_radius_bottom_right = 4
+	panel.add_theme_stylebox_override("panel", panel_style)
+	panel.custom_minimum_size.y = 60
+	milestones_container.add_child(panel)
 	
-	# Header del nivel
-	var header = HBoxContainer.new()
-	section.add_child(header)
+	var content = HBoxContainer.new()
+	content.add_theme_constant_override("separation", 12)
+	panel.add_child(content)
 	
+	# Icono de estado
 	var status_icon = Label.new()
-	status_icon.text = "OK" if unlocked else "LOCK"
-	status_icon.add_theme_font_size_override("font_size", 16)
+	status_icon.text = "✓" if unlocked else "🔒"
+	status_icon.add_theme_font_size_override("font_size", 24)
 	status_icon.add_theme_color_override("font_color", Color.GREEN if unlocked else Color.GRAY)
-	header.add_child(status_icon)
+	content.add_child(status_icon)
+	
+	# Información del milestone
+	var info_vbox = VBoxContainer.new()
+	info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_child(info_vbox)
 	
 	var level_title = Label.new()
 	level_title.text = "Nivel %d" % level
 	level_title.add_theme_font_size_override("font_size", 18)
-	level_title.modulate = Color.WHITE if unlocked else Color.GRAY
-	header.add_child(level_title)
+	level_title.add_theme_color_override("font_color", Color.WHITE if unlocked else Color.GRAY)
+	info_vbox.add_child(level_title)
 	
-	# Milestone del nivel (Experience usa un milestone por nivel)
+	# Descripción del milestone
 	for milestone in milestones:
-		var milestone_item = HBoxContainer.new()
-		section.add_child(milestone_item)
-		
-		var bullet = Label.new()
-		bullet.text = "  - "
-		bullet.modulate = Color.WHITE if unlocked else Color.GRAY
-		milestone_item.add_child(bullet)
-		
 		var description = Label.new()
 		description.text = milestone.get("desc", "Milestone desbloqueado")
-		description.modulate = Color.WHITE if unlocked else Color.GRAY
-		description.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		milestone_item.add_child(description)
-		
-		if milestone.has("value"):
-			var value_label = Label.new()
-			var value_text = "+" + str(milestone.value)
-			if milestone.type == "coins_multiplier":
-				value_text = "+" + str(milestone.value * 100) + "%"
-			value_label.text = value_text
-			value_label.modulate = Color.LIGHT_GREEN if unlocked else Color.GRAY
-			milestone_item.add_child(value_label)
+		description.add_theme_font_size_override("font_size", 14)
+		description.add_theme_color_override("font_color", Color.LIGHT_GRAY if unlocked else Color.GRAY)
+		info_vbox.add_child(description)
 	
-	# Separador
-	var separator = HSeparator.new()
-	separator.modulate = Color(1, 1, 1, 0.3)
-	section.add_child(separator)
+	# Espaciado
+	var spacer = Control.new()
+	spacer.custom_minimum_size.y = 8
+	milestones_container.add_child(spacer)

@@ -13,7 +13,7 @@ var containers := {}
 const CONTAINER_CONFIG := {
 	"fishing": {
 		"name": "Pesca",
-		"capacity": 100,
+		"capacity": 20,
 		"item_types": ["fish"],
 		"allow_overflow": false
 	},
@@ -363,60 +363,70 @@ func print_inventory_debug():
 # === MÉTODOS DE GUARDADO Y CARGA ===
 
 func get_inventory_for_saving() -> Array:
-	"""Obtener inventario en formato compatible para guardado"""
+	"""Obtener inventario desde la base de datos de capturas"""
+	if not Save:
+		return []
+	
+	# El inventario ahora se obtiene de la base de datos de capturas
+	var inventory_catches = Save.get_catches_in_inventory()
 	var save_data = []
-	var fishing_container = get_fishing_container()
-
-	if not fishing_container:
-		print("[UnifiedInventorySystem] ADVERTENCIA: Contenedor de pesca no disponible para guardado")
-		return save_data
-
-	for item_instance in fishing_container["items"]:
-		var fish_data = item_instance.to_fish_data()
-		if not fish_data.is_empty():
-			save_data.append(fish_data)
-
-	print("[UnifiedInventorySystem] Inventario preparado para guardado: %d items" % save_data.size())
+	
+	for catch_entry in inventory_catches:
+		# Convertir entrada de BD a formato de fish_data
+		var fish_data = {
+			"id": catch_entry.get("fish_id", "unknown"),
+			"name": catch_entry.get("fish_name", "Pez"),
+			"size": catch_entry.get("size", 0.0),
+			"weight": catch_entry.get("weight", 0.0),
+			"value": catch_entry.get("value", 0),
+			"rarity": catch_entry.get("rarity", "común"),
+			"zone_caught": catch_entry.get("zone_caught", "desconocido"),
+			"catch_id": catch_entry.get("id", "")
+		}
+		save_data.append(fish_data)
+	
+	print("[UnifiedInventorySystem] Inventario desde BD: %d items" % save_data.size())
 	return save_data
 
 func load_from_save(inventory_data: Array):
 	"""Cargar inventario desde datos guardados"""
-	# Asegurar inicialización con debug mejorado
 	_ensure_initialized()
 
 	print("[UnifiedInventorySystem] Cargando desde save: %d items" % inventory_data.size())
-	print("[UnifiedInventorySystem] Contenedores disponibles: %s" % str(containers.keys()))
 
 	var fishing_container = get_fishing_container()
 	if not fishing_container:
-		print("[UnifiedInventorySystem] ERROR: No se pudo cargar - contenedor de pesca no disponible")
-		print("[UnifiedInventorySystem] DEBUG: containers = %s" % str(containers))
-		print("[UnifiedInventorySystem] DEBUG: _initialized = %s" % str(_initialized))
-		# Reintentar inicialización si falló
-		_initialize_system()
-		fishing_container = get_fishing_container()
-		if not fishing_container:
-			print("[UnifiedInventorySystem] FATAL: Falló reinicialización - omitiendo carga")
-			return
+		print("[UnifiedInventorySystem] ERROR: Contenedor de pesca no disponible")
+		return
 
 	# Limpiar contenedor actual
 	fishing_container["items"].clear()
 
-	# Cargar items
-	var loaded_count = 0
-	for fish_data in inventory_data:
-		var item_instance = ItemInstance.new()
-		item_instance.from_fish_data(fish_data)
+	# Cargar desde la base de datos de capturas en lugar del array legacy
+	if Save:
+		var catches_in_inventory = Save.get_catches_in_inventory()
+		print("[UnifiedInventorySystem] Cargando %d capturas desde BD" % catches_in_inventory.size())
+		
+		for catch_entry in catches_in_inventory:
+			var item_instance = ItemInstance.new()
+			# Crear fish_data desde la entrada de BD
+			var fish_data = {
+				"id": catch_entry.get("fish_id", "unknown"),
+				"name": catch_entry.get("fish_name", "Pez"),
+				"size": catch_entry.get("size", 0.0),
+				"weight": catch_entry.get("weight", 0.0),
+				"value": catch_entry.get("value", 0),
+				"rarity": catch_entry.get("rarity", "común"),
+				"zone_caught": catch_entry.get("zone_caught", "desconocido")
+			}
+			item_instance.from_fish_data(fish_data)
+			item_instance.instance_data["catch_id"] = catch_entry.get("id", "")
+			
+			if add_item(item_instance, "fishing"):
+				print("[UnifiedInventorySystem] Cargado desde BD: %s" % catch_entry.get("fish_name"))
 
-		if add_item(item_instance, "fishing"):
-			loaded_count += 1
-
-	print("[UnifiedInventorySystem] Cargados %d items del save" % loaded_count)
 	inventory_updated.emit("fishing")
-
-	# MODO PRODUCCIÓN: No generar peces automáticamente
-	if loaded_count == 0:
-		print("[UnifiedInventorySystem] Inventario vacío - listo para capturar peces reales")
+	print("[UnifiedInventorySystem] Inventario cargado desde base de datos")
 
 func clear_all_containers():
 	"""Limpiar todos los contenedores"""
@@ -512,9 +522,14 @@ func sell_item(item_instance: ItemInstance) -> bool:
 		return false
 
 	var value = item_instance.get_market_value()
+	var catch_id = item_instance.instance_data.get("catch_id", "")
+	
 	if remove_item(item_instance, "fishing"):
 		if Save:
 			Save.add_coins(value)
+			# Marcar como vendido en la base de datos
+			if catch_id != "":
+				Save.mark_catch_as_sold(catch_id, value)
 			print("[UnifiedInventorySystem] Vendido: %s por %d monedas" % [item_instance.get_display_name(), value])
 		return true
 	return false

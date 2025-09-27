@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/UpgradeDef.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "rod_energy"
+name = "Resistencia del Pescador"
+description = "Mejora tu resistencia para realizar más lanzamientos consecutivos"
+max_level = 20
+cost_base = 100
+cost_mult = 1.25
+effects = {"max_energy_bonus": 1}

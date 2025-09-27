@@ -72,7 +72,7 @@ var game_data := {
 		"sfx": 0.8,
 		"music": 0.4
 	},
-	"catch_history": [] # Historial de capturas recientes
+	"catches_database": [] # Base de datos unificada de todas las capturas
 }
 
 func _ready():
@@ -458,7 +458,7 @@ func reset_to_default():
 			"sfx": 0.8,
 			"music": 0.4
 		},
-		"catch_history": []
+		"catches_database": []
 	}
 
 	# Limpiar también el inventario del sistema
@@ -471,73 +471,153 @@ func reset_to_default():
 	data_loaded.emit(current_save_slot)
 
 
-# ========== HISTORIAL DE CAPTURAS ==========
+# ========== BASE DE DATOS DE CAPTURAS ==========
 
-func add_catch_to_history(fish_data: Dictionary) -> void:
-	"""Agregar captura al historial"""
-	if not game_data.has("catch_history"):
-		game_data["catch_history"] = []
+func add_catch_to_database(fish_data: Dictionary) -> String:
+	"""Agregar captura a la base de datos y retornar ID único"""
+	print("[Save] === AGREGANDO CAPTURA A BD ===")
+	print("[Save] Fish data recibido: %s" % str(fish_data))
+	
+	if not game_data.has("catches_database"):
+		game_data["catches_database"] = []
+		print("[Save] Inicializando catches_database")
 
-	# Crear entrada del historial
+	# Generar ID único para la captura
+	var catch_id = "catch_%d_%d" % [Time.get_unix_time_from_system(), randi()]
+
+	# Crear entrada completa en la base de datos
 	var catch_entry = {
-		"name": fish_data.get("name", "Pez Desconocido"),
-		"id": fish_data.get("id", "unknown"),
+		"id": catch_id,
+		"fish_name": fish_data.get("name", "Pez Desconocido"),
+		"fish_id": fish_data.get("id", "unknown"),
 		"size": fish_data.get("size", 0.0),
+		"weight": fish_data.get("weight", 0.0),
 		"value": fish_data.get("value", 0),
 		"rarity": fish_data.get("rarity", "común"),
 		"zone_caught": fish_data.get("zone_caught", "desconocido"),
-		"timestamp": Time.get_datetime_dict_from_system(),
-		"icon": fish_data.get("icon", null) # Guardar referencia al icono
+		"timestamp": Time.get_unix_time_from_system(),
+		"date_caught": Time.get_datetime_dict_from_system(),
+		"is_sold": false,
+		"sold_timestamp": 0,
+		"sold_price": 0,
+		"in_inventory": true
 	}
 
-	# Agregar al principio del array (más reciente primero)
-	game_data["catch_history"].push_front(catch_entry)
+	print("[Save] Entrada creada: %s" % str(catch_entry))
 
-	# Limitar a las últimas 50 capturas
-	if game_data["catch_history"].size() > 50:
-		game_data["catch_history"] = game_data["catch_history"].slice(0, 50)
+	# Agregar al principio del array (más reciente primero)
+	game_data["catches_database"].push_front(catch_entry)
+	print("[Save] Total capturas en BD: %d" % game_data["catches_database"].size())
 
 	# Emitir señal de cambio
 	inventory_changed.emit()
 
-	print("📊 [Save] Captura agregada al historial: %s" % fish_data.get("name", "Unknown"))
+	print("[Save] Captura agregada exitosamente: %s (ID: %s)" % [fish_data.get("name", "Unknown"), catch_id])
+	return catch_id
 
-func get_catch_history(max_entries: int = 20) -> Array[Dictionary]:
-	"""Obtener historial de capturas limitado"""
-	if not game_data.has("catch_history"):
+func mark_catch_as_sold(catch_id: String, sold_price: int) -> bool:
+	"""Marcar captura como vendida"""
+	if not game_data.has("catches_database"):
+		return false
+
+	for catch_entry in game_data["catches_database"]:
+		if catch_entry.get("id") == catch_id:
+			catch_entry["is_sold"] = true
+			catch_entry["sold_timestamp"] = Time.get_unix_time_from_system()
+			catch_entry["sold_price"] = sold_price
+			catch_entry["in_inventory"] = false
+			print("📊 [Save] Captura marcada como vendida: %s por %d" % [catch_entry.get("fish_name"), sold_price])
+			return true
+
+	return false
+
+func get_catches_in_inventory() -> Array[Dictionary]:
+	"""Obtener solo capturas que están en inventario (no vendidas)"""
+	print("[Save] === OBTENIENDO CAPTURAS EN INVENTARIO ===")
+	
+	if not game_data.has("catches_database"):
+		print("[Save] No existe catches_database")
 		return []
 
-	var history = game_data["catch_history"]
-	if max_entries > 0 and history.size() > max_entries:
-		return history.slice(0, max_entries)
+	print("[Save] Total capturas en BD: %d" % game_data["catches_database"].size())
+	
+	var inventory_catches = []
+	for catch_entry in game_data["catches_database"]:
+		var is_sold = catch_entry.get("is_sold", false)
+		var in_inventory = catch_entry.get("in_inventory", true)
+		print("[Save] Captura: %s | Vendido: %s | En inventario: %s" % [catch_entry.get("fish_name"), is_sold, in_inventory])
+		
+		if in_inventory and not is_sold:
+			inventory_catches.append(catch_entry)
+			print("[Save] -> Añadida al inventario")
+		else:
+			print("[Save] -> Excluida del inventario")
 
-	return history
+	print("[Save] Capturas en inventario: %d" % inventory_catches.size())
+	return inventory_catches
+
+func get_recent_catches(max_entries: int = 20) -> Array[Dictionary]:
+	"""Obtener capturas recientes (todas, vendidas o no)"""
+	if not game_data.has("catches_database"):
+		return []
+
+	var database = game_data["catches_database"]
+	if max_entries > 0 and database.size() > max_entries:
+		return database.slice(0, max_entries)
+
+	return database
+
+func get_catch_by_id(catch_id: String) -> Dictionary:
+	"""Obtener captura específica por ID"""
+	if not game_data.has("catches_database"):
+		return {}
+
+	for catch_entry in game_data["catches_database"]:
+		if catch_entry.get("id") == catch_id:
+			return catch_entry
+
+	return {}
 
 func get_catch_stats() -> Dictionary:
-	"""Obtener estadísticas de capturas"""
-	if not game_data.has("catch_history"):
-		return {"total_catches": 0, "total_value": 0, "most_common_fish": ""}
+	"""Obtener estadísticas completas de capturas"""
+	if not game_data.has("catches_database"):
+		return {"total_catches": 0, "total_value_caught": 0, "total_value_sold": 0, "most_common_fish": ""}
 
-	var history = game_data["catch_history"]
+	var database = game_data["catches_database"]
 	var stats = {
-		"total_catches": history.size(),
-		"total_value": 0,
+		"total_catches": database.size(),
+		"total_value_caught": 0,
+		"total_value_sold": 0,
+		"catches_sold": 0,
+		"catches_in_inventory": 0,
 		"fish_counts": {},
 		"most_common_fish": "",
-		"rarity_counts": {}
+		"rarity_counts": {},
+		"zone_counts": {}
 	}
 
-	for catch_entry in history:
-		# Sumar valor total
-		stats["total_value"] += catch_entry.get("value", 0)
+	for catch_entry in database:
+		# Sumar valor capturado
+		stats["total_value_caught"] += catch_entry.get("value", 0)
+
+		# Estadísticas de venta
+		if catch_entry.get("is_sold", false):
+			stats["catches_sold"] += 1
+			stats["total_value_sold"] += catch_entry.get("sold_price", 0)
+		else:
+			stats["catches_in_inventory"] += 1
 
 		# Contar peces por nombre
-		var fish_name = catch_entry.get("name", "Desconocido")
+		var fish_name = catch_entry.get("fish_name", "Desconocido")
 		stats["fish_counts"][fish_name] = stats["fish_counts"].get(fish_name, 0) + 1
 
 		# Contar por rareza
 		var rarity = catch_entry.get("rarity", "común")
 		stats["rarity_counts"][rarity] = stats["rarity_counts"].get(rarity, 0) + 1
+
+		# Contar por zona
+		var zone = catch_entry.get("zone_caught", "desconocido")
+		stats["zone_counts"][zone] = stats["zone_counts"].get(zone, 0) + 1
 
 	# Encontrar pez más común
 	var max_count = 0
@@ -547,3 +627,39 @@ func get_catch_stats() -> Dictionary:
 			stats["most_common_fish"] = fish_name
 
 	return stats
+
+# Método de compatibilidad
+func add_catch_to_history(fish_data: Dictionary) -> void:
+	"""Método de compatibilidad - redirige a add_catch_to_database"""
+	add_catch_to_database(fish_data)
+
+func get_catch_history(max_entries: int = 20) -> Array[Dictionary]:
+	"""Método de compatibilidad - redirige a get_recent_catches"""
+	return get_recent_catches(max_entries)
+
+# ========== FUNCIONES DE MILESTONE ==========
+
+func add_milestone_inventory(bonus: int) -> void:
+	"""Añadir bonus de inventario por milestone"""
+	game_data["milestone_bonuses"]["inventory_capacity"] += bonus
+	print("[Save] Milestone: +%d inventario (total: %d)" % [bonus, game_data["milestone_bonuses"]["inventory_capacity"]])
+
+func add_milestone_coins_multiplier(bonus: float) -> void:
+	"""Añadir multiplicador de monedas por milestone"""
+	game_data["milestone_bonuses"]["coins_multiplier"] += bonus
+	print("[Save] Milestone: +%.1f%% monedas (total: %.1f%%)" % [bonus * 100, game_data["milestone_bonuses"]["coins_multiplier"] * 100])
+
+func add_milestone_qte_time(bonus: float) -> void:
+	"""Añadir tiempo extra de QTE por milestone"""
+	game_data["milestone_bonuses"]["qte_time_bonus"] += bonus
+	print("[Save] Milestone: +%.1fs QTE (total: %.1fs)" % [bonus, game_data["milestone_bonuses"]["qte_time_bonus"]])
+
+func add_milestone_rare_chance(bonus: float) -> void:
+	"""Añadir probabilidad de peces raros por milestone"""
+	game_data["milestone_bonuses"]["rare_fish_chance"] += bonus
+	print("[Save] Milestone: +%.1f%% peces raros (total: %.1f%%)" % [bonus * 100, game_data["milestone_bonuses"]["rare_fish_chance"] * 100])
+
+func unlock_prestige() -> void:
+	"""Desbloquear sistema de prestigio"""
+	game_data["prestige_unlocked"] = true
+	print("[Save] Milestone: Prestigio desbloqueado")

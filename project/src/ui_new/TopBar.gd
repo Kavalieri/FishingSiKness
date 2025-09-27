@@ -20,6 +20,8 @@ signal button_pressed(button_type: String)
 @onready var level_label: Label = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/LevelLabel
 @onready var value_label: Label = $VBoxContainer/MarginContainer/ContentContainer/BottomRow/MarginContainer/XPProgress/ValueLabel
 
+
+
 func _ready() -> void:
 	print("[TopBar] _ready() called")
 	_connect_buttons()
@@ -56,9 +58,108 @@ func _on_pause_button_pressed() -> void:
 		button_pressed.emit("pause")
 
 func _on_xp_progress_input(event: InputEvent) -> void:
-	"""Manejar click en barra XP (opcional según especificación)"""
-	if event is InputEventMouseButton and event.pressed:
-		button_pressed.emit("xp")
+	"""Manejar click en barra XP - abrir ventana de milestones"""
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_show_milestones_window()
+
+func _show_milestones_window() -> void:
+	"""Mostrar ventana de milestones simple"""
+	var dialog = AcceptDialog.new()
+	dialog.title = "Milestones de Nivel"
+	dialog.size = Vector2i(500, 600)
+	
+	# Crear contenido
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	
+	# Info actual
+	if Experience:
+		var info_label = Label.new()
+		var progress = Experience.get_xp_progress()
+		info_label.text = "Nivel Actual: %d\nXP: %d / %d para siguiente nivel" % [
+			Experience.current_level,
+			progress.current_xp,
+			progress.required_xp
+		]
+		info_label.add_theme_font_size_override("font_size", 16)
+		vbox.add_child(info_label)
+		
+		var separator = HSeparator.new()
+		vbox.add_child(separator)
+		
+		# Milestones
+		var scroll = ScrollContainer.new()
+		scroll.custom_minimum_size.y = 400
+		vbox.add_child(scroll)
+		
+		var milestones_vbox = VBoxContainer.new()
+		scroll.add_child(milestones_vbox)
+		
+		# Mostrar milestones
+		var milestone_levels = Experience.milestones.keys()
+		milestone_levels.sort()
+		
+		for level in milestone_levels:
+			var milestone = Experience.milestones[level]
+			var unlocked = level <= Experience.current_level
+			
+			var panel = PanelContainer.new()
+			var style = StyleBoxFlat.new()
+			style.bg_color = Color(0.1, 0.1, 0.1, 0.8) if unlocked else Color(0.05, 0.05, 0.05, 0.6)
+			style.border_width_left = 2
+			style.border_color = Color.GREEN if unlocked else Color.GRAY
+			style.corner_radius_top_left = 4
+			style.corner_radius_top_right = 4
+			style.corner_radius_bottom_left = 4
+			style.corner_radius_bottom_right = 4
+			panel.add_theme_stylebox_override("panel", style)
+			
+			var hbox = HBoxContainer.new()
+			hbox.add_theme_constant_override("separation", 12)
+			panel.add_child(hbox)
+			
+			var icon = Label.new()
+			icon.text = "✓" if unlocked else "🔒"
+			icon.add_theme_font_size_override("font_size", 20)
+			icon.add_theme_color_override("font_color", Color.GREEN if unlocked else Color.GRAY)
+			hbox.add_child(icon)
+			
+			var info = VBoxContainer.new()
+			info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			hbox.add_child(info)
+			
+			var title = Label.new()
+			var required_xp = Experience.get_xp_for_level(level)
+			title.text = "Nivel %d (XP necesaria: %d)" % [level, required_xp]
+			title.add_theme_font_size_override("font_size", 16)
+			title.add_theme_color_override("font_color", Color.WHITE if unlocked else Color.GRAY)
+			info.add_child(title)
+			
+			var desc = Label.new()
+			desc.text = milestone.get("desc", "Milestone")
+			desc.add_theme_font_size_override("font_size", 14)
+			desc.add_theme_color_override("font_color", Color.LIGHT_GRAY if unlocked else Color.GRAY)
+			info.add_child(desc)
+			
+			milestones_vbox.add_child(panel)
+			
+			# Espaciado
+			var spacer = Control.new()
+			spacer.custom_minimum_size.y = 4
+			milestones_vbox.add_child(spacer)
+	
+	# Agregar contenido a la ventana
+	dialog.add_child(vbox)
+	vbox.anchor_right = 1.0
+	vbox.anchor_bottom = 1.0
+	vbox.offset_left = 8
+	vbox.offset_top = 8
+	vbox.offset_right = -8
+	vbox.offset_bottom = -50
+	
+	get_tree().current_scene.add_child(dialog)
+	dialog.popup_centered()
+	dialog.confirmed.connect(func(): dialog.queue_free())
 
 func _sync_from_autoloads() -> void:
 	"""Sincronizar datos desde autoloads"""
@@ -71,10 +172,12 @@ func _sync_from_autoloads() -> void:
 
 	if Experience:
 		Experience.level_up.connect(_on_level_up)
-		if Experience.has_signal("experience_changed"):
-			Experience.experience_changed.connect(_on_experience_changed)
+		Experience.experience_changed.connect(_on_experience_changed)
+		print("[TopBar] Conectado a Experience system")
 		# Actualizar display inicial
 		call_deferred("_update_xp_display")
+	
+
 
 func _on_data_loaded(_slot: int) -> void:
 	"""Actualizar cuando se cargan datos"""
@@ -95,29 +198,17 @@ func set_zone(zone_name: String) -> void:
 
 func _update_xp_display() -> void:
 	"""Actualizar barra de experiencia"""
-	if not Save:
-		print("[TopBar] Save no disponible")
+	if not Experience:
+		print("[TopBar] Experience no disponible")
 		return
 
-	# Calcular nivel directamente desde upgrades si no hay XP
-	var level = Save.game_data.get("level", 1)
-	var experience = Save.game_data.get("experience", 0)
+	var level = Experience.current_level
+	var experience = Experience.current_xp
 	
-	if experience == 0 and Save.game_data.has("upgrades"):
-		var total_upgrade_levels = 0
-		for upgrade_id in Save.game_data.upgrades:
-			total_upgrade_levels += Save.game_data.upgrades[upgrade_id]
-		
-		if total_upgrade_levels > 0:
-			experience = total_upgrade_levels * 10
-			level = max(1, int(sqrt(experience / 100.0)) + 1)
-			print("[TopBar] Nivel calculado: %d upgrades = %d XP = nivel %d" % [total_upgrade_levels, experience, level])
-
-	# Calcular progreso hacia siguiente nivel
-	var next_level_xp = (level * level) * 100
-	var current_level_xp = ((level - 1) * (level - 1)) * 100
-	var progress_xp = experience - current_level_xp
-	var required_xp = next_level_xp - current_level_xp
+	# Obtener progreso desde Experience
+	var progress_data = Experience.get_xp_progress()
+	var progress_xp = progress_data.current_xp
+	var required_xp = progress_data.required_xp
 	
 	xp_progress.max_value = required_xp
 	xp_progress.value = progress_xp
@@ -125,16 +216,19 @@ func _update_xp_display() -> void:
 	level_label.text = "LVL %d" % level
 	value_label.text = "%d / %d" % [progress_xp, required_xp]
 	
-	print("[TopBar] XP actualizada: Nivel %d, Progreso %d/%d" % [level, progress_xp, required_xp])
+	print("[TopBar] XP actualizada: Nivel %d, XP total %d, Progreso %d/%d" % [level, experience, progress_xp, required_xp])
 
 func _on_level_up(new_level: int) -> void:
 	"""Manejar subida de nivel con animación"""
 	_update_xp_display()
 	# TODO: Añadir animación/efecto visual de level up
 
-func _on_experience_changed(new_xp: int) -> void:
+func _on_experience_changed(new_xp: int, new_level: int) -> void:
 	"""Manejar cambio de experiencia"""
+	print("[TopBar] Experience changed: XP=%d, Level=%d" % [new_xp, new_level])
 	_update_xp_display()
+
+
 
 func _format_currency(amount: int) -> String:
 	"""Formatear moneda con abreviaciones (1.2K, 3.4M)"""

@@ -97,16 +97,17 @@ func _ready() -> void:
 
 func setup_market_screen() -> void:
 	"""Método llamado por CentralHost para configurar la pantalla"""
-	print("[MARKET] setup_market_screen() llamado")
-	print("[MARKET] UnifiedInventorySystem disponible: %s" % (UnifiedInventorySystem != null))
-	if UnifiedInventorySystem:
-		var fishing_container = UnifiedInventorySystem.get_fishing_container()
-		if fishing_container:
-			print("[MARKET] Inventario de pesca tiene %d items" % fishing_container.items.size())
+	print("[MARKET] === CONFIGURANDO MARKET SCREEN ===")
+	print("[MARKET] Save disponible: %s" % (Save != null))
+	if Save:
+		print("[MARKET] game_data disponible: %s" % (Save.game_data != null))
+		if Save.game_data and Save.game_data.has("catches_database"):
+			print("[MARKET] catches_database existe con %d entradas" % Save.game_data["catches_database"].size())
 		else:
-			print("[MARKET] ERROR: No se pudo obtener fishing_container")
-	else:
-		print("[MARKET] ERROR: UnifiedInventorySystem no disponible")
+			print("[MARKET] catches_database NO existe")
+	
+	# Esperar un frame para asegurar que Save esté listo
+	await get_tree().process_frame
 	_refresh_market_view()
 	print("[MARKET] Pantalla de mercado configurada.")
 
@@ -139,25 +140,44 @@ func _display_inventory_items() -> void:
 	for child in items_container.get_children():
 		child.queue_free()
 
-	if not UnifiedInventorySystem:
-		print("[MARKET] ERROR: UnifiedInventorySystem no disponible")
-		return
-
-	var fishing_container = UnifiedInventorySystem.get_fishing_container()
-	if not fishing_container:
-		print("[MARKET] ERROR: No se pudo obtener fishing_container")
-		return
-
-	if fishing_container.items.is_empty():
-		print("[MARKET] Inventario de pesca vacío.")
+	# Obtener capturas desde Save directamente
+	if not Save or not Save.game_data.has("catches_database"):
+		print("[MARKET] No hay datos de capturas")
 		_show_empty_inventory_message()
 		return
 
-	# Aplicar filtros
+	# Filtrar capturas no vendidas
+	var available_catches = []
+	for catch_entry in Save.game_data["catches_database"]:
+		if not catch_entry.get("is_sold", false) and catch_entry.get("in_inventory", true):
+			available_catches.append(catch_entry)
+
+	print("[MARKET] Capturas disponibles: %d" % available_catches.size())
+
+	if available_catches.is_empty():
+		print("[MARKET] Inventario vacío.")
+		_show_empty_inventory_message()
+		return
+
+	# Crear ItemInstance desde cada captura y usar tarjetas existentes
 	var filtered_items: Array[ItemInstance] = []
-	for item in fishing_container.items:
-		if _item_passes_filters(item):
-			filtered_items.append(item)
+	for catch_entry in available_catches:
+		var item_instance = ItemInstance.new()
+		# Crear fish_data desde catch_entry
+		var fish_data = {
+			"id": catch_entry.get("fish_id", "unknown"),
+			"name": catch_entry.get("fish_name", "Pez"),
+			"size": catch_entry.get("size", 0.0),
+			"weight": catch_entry.get("weight", 0.0),
+			"value": catch_entry.get("value", 0),
+			"rarity": catch_entry.get("rarity", "común"),
+			"zone_caught": catch_entry.get("zone_caught", "desconocido")
+		}
+		item_instance.from_fish_data(fish_data)
+		item_instance.instance_data["catch_id"] = catch_entry.get("id", "")
+		
+		if _item_passes_filters(item_instance):
+			filtered_items.append(item_instance)
 	
 	if filtered_items.is_empty():
 		print("[MARKET] No hay items que pasen los filtros actuales.")
@@ -167,14 +187,14 @@ func _display_inventory_items() -> void:
 	# Ordenar items
 	filtered_items = _sort_items(filtered_items)
 	
-	print("[MARKET] Mostrando %d peces (de %d total) después de filtros." % [filtered_items.size(), fishing_container.items.size()])
+	print("[MARKET] Mostrando %d peces (de %d total) después de filtros." % [filtered_items.size(), available_catches.size()])
 	
-	# Crear tarjetas para items filtrados
+	# Usar las tarjetas existentes
 	for item_instance in filtered_items:
 		_create_item_card(item_instance)
 	
 	# Actualizar contador de inventario
-	_update_inventory_counter(filtered_items.size(), fishing_container.items.size())
+	_update_inventory_counter(filtered_items.size(), available_catches.size())
 	print("[MARKET] Items del inventario mostrados correctamente")
 
 func _show_empty_inventory_message() -> void:
@@ -352,21 +372,29 @@ func _create_item_card(item: ItemInstance) -> void:
 	zone_icon.text = "🗺️"
 	stats_grid.add_child(zone_icon)
 	var zone_label = Label.new()
-	zone_label.text = item.instance_data.get("capture_zone_id", "Desconocida")
+	var zone_id = item.instance_data.get("capture_zone_id", "desconocida")
+	zone_label.text = _get_zone_display_name(zone_id)
 	zone_label.add_theme_font_size_override("font_size", 12)
 	zone_label.add_theme_color_override("font_color", Color.GRAY)
 	stats_grid.add_child(zone_label)
 
-	# Panel de acciones con precio destacado
+	# Panel de acciones reordenado
 	var actions_container = VBoxContainer.new()
 	actions_container.alignment = BoxContainer.ALIGNMENT_CENTER
-	actions_container.add_theme_constant_override("separation", 8)
+	actions_container.add_theme_constant_override("separation", 6)
 	main_layout.add_child(actions_container)
 	
-	# Precio con fondo dorado
+	# 1. Botón detalles arriba
+	var details_button = Button.new()
+	details_button.text = "ℹ️ Detalles"
+	details_button.custom_minimum_size = Vector2(100, 30)
+	details_button.pressed.connect(_on_fish_details_pressed.bind(item))
+	actions_container.add_child(details_button)
+	
+	# 2. Precio en el medio
 	var price_panel = PanelContainer.new()
 	var price_style = StyleBoxFlat.new()
-	price_style.bg_color = Color(0.8, 0.6, 0.0, 0.3)  # Dorado semi-transparente
+	price_style.bg_color = Color(0.8, 0.6, 0.0, 0.3)
 	price_style.border_width_left = 2
 	price_style.border_width_right = 2
 	price_style.border_width_top = 2
@@ -390,44 +418,43 @@ func _create_item_card(item: ItemInstance) -> void:
 	var value_label = Label.new()
 	var sell_price = item.instance_data.get("value", 0)
 	value_label.text = str(sell_price)
-	value_label.add_theme_font_size_override("font_size", 20)
+	value_label.add_theme_font_size_override("font_size", 18)
 	value_label.add_theme_color_override("font_color", Color.GOLD)
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	price_container.add_child(value_label)
 	
 	actions_container.add_child(price_panel)
 	
-	# Botones de acción estilizados
-	var button_container = VBoxContainer.new()
-	button_container.add_theme_constant_override("separation", 4)
-	actions_container.add_child(button_container)
-	
-	var details_button = Button.new()
-	details_button.text = "ℹ️ Detalles"
-	details_button.custom_minimum_size = Vector2(100, 32)
-	details_button.pressed.connect(_on_fish_details_pressed.bind(item))
-	button_container.add_child(details_button)
-	
+	# 3. Botón vender abajo
 	var sell_button = Button.new()
 	sell_button.text = "💰 Vender"
 	sell_button.custom_minimum_size = Vector2(100, 36)
 	var sell_style = StyleBoxFlat.new()
-	sell_style.bg_color = Color(0.2, 0.7, 0.2, 0.8)  # Verde
+	sell_style.bg_color = Color(0.2, 0.7, 0.2, 0.8)
 	sell_style.corner_radius_top_left = 4
 	sell_style.corner_radius_top_right = 4
 	sell_style.corner_radius_bottom_left = 4
 	sell_style.corner_radius_bottom_right = 4
 	sell_button.add_theme_stylebox_override("normal", sell_style)
 	sell_button.pressed.connect(_on_sell_one_pressed.bind(item))
-	button_container.add_child(sell_button)
+	actions_container.add_child(sell_button)
 
 	items_container.add_child(card)
 	print("[MARKET] Tarjeta profesional mejorada creada para: %s" % fish_def.name)
 
 func _on_sell_one_pressed(item_to_sell: ItemInstance) -> void:
 	"""Vende un único pez."""
-	print("[MarketScreen] Intentando vender un item: %s" % item_to_sell.get_item_def().name)
-	UnifiedInventorySystem.sell_item(item_to_sell)
+	var catch_id = item_to_sell.instance_data.get("catch_id", "")
+	var value = item_to_sell.get_market_value()
+	
+	print("[MarketScreen] Vendiendo: %s (ID: %s) por %d" % [item_to_sell.get_display_name(), catch_id, value])
+	
+	if catch_id != "" and Save and Save.mark_catch_as_sold(catch_id, value):
+		Save.add_coins(value)
+		Save.save_game()
+		_refresh_market_view()
+	else:
+		print("[MarketScreen] ERROR: No se pudo vender")
 
 func _on_sell_all_pressed() -> void:
 	"""Vende todos los peces del inventario de pesca."""
@@ -701,11 +728,36 @@ func setup_market(money: int, gems: int, sell_items: Array, buy_items: Array) ->
 
 func _update_inventory_counter(filtered_count: int, total_count: int) -> void:
 	"""Actualizar contador de inventario"""
-	if inventory_counter:
-		if filtered_count == total_count:
-			inventory_counter.text = "Inventario: %d peces" % total_count
-		else:
-			inventory_counter.text = "Mostrando: %d de %d peces" % [filtered_count, total_count]
+	# Crear contador si no existe
+	if not inventory_counter:
+		inventory_counter = Label.new()
+		inventory_counter.add_theme_font_size_override("font_size", 16)
+		inventory_counter.add_theme_color_override("font_color", Color.WHITE)
+		inventory_counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		
+		# Añadir al contenedor principal
+		var main_container = get_node("VBoxContainer")
+		if main_container:
+			main_container.add_child(inventory_counter)
+			main_container.move_child(inventory_counter, 0)  # Poner al principio
+	
+	# Obtener capacidad del inventario
+	var fishing_container = UnifiedInventorySystem.get_fishing_container()
+	var max_capacity = fishing_container.capacity if fishing_container else 20
+	
+	if filtered_count == total_count:
+		inventory_counter.text = "Inventario: %d/%d peces" % [total_count, max_capacity]
+	else:
+		inventory_counter.text = "Mostrando: %d de %d/%d peces" % [filtered_count, total_count, max_capacity]
+	
+	# Cambiar color según capacidad
+	var usage_percent = float(total_count) / float(max_capacity)
+	if usage_percent >= 1.0:
+		inventory_counter.add_theme_color_override("font_color", Color.RED)
+	elif usage_percent >= 0.8:
+		inventory_counter.add_theme_color_override("font_color", Color.ORANGE)
+	else:
+		inventory_counter.add_theme_color_override("font_color", Color.WHITE)
 
 func _on_item_checkbox_toggled(pressed: bool, item: ItemInstance) -> void:
 	"""Manejar selección/deselección de items"""
@@ -925,3 +977,24 @@ func _sort_items(items: Array[ItemInstance]) -> Array[ItemInstance]:
 			)
 	
 	return sorted_items
+
+func _get_zone_display_name(zone_id: String) -> String:
+	"""Convertir ID de zona a nombre bonito"""
+	var zone_names = {
+		"lago_montana_alpes": "Lagos de Montaña - Alpes",
+		"grandes_lagos_norteamerica": "Grandes Lagos de Norteamérica",
+		"costas_atlanticas": "Costas Atlánticas",
+		"rios_amazonicos": "Ríos Amazónicos",
+		"oceanos_profundos": "Océanos Profundos",
+		"orilla": "Orilla",
+		"lago": "Lago",
+		"rio": "Río",
+		"costa": "Costa",
+		"mar": "Mar",
+		"glaciar": "Glaciar",
+		"industrial": "Industrial",
+		"abismo": "Abismo",
+		"infernal": "Infernal"
+	}
+	return zone_names.get(zone_id, zone_id.capitalize().replace("_", " "))
+

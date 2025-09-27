@@ -8,18 +8,21 @@ signal experience_changed(current_xp: int, current_level: int)
 var current_xp: int = 0
 var current_level: int = 1
 
-# Milestones y recompensas
+# Milestones y recompensas - Cada nivel aumenta energía
 var milestones = {
-	5: {"type": "inventory_capacity", "value": 2, "desc": "Capacidad +2 espacios"},
-	10: {"type": "coins_multiplier", "value": 0.1, "desc": "Monedas +10%"},
-	15: {"type": "qte_time", "value": 0.5, "desc": "QTE +0.5s más tiempo"},
-	20: {"type": "inventory_capacity", "value": 3, "desc": "Capacidad +3 espacios"},
-	25: {"type": "coins_multiplier", "value": 0.15, "desc": "Monedas +15%"},
-	30: {"type": "rare_fish_chance", "value": 0.05, "desc": "Peces raros +5%"},
-	40: {"type": "inventory_capacity", "value": 5, "desc": "Capacidad +5 espacios"},
-	50: {"type": "coins_multiplier", "value": 0.25, "desc": "Monedas +25%"},
-	75: {"type": "prestige_unlock", "value": 1, "desc": "Desbloquea Prestigio"},
-	100: {"type": "coins_multiplier", "value": 0.5, "desc": "Monedas +50%"}
+	2: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	3: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	4: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	5: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	6: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	7: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	8: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	9: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima"},
+	10: {"type": "energy_increase", "value": 1, "desc": "+1 Energía Máxima + Auto-Pesca"},
+	15: {"type": "energy_increase", "value": 2, "desc": "+2 Energía Máxima"},
+	20: {"type": "energy_increase", "value": 2, "desc": "+2 Energía Máxima"},
+	25: {"type": "energy_increase", "value": 3, "desc": "+3 Energía Máxima"},
+	30: {"type": "energy_increase", "value": 3, "desc": "+3 Energía Máxima"}
 }
 
 func _ready():
@@ -47,15 +50,16 @@ func add_experience(amount: int):
 	save_experience()
 
 	# Emitir señal de cambio de experiencia para actualizaciones en tiempo real
-	emit_signal("experience_changed", current_xp, current_level)
+	print("[Experience] Emitiendo experience_changed: XP=%d, Nivel=%d" % [current_xp, current_level])
+	experience_changed.emit(current_xp, current_level)
 
 func calculate_level_from_xp(xp: int) -> int:
-	"""Fórmula: nivel = sqrt(xp / 100)"""
-	return max(1, int(sqrt(xp / 100.0)) + 1)
+	"""Fórmula ajustada para progresión más rápida inicial"""
+	return max(1, int(sqrt(xp / 50.0)) + 1)  # Divido por 50 en lugar de 100
 
 func get_xp_for_level(level: int) -> int:
 	"""XP necesaria para alcanzar un nivel específico"""
-	return (level - 1) * (level - 1) * 100
+	return (level - 1) * (level - 1) * 50  # Ajustado para progresión más rápida
 
 func get_xp_progress() -> Dictionary:
 	"""Progreso actual hacia el siguiente nivel"""
@@ -78,6 +82,11 @@ func apply_milestone(milestone_level: int):
 
 	var milestone = milestones[milestone_level]
 	match milestone.type:
+		"energy_increase":
+			if EnergySystem:
+				EnergySystem.increase_max_energy(milestone.value)
+				EnergySystem.refill_energy()  # Rellenar al 100%
+				print("[Experience] Milestone %d: +%d energía máxima, recargada al 100%%" % [milestone_level, milestone.value])
 		"inventory_capacity":
 			Save.add_milestone_inventory(milestone.value)
 		"coins_multiplier":
@@ -89,7 +98,7 @@ func apply_milestone(milestone_level: int):
 		"prestige_unlock":
 			Save.unlock_prestige()
 
-	print("Milestone alcanzado nivel ", milestone_level, ": ", milestone.desc)
+	print("[Experience] Milestone alcanzado nivel %d: %s" % [milestone_level, milestone.desc])
 
 func get_milestone_info(level: int) -> Dictionary:
 	"""Obtener información de un milestone específico"""
@@ -131,6 +140,7 @@ func load_experience():
 func save_experience():
 	"""Guardar experiencia en el sistema de guardado"""
 	Save.set_experience(current_xp, current_level)
+	print("[Experience] Guardado: XP=%d, Nivel=%d" % [current_xp, current_level])
 
 func get_experience_for_level(level: int) -> int:
 	"""Calcular experiencia requerida para un nivel específico"""

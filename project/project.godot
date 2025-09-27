@@ -35,6 +35,9 @@ PrestigeSystem="*res://src/systems/PrestigeSystem.gd"
 App="*res://src/autoload/App.gd"
 WindowManager="*res://src/autoload/WindowManager.gd"
 PauseManager="*res://src/autoload/PauseManager.gd"
+EnergySystem="*res://src/autoload/EnergySystem.gd"
+StatsTracker="*res://src/autoload/StatsTracker.gd"
+AutoFishingSystem="*res://src/autoload/AutoFishingSystem.gd"
 
 [display]
 
