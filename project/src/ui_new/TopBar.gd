@@ -65,6 +65,7 @@ func _sync_from_autoloads() -> void:
 	if Save:
 		Save.coins_changed.connect(set_money)
 		Save.gems_changed.connect(set_gems)
+		Save.data_loaded.connect(_on_data_loaded)
 		set_money(Save.get_coins())
 		set_gems(Save.get_gems())
 
@@ -72,7 +73,13 @@ func _sync_from_autoloads() -> void:
 		Experience.level_up.connect(_on_level_up)
 		if Experience.has_signal("experience_changed"):
 			Experience.experience_changed.connect(_on_experience_changed)
-		_update_xp_display()
+		# Actualizar display inicial
+		call_deferred("_update_xp_display")
+
+func _on_data_loaded(_slot: int) -> void:
+	"""Actualizar cuando se cargan datos"""
+	call_deferred("_sync_from_autoloads")
+	call_deferred("_update_xp_display")
 
 func set_money(amount: int) -> void:
 	"""Actualizar display de dinero con formato abreviado"""
@@ -88,23 +95,37 @@ func set_zone(zone_name: String) -> void:
 
 func _update_xp_display() -> void:
 	"""Actualizar barra de experiencia"""
-	if not Experience:
+	if not Save:
+		print("[TopBar] Save no disponible")
 		return
 
-	var level = Experience.current_level
-	var current_xp = Experience.current_xp
-	var required_xp = Experience.get_experience_for_level(level + 1)
-	var level_start_xp = Experience.get_experience_for_level(level)
+	# Calcular nivel directamente desde upgrades si no hay XP
+	var level = Save.game_data.get("level", 1)
+	var experience = Save.game_data.get("experience", 0)
+	
+	if experience == 0 and Save.game_data.has("upgrades"):
+		var total_upgrade_levels = 0
+		for upgrade_id in Save.game_data.upgrades:
+			total_upgrade_levels += Save.game_data.upgrades[upgrade_id]
+		
+		if total_upgrade_levels > 0:
+			experience = total_upgrade_levels * 10
+			level = max(1, int(sqrt(experience / 100.0)) + 1)
+			print("[TopBar] Nivel calculado: %d upgrades = %d XP = nivel %d" % [total_upgrade_levels, experience, level])
 
-	# Calcular progreso en el nivel actual
-	var level_progress = current_xp - level_start_xp
-	var level_required = required_xp - level_start_xp
-
-	xp_progress.max_value = level_required
-	xp_progress.value = level_progress
+	# Calcular progreso hacia siguiente nivel
+	var next_level_xp = (level * level) * 100
+	var current_level_xp = ((level - 1) * (level - 1)) * 100
+	var progress_xp = experience - current_level_xp
+	var required_xp = next_level_xp - current_level_xp
+	
+	xp_progress.max_value = required_xp
+	xp_progress.value = progress_xp
 
 	level_label.text = "LVL %d" % level
-	value_label.text = "%s / %s" % [_format_number(current_xp), _format_number(required_xp)]
+	value_label.text = "%d / %d" % [progress_xp, required_xp]
+	
+	print("[TopBar] XP actualizada: Nivel %d, Progreso %d/%d" % [level, progress_xp, required_xp])
 
 func _on_level_up(new_level: int) -> void:
 	"""Manejar subida de nivel con animación"""

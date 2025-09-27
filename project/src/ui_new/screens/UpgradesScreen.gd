@@ -36,13 +36,10 @@ func setup_screen() -> void:
 		var upgrades_data = _get_upgrades_data()
 		print("[UPGRADESSCREEN] Upgrades obtenidos: %d" % upgrades_data.size())
 
-		var money = Save.get_coins()
-		var gems = Save.get_gems()
 		var stats = _get_player_stats()
 
-		print("[UPGRADESSCREEN] Money: %d, Gems: %d" % [money, gems])
 		print("[UPGRADESSCREEN] Llamando setup_upgrades...")
-		upgrades_panel.setup_upgrades(upgrades_data, money, gems, stats)
+		upgrades_panel.setup_upgrades(upgrades_data, stats)
 		print("[UPGRADESSCREEN] setup_screen completado")
 	else:
 		print("[UPGRADESSCREEN] ERROR: componentes no disponibles")

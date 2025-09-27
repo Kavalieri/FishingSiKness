@@ -174,22 +174,25 @@ func _handle_classic_input(event: InputEvent) -> void:
 		# Detener QTE
 		is_active = false
 		
-		# Emitir señal inmediatamente
+		# Emitir señal sin cerrar si es éxito
 		if success:
 			qte_success.emit()
 		else:
+			_animate_exit(false)
 			qte_failed.emit()
 
 func _end_qte(success: bool) -> void:
 	"""Finalizar QTE por timeout"""
 	is_active = false
-	visible = false
+	
+	# Animar salida y luego ocultar
+	_animate_exit(false)
 
 	# Resetear colores
 	_reset_colors()
 
-	# Emitir señal de timeout/fallo
-	qte_failed.emit()
+	# Emitir señal de timeout
+	qte_timeout.emit()
 
 func _reset_colors() -> void:
 	"""Resetear todos los colores a su estado inicial"""
@@ -310,8 +313,17 @@ func _on_release_pressed() -> void:
 func _close_result() -> void:
 	"""Cerrar ventana de resultado"""
 	is_showing_result = false
-	visible = false
 	
+	# Animar salida
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(func(): 
+		visible = false
+		_cleanup_result()
+	)
+
+func _cleanup_result() -> void:
+	"""Limpiar elementos de resultado"""
 	# Limpiar botones
 	if action_buttons:
 		action_buttons.queue_free()

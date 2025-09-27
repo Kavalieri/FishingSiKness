@@ -269,6 +269,7 @@ func _on_save_window_closed() -> void:
 	# Solo mostrar el menú de pausa si está abierto
 	if current_pause_window and is_pause_menu_open:
 		current_pause_window.visible = true
+		current_pause_window.process_mode = Node.PROCESS_MODE_INHERIT
 
 # API pública para integración con TopBar/SplashScreen
 func is_menu_open() -> bool:

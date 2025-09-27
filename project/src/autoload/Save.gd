@@ -145,8 +145,12 @@ func _notification(what):
 
 func _auto_save():
 	"""Guardado automático periódico"""
-	print("Auto-save triggered")
-	save_game()
+	print("[Save] Auto-save triggered")
+	if has_valid_game_data():
+		save_game()
+		print("[Save] Auto-save completed")
+	else:
+		print("[Save] Auto-save skipped - no valid data")
 
 # ELIMINADO: _ensure_initial_data() - ya no creamos peces automáticamente
 
@@ -208,8 +212,10 @@ func save_game():
 
 	# Actualizar timestamp
 	game_data.last_played = Time.get_unix_time_from_system()
+	print("[Save] Guardando en slot %d, timestamp: %s" % [current_save_slot, Time.get_datetime_string_from_system()])
 
 	save(game_data)
+	print("[Save] Guardado completado")
 
 func load_game():
 	var loaded_data = load_data()
@@ -287,7 +293,7 @@ func get_total_inventory_capacity() -> int:
 # --- Sistema de guardado múltiple ---
 
 func get_save_slot_path(slot: int) -> String:
-	return "user://save_slot_%d.json" % slot
+	return get_save_path(slot)  # Usar la función unificada
 
 func save_to_slot(slot: int):
 	current_save_slot = slot
@@ -300,6 +306,10 @@ func load_from_slot(slot: int):
 	current_save_slot = slot
 	save_last_used_slot() # Recordar slot actual
 	load_game()
+
+	# Forzar actualización de Experience
+	if Experience:
+		Experience.load_experience()
 
 	# Emitir múltiples señales para actualización completa de UI
 	data_loaded.emit(slot)
@@ -321,9 +331,28 @@ func get_save_slot_info(slot: int) -> Dictionary:
 	if typeof(data) != TYPE_DICTIONARY:
 		return {"exists": false, "empty": true}
 
-	# Calcular tiempo de juego aproximado basado en nivel y experiencia
+	# Calcular nivel real basado en experiencia o upgrades
 	var level = data.get("level", 1)
 	var experience = data.get("experience", 0)
+	
+	# DEBUG: Mostrar datos del slot
+	print("[Save] Slot %d - Level guardado: %s, XP: %s" % [slot, level, experience])
+	
+	# Si no hay experiencia pero hay upgrades, calcular nivel basado en upgrades
+	if experience == 0 and data.has("upgrades"):
+		var upgrades_data = data.upgrades
+		var total_upgrade_levels = 0
+		for upgrade_id in upgrades_data:
+			total_upgrade_levels += upgrades_data[upgrade_id]
+			print("[Save] Upgrade %s: nivel %s" % [upgrade_id, upgrades_data[upgrade_id]])
+		
+		if total_upgrade_levels > 0:
+			experience = total_upgrade_levels * 10  # 10 XP por nivel de upgrade
+			# Calcular nivel desde XP: nivel = sqrt(xp / 100) + 1
+			level = max(1, int(sqrt(experience / 100.0)) + 1)
+			print("[Save] Slot %d calculado: %d upgrades = %d XP = nivel %d" % [slot, total_upgrade_levels, experience, level])
+	else:
+		print("[Save] Slot %d usando nivel guardado: %d" % [slot, level])
 	var estimated_playtime = _calculate_playtime(level, experience)
 
 	# Calcular valor total de peces en inventario
@@ -335,6 +364,13 @@ func get_save_slot_info(slot: int) -> Dictionary:
 			total_fish_value += fish.value
 			fish_count += 1
 
+	# Formatear fecha de último guardado
+	var last_played_timestamp = data.get("last_played", 0)
+	var last_played_str = "Nunca"
+	if last_played_timestamp > 0:
+		var datetime = Time.get_datetime_dict_from_unix_time(last_played_timestamp)
+		last_played_str = "%02d/%02d/%d %02d:%02d" % [datetime.day, datetime.month, datetime.year, datetime.hour, datetime.minute]
+
 	return {
 		"exists": true,
 		"empty": false,
@@ -344,7 +380,8 @@ func get_save_slot_info(slot: int) -> Dictionary:
 		"experience": experience,
 		"zone": _get_zone_display_name(data.get("current_zone", "lago_montana_alpes")),
 		"playtime": estimated_playtime,
-		"last_played": data.get("last_played", 0),
+		"last_played": last_played_timestamp,
+		"last_played_str": last_played_str,
 		"fish_count": fish_count,
 		"fish_value": total_fish_value
 	}
@@ -379,10 +416,13 @@ func _get_zone_display_name(zone_id: String) -> String:
 	return zone_names.get(zone_id, zone_id.capitalize())
 
 func delete_save_slot(slot: int):
-	var slot_path = get_save_slot_path(slot)
+	var slot_path = get_save_path(slot)
+	var backup_path = get_backup_path(slot)
 	var dir = DirAccess.open("user://")
 	if dir:
 		dir.remove(slot_path)
+		dir.remove(backup_path)
+	print("[Save] Slot %d eliminado: %s" % [slot, slot_path])
 
 func reset_to_default():
 	"""Resetear game_data a valores por defecto para nueva partida"""

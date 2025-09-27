@@ -188,8 +188,8 @@ func _start_fishing() -> void:
 	is_fishing = true
 	set_casting_state(true)
 
-	# Simular tiempo de lanzamiento
-	await get_tree().create_timer(1.5).timeout
+	# Simular tiempo de lanzamiento más rápido
+	await get_tree().create_timer(0.5).timeout
 
 	# Iniciar QTE
 	_start_qte_event()
@@ -258,6 +258,10 @@ func _on_qte_failed() -> void:
 	# Limpiar metadata
 	remove_meta("preview_fish")
 	remove_meta("current_fish")
+	
+	# Asegurar que QTE esté oculto
+	if qte_container:
+		qte_container.visible = false
 
 func _on_qte_timeout() -> void:
 	"""QTE timeout - sin actividad"""
@@ -270,6 +274,10 @@ func _on_qte_timeout() -> void:
 	# Limpiar metadata
 	remove_meta("preview_fish")
 	remove_meta("current_fish")
+	
+	# Asegurar que QTE esté oculto
+	if qte_container:
+		qte_container.visible = false
 
 func _on_fish_kept() -> void:
 	"""Pez guardado desde ventana de resultado"""
@@ -277,6 +285,10 @@ func _on_fish_kept() -> void:
 	if not fish_data.is_empty():
 		_process_caught_fish(fish_data)
 	remove_meta("current_fish")
+	
+	# Resetear estado de pesca
+	is_fishing = false
+	set_casting_state(false)
 
 func _on_fish_released() -> void:
 	"""Pez liberado desde ventana de resultado"""
@@ -284,6 +296,10 @@ func _on_fish_released() -> void:
 	if not fish_data.is_empty():
 		_show_release_message(fish_data)
 	remove_meta("current_fish")
+	
+	# Resetear estado de pesca
+	is_fishing = false
+	set_casting_state(false)
 
 func _show_escape_message() -> void:
 	"""Mostrar mensaje de pez escapado"""
@@ -418,13 +434,18 @@ func _process_caught_fish(fish_data: Dictionary) -> void:
 	print("🐟 [DEBUG] UnifiedInventorySystem disponible: %s" % (UnifiedInventorySystem != null))
 
 	# FUENTE DE VERDAD: Solo UnifiedInventorySystem maneja el inventario real
+	# Asegurar que el pez tiene zona actual
+	var current_zone_id = current_zone.get("id", Save.game_data.get("current_zone", "lago_montana_alpes"))
+	fish_data["zone_caught"] = current_zone_id
+	fish_data["timestamp"] = Time.get_unix_time_from_system()
+	
 	var item_instance = ItemInstance.new()
 	item_instance.from_fish_data({
 		"id": fish_data.get("id", "unknown_fish"),
 		"name": fish_data.get("name", "Pez desconocido"),
 		"size": fish_data.get("size", 10.0),
 		"value": int(fish_data.get("value", 10)),
-		"zone_caught": fish_data.get("zone", "unknown"),
+		"zone_caught": current_zone_id,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 
@@ -434,6 +455,11 @@ func _process_caught_fish(fish_data: Dictionary) -> void:
 	# ÚNICA FUENTE DE VERDAD: Añadir solo al UnifiedInventorySystem
 	if UnifiedInventorySystem.add_item(item_instance, "fishing"):
 		print("✅ [DEBUG] Pez añadido al UnifiedInventorySystem: %s" % fish_data.get("name", "Pez"))
+
+		# Añadir al historial ANTES de guardar
+		if Save and Save.has_method("add_catch_to_history"):
+			Save.add_catch_to_history(fish_data)
+			print("✅ [DEBUG] Añadido al historial visual")
 
 		# Guardar el juego después de añadir el pez
 		if Save:
@@ -448,12 +474,6 @@ func _process_caught_fish(fish_data: Dictionary) -> void:
 	else:
 		print("🚨 [DEBUG] Error: No se pudo añadir el pez al inventario")
 		return # No continuar si falla
-
-	# Solo para historial visual (NO para lógica de inventario)
-	print("🐟 [DEBUG] Añadiendo al historial visual...")
-	if Save and Save.has_method("add_catch_to_history"):
-		Save.add_catch_to_history(fish_data)
-		print("✅ [DEBUG] Añadido al historial visual")
 
 	print("🐟 [DEBUG] Mostrando pez capturado y emitiendo señal...")
 	show_caught_fish(fish_data)

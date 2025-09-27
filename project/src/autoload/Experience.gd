@@ -113,7 +113,20 @@ func get_next_milestones(count: int = 3) -> Array:
 func load_experience():
 	"""Cargar experiencia del sistema de guardado"""
 	current_xp = Save.get_experience()
+	
+	# Si no hay XP pero hay upgrades, calcular XP retroactiva
+	if current_xp == 0 and Save.game_data.has("upgrades"):
+		var total_upgrade_levels = 0
+		for upgrade_id in Save.game_data.upgrades:
+			total_upgrade_levels += Save.game_data.upgrades[upgrade_id]
+		
+		if total_upgrade_levels > 0:
+			current_xp = total_upgrade_levels * 10  # 10 XP por nivel de upgrade
+			print("[Experience] XP retroactiva calculada: %d upgrades = %d XP" % [total_upgrade_levels, current_xp])
+	
 	current_level = calculate_level_from_xp(current_xp)
+	Save.set_experience(current_xp, current_level)
+	print("[Experience] Cargado: XP=%d, Nivel=%d" % [current_xp, current_level])
 
 func save_experience():
 	"""Guardar experiencia en el sistema de guardado"""

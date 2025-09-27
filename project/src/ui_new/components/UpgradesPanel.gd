@@ -27,10 +27,7 @@ const UPGRADE_CARD_SCENE = preload("res://scenes/ui_new/components/UpgradeCard.t
 @onready var hook_button: Button = $VBoxContainer/CategoryTabs/HookButton
 @onready var line_button: Button = $VBoxContainer/CategoryTabs/LineButton
 @onready var boat_button: Button = $VBoxContainer/CategoryTabs/BoatButton
-@onready var money_label: Label = $VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo / \
-	MoneyContainer / MoneyLabel
-@onready var gems_label: Label = $VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo / \
-	GemsContainer / GemsLabel
+# Resources now shown only in TopBar
 @onready var power_label: Label = $VBoxContainer/PlayerStats/StatsContainer/CurrentStats / \
 	PowerLabel
 @onready var luck_label: Label = $VBoxContainer/PlayerStats/StatsContainer/CurrentStats/LuckLabel
@@ -49,27 +46,22 @@ func _connect_signals() -> void:
 func _setup_initial_state() -> void:
 	_update_category_display()
 
-func setup_upgrades(upgrades: Array[Dictionary], money: int, gems: int, stats: Dictionary) -> void:
+func setup_upgrades(upgrades: Array[Dictionary], stats: Dictionary) -> void:
 	"""Configurar panel con datos de mejoras"""
 	print("[UPGRADESPANEL] setup_upgrades llamado")
 	print("[UPGRADESPANEL] Upgrades recibidos: %d" % upgrades.size())
-	print("[UPGRADESPANEL] Money: %d, Gems: %d" % [money, gems])
 
 	available_upgrades = upgrades
-	player_money = money
-	player_gems = gems
 	player_stats = stats
 
 	print("[UPGRADESPANEL] Actualizando displays...")
-	_update_resources_display()
 	_update_stats_display()
 	_refresh_upgrades_list()
 	print("[UPGRADESPANEL] Setup completado")
 
 func _update_resources_display() -> void:
-	"""Actualizar visualización de recursos"""
-	money_label.text = _format_number(player_money)
-	gems_label.text = _format_number(player_gems)
+	"""Resources now shown only in TopBar"""
+	pass
 
 func _update_stats_display() -> void:
 	"""Actualizar visualización de estadísticas"""

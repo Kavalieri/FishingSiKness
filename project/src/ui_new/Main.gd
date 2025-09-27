@@ -283,7 +283,8 @@ func _show_pause_menu() -> void:
 
 func _show_xp_details() -> void:
 	"""Mostrar detalles de experiencia"""
-	print("[Main] TODO: Implementar detalles de XP")
+	print("[Main] Abriendo pantalla de milestones de nivel")
+	central_host.show_screen("res://scenes/ui_new/screens/LevelMilestonesScreen.tscn")
 
 # Métodos para eventos del juego (llamados por las pantallas)
 func _on_zone_changed(new_zone_id: String) -> void:

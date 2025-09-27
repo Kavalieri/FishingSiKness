@@ -8,8 +8,8 @@ const WINDOW_SCENE_PATHS = {
 	"money": "res://scenes/ui_new/screens/MarketScreen.tscn",
 	"diamonds": "res://scenes/views/StoreView.tscn",
 	"zone": "res://scenes/views/Map.tscn",
-	"level": "res://scenes/views/MilestonesPanel.tscn",
-	"xp": "res://scenes/views/MilestonesPanel.tscn",
+	"level": "res://scenes/ui_new/screens/LevelMilestonesScreen.tscn",
+	"xp": "res://scenes/ui_new/screens/LevelMilestonesScreen.tscn",
 	"options": "res://scenes/views/SettingsMenu.tscn",
 }
 

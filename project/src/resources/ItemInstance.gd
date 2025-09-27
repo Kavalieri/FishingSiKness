@@ -111,9 +111,15 @@ func from_fish_data(fish_data: Dictionary) -> void:
 	set_item_def(fish_def)
 
 	# Copiar todos los datos relevantes del pez
-	for key in ["size", "weight", "value", "capture_zone_id", "zone_multiplier", "capture_timestamp", "rarity_bonus", "rarity", "timestamp"]:
+	for key in ["size", "weight", "value", "zone_multiplier", "capture_timestamp", "rarity_bonus", "rarity", "timestamp"]:
 		if key in fish_data:
 			instance_data[key] = fish_data[key]
+	
+	# Manejar zona con ambos nombres para compatibilidad
+	if "zone_caught" in fish_data:
+		instance_data["capture_zone_id"] = fish_data["zone_caught"]
+	elif "capture_zone_id" in fish_data:
+		instance_data["capture_zone_id"] = fish_data["capture_zone_id"]
 	
 	# Si no hay peso, calcularlo basado en el tamaño
 	if not instance_data.has("weight") and instance_data.has("size"):
@@ -149,6 +155,7 @@ func to_market_dict() -> Dictionary:
 		"rarity": instance_data.get("rarity_bonus", "común"),
 		"weight": instance_data.get("weight", 0.0),
 		"capture_zone_id": instance_data.get("capture_zone_id", "Desconocida"),
+		"zone_caught": instance_data.get("capture_zone_id", "Desconocida"),
 		"timestamp": instance_data.get("capture_timestamp", 0),
 		"description": fish_def.description if fish_def.has_method("get") and fish_def.has("description") else "Sin descripción"
 	}

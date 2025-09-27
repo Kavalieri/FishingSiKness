@@ -60,32 +60,6 @@ theme_override_styles/panel = ExtResource("2_qh3sx")
 [node name="StatsContainer" type="HBoxContainer" parent="VBoxContainer/PlayerStats"]
 layout_mode = 2
 
-[node name="ResourcesInfo" type="VBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="MoneyContainer" type="HBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo"]
-layout_mode = 2
-
-[node name="MoneyIcon" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/MoneyContainer"]
-layout_mode = 2
-text = "💰"
-
-[node name="MoneyLabel" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/MoneyContainer"]
-layout_mode = 2
-text = "1,000"
-
-[node name="GemsContainer" type="HBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo"]
-layout_mode = 2
-
-[node name="GemsIcon" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/GemsContainer"]
-layout_mode = 2
-text = "💎"
-
-[node name="GemsLabel" type="Label" parent="VBoxContainer/PlayerStats/StatsContainer/ResourcesInfo/GemsContainer"]
-layout_mode = 2
-text = "50"
-
 [node name="CurrentStats" type="VBoxContainer" parent="VBoxContainer/PlayerStats/StatsContainer"]
 layout_mode = 2
 size_flags_horizontal = 3

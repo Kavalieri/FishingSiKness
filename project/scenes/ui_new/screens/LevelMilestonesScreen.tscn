@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://f8k2v3y8rbvq"]
+
+[ext_resource type="PackedScene" uid="uid://dflvvy162pbf1" path="res://src/ui/base/BaseWindow.tscn" id="1_base"]
+[ext_resource type="Script" path="res://src/ui_new/screens/LevelMilestonesScreen.gd" id="2_script"]
+
+[node name="LevelMilestonesScreen" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+
+[node name="LevelLabel" type="Label" parent="WindowPanel/ContentContainer" unique_name_in_owner="true"]
+layout_mode = 2
+text = "Nivel 1"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="XPProgress" type="ProgressBar" parent="WindowPanel/ContentContainer" unique_name_in_owner="true"]
+layout_mode = 2
+max_value = 100.0
+show_percentage = false
+
+[node name="XPLabel" type="Label" parent="WindowPanel/ContentContainer" unique_name_in_owner="true"]
+layout_mode = 2
+text = "0 XP (-100 para siguiente nivel)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="WindowPanel/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MilestonesContainer" type="VBoxContainer" parent="WindowPanel/ContentContainer/ScrollContainer" unique_name_in_owner="true"]
+layout_mode = 2
+size_flags_horizontal = 3

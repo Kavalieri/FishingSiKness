@@ -102,6 +102,12 @@ func purchase_upgrade(upgrade_id: String, quantity: int = 1) -> bool:
 			if MilestoneSystem:
 				MilestoneSystem.apply_milestone_effects(upgrade_id, i)
 
+		# Dar experiencia por comprar upgrades
+		if Experience:
+			var xp_reward = quantity * 10  # 10 XP por nivel de upgrade
+			Experience.add_experience(xp_reward)
+			Logger.info("XP ganada por upgrade: %d" % xp_reward)
+
 		Logger.info("Upgrade comprado: %s +%d niveles (total: %d) por %d monedas" % [upgrade_id, quantity, new_level, total_cost])
 		return true
 
@@ -109,8 +115,36 @@ func purchase_upgrade(upgrade_id: String, quantity: int = 1) -> bool:
 
 func apply_upgrade_effects(upgrade_id: String, level: int) -> void:
 	"""Aplicar efectos de un upgrade específico"""
-	# TODO: Implementar efectos reales cuando Save tenga la estructura correcta
-	Logger.debug("Upgrade %s aplicado en nivel %d (efectos pendientes)" % [upgrade_id, level])
+	var upgrade_def = available_upgrades.get(upgrade_id)
+	if not upgrade_def:
+		return
+	
+	var effect_key = PRIMARY_EFFECT_KEY_BY_ID.get(upgrade_id, "")
+	if effect_key == "":
+		return
+	
+	var effect_value = upgrade_def.get_effect_at_level(effect_key, level)
+	
+	# Aplicar efectos reales al sistema de juego
+	match effect_key:
+		"qte_success_bonus":
+			Save.game_data.qte_success_bonus = effect_value
+		"fish_value_multiplier":
+			Save.game_data.fish_value_multiplier = 1.0 + effect_value
+		"fishing_speed":
+			Save.game_data.fishing_speed_bonus = effect_value
+		"escape_reduction":
+			Save.game_data.escape_reduction = effect_value
+		"rare_fish_chance":
+			Save.game_data.rare_fish_bonus = effect_value
+		"qte_time_bonus":
+			Save.game_data.qte_time_bonus = effect_value
+		"zone_multiplier_bonus":
+			Save.game_data.zone_multiplier_bonus = effect_value
+		"inventory_capacity":
+			Save.game_data.max_inventory += int(effect_value)
+	
+	Logger.info("Upgrade %s nivel %d aplicado: %s = %s" % [upgrade_id, level, effect_key, effect_value])
 
 func get_upgrade_info(upgrade_id: String) -> Dictionary:
 	"""Obtener información completa de un upgrade"""

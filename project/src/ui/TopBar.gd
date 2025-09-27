@@ -76,23 +76,24 @@ func set_xp_progress(level: int, current: int, required: int) -> void:
 	var percentage = (float(current) / float(required)) * 100.0 if required > 0 else 0.0
 	# xp_progress_button.tooltip_text = tr("Nivel %d\nProgreso: %d / %d XP (%.1f%%)\nClick para ver habilidades y progreso") % [level, current, required, percentage]
 
-func sync_from_state(save_data: Node, experience_data: Node) -> void:
-	set_money(save_data.get_coins())
-	set_diamonds(save_data.get_gems())
-	set_zone(save_data._get_zone_display_name(save_data.game_data.current_zone))
+func sync_from_state() -> void:
+	if Save:
+		set_money(Save.get_coins())
+		set_diamonds(Save.get_gems())
+		set_zone(Save._get_zone_display_name(Save.game_data.current_zone))
 
-	var level = experience_data.current_level
-	var xp_progress = experience_data.get_xp_progress()
-	set_xp_progress(level, xp_progress.current_xp, xp_progress.required_xp)
+	if Experience:
+		# Asegurar que Experience esté sincronizado con Save
+		Experience.load_experience()
+		var level = Experience.current_level
+		var xp_progress = Experience.get_xp_progress()
+		set_xp_progress(level, xp_progress.current_xp, xp_progress.required_xp)
 
-func _on_experience_level_up(new_level: int) -> void:
-	var xp_progress = Experience.get_xp_progress()
-	set_xp_progress(new_level, xp_progress.current_xp, xp_progress.required_xp)
+func _on_level_up(new_level: int) -> void:
+	sync_from_state()
 
 func _on_experience_changed(current_xp: int, current_level: int) -> void:
-	"""Callback para cambios de experiencia que no sean level-up"""
-	var xp_progress = Experience.get_xp_progress()
-	set_xp_progress(current_level, xp_progress.current_xp, xp_progress.required_xp)
+	sync_from_state()
 
 func setup_professional_styles() -> void:
 	"""Configurar estilos visuales profesionales mejorados con fuentes más grandes"""

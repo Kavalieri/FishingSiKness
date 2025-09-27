@@ -28,6 +28,9 @@ func setup_save_manager_ui():
 
 	# Evento para cerrar al hacer click en fondo
 	opaque_bg.gui_input.connect(_on_background_clicked)
+	
+	# Asegurar que se destruya correctamente
+	tree_exiting.connect(_on_tree_exiting)
 
 	# Panel principal centrado dinámicamente
 	var main_panel = PanelContainer.new()
@@ -63,7 +66,7 @@ func _setup_panel_content(panel: PanelContainer):
 	main_vbox.add_child(title_hbox)
 
 	var title_label = Label.new()
-	title_label.text = "SAVE GESTOR DE PARTIDAS"
+	title_label.text = "GESTOR DE PARTIDAS"
 	title_label.add_theme_font_size_override("font_size", 28) # Mismo tamaño que UnifiedMenu
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -145,7 +148,7 @@ func create_save_slot(slot: int):
 
 	if slot_info.empty:
 		var empty_label = Label.new()
-		empty_label.text = "💭 Partida nueva"
+		empty_label.text = "Partida nueva"
 		empty_label.add_theme_color_override("font_color", Color.GRAY)
 		info_container.add_child(empty_label)
 	else:
@@ -154,9 +157,9 @@ func create_save_slot(slot: int):
 		var line1 = "%d monedas | %d gemas | Nivel %d" % [
 			slot_info.coins, slot_info.gems, slot_info.level
 		]
-		# Segunda línea: zona y tiempo
-		var line2 = "Zona: %s | %s" % [
-			slot_info.zone.capitalize(), slot_info.playtime
+		# Segunda línea: zona y fecha
+		var line2 = "Zona: %s | Último: %s" % [
+			slot_info.zone.capitalize(), slot_info.get("last_played_str", "Nunca")
 		]
 		# Tercera línea: inventario de peces (solo si hay peces)
 		var line3 = ""
@@ -183,7 +186,7 @@ func create_save_slot(slot: int):
 		buttons_container.add_child(new_game_btn)
 	else:
 		var load_btn = Button.new()
-		load_btn.text = "📂 Cargar"
+		load_btn.text = "Cargar"
 		load_btn.custom_minimum_size = Vector2(100, 35)
 		load_btn.add_theme_color_override("font_color", Color.CYAN)
 		load_btn.pressed.connect(_on_load_pressed.bind(slot))
@@ -220,7 +223,7 @@ func _perform_new_game(slot: int):
 	Save.save_to_slot(slot)
 	Save.current_save_slot = slot
 
-	# CORRECCIÓN: Cargar inmediatamente los datos nuevos en memoria
+	# Cargar inmediatamente los datos nuevos en memoria
 	Save.load_from_slot(slot)
 
 	emit_signal("save_created", slot)
@@ -228,16 +231,30 @@ func _perform_new_game(slot: int):
 		SFX.play_event("success")
 	show_message("CELEBRATION Nueva partida creada en Slot %d" % slot)
 	refresh_save_slots()
+	# Cerrar el gestor después de crear
+	call_deferred("_cleanup_and_close")
 
 func _on_load_pressed(slot: int):
-	"""Cargar partida existente"""
+	"""Cargar partida existente con confirmación"""
+	var confirm_dialog = ConfirmationDialog.new()
+	confirm_dialog.title = "Cargar Partida"
+	confirm_dialog.dialog_text = "¿Cargar la partida del Slot %d?\n\nSe perderá el progreso no guardado de la partida actual." % slot
+
+	add_child(confirm_dialog)
+	confirm_dialog.confirmed.connect(_perform_load.bind(slot))
+	confirm_dialog.popup_centered()
+
+func _perform_load(slot: int):
+	"""Ejecutar carga de partida"""
 	Save.load_from_slot(slot)
 	emit_signal("save_loaded", slot)
 	if SFX:
 		SFX.play_event("success")
-	show_message("📂 Partida cargada desde Slot %d" % slot)
+	show_message("Partida cargada desde Slot %d" % slot)
 	# Refrescar para mostrar el nuevo slot actual
 	refresh_save_slots()
+	# Cerrar el gestor después de cargar
+	call_deferred("_cleanup_and_close")
 
 func _on_save_pressed(slot: int):
 	"""Sobrescribir partida existente con confirmación"""
@@ -284,7 +301,21 @@ func _perform_delete(slot: int):
 
 func _on_back_pressed():
 	# Cerrar la vista del gestor de guardado
+	_cleanup_and_close()
+
+func _cleanup_and_close():
+	# Limpiar cualquier input capturado
+	set_process_input(false)
+	set_process_unhandled_input(false)
+	# Asegurar que el mouse_filter se libere
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	queue_free()
+
+func _on_tree_exiting():
+	# Limpiar al salir del árbol
+	set_process_input(false)
+	set_process_unhandled_input(false)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func show_message(text: String):
 	"""Mostrar mensaje de feedback mejorado"""
@@ -313,9 +344,11 @@ func show_message(text: String):
 
 func _on_background_clicked(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		queue_free()
+		_cleanup_and_close()
+		get_viewport().set_input_as_handled()
 
 func _input(event):
 	# Permitir cerrar con ESC
 	if event.is_action_pressed("ui_cancel"):
-		queue_free()
+		_cleanup_and_close()
+		get_viewport().set_input_as_handled()
